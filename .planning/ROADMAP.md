@@ -1,6 +1,6 @@
 # Roadmap: Steam Deck Robot Controller
 
-## Phase 1: Monorepo Foundation
+## Phase1: Monorepo Foundation
 
 **Goal:** Set up pnpm workspaces monorepo with frontend and backend apps, TypeScript configured, and working dev scripts.
 
@@ -22,11 +22,13 @@ Plans:
 
 ---
 
-## Phase 2: Backend — WebSocket + Bluetooth Serial
+## Phase2: Backend — WebSocket + Bluetooth Serial
 
 **Goal:** Build Node.js backend that connects to DX-BT24 via serial port and bridges WebSocket commands to Bluetooth serial.
 
 **Requirements:** BACK-01, BACK-02, BACK-03, BACK-04, BACK-05, BACK-06, SAFE-01, SAFE-02
+
+**Plans:** 2 plans
 
 **Success Criteria:**
 1. WebSocket server starts and accepts connections on a configurable port
@@ -36,9 +38,13 @@ Plans:
 5. WebSocket client disconnect triggers "S" written to serial port
 6. Console logs show command receipt and serial status changes
 
+Plans:
+- [ ] 02-01-PLAN.md — Set up Fastify server with WebSocket and Serial Port (Wave 1)
+- [ ] 02-02-PLAN.md — Add Vitest tests for command validation and WebSocket handling (Wave 2)
+
 ---
 
-## Phase 3: Frontend — React UI + Gamepad Control
+## Phase3: Frontend — React UI + Gamepad Control
 
 **Goal:** Build React UI with connection status, manual buttons, gamepad support, and WebSocket communication.
 
