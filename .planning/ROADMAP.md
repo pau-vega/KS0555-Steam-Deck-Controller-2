@@ -6,11 +6,19 @@
 
 **Requirements:** MONO-01, MONO-02, MONO-03, MONO-04
 
+**Plans:** 4 plans
+
 **Success Criteria:**
 1. `pnpm install` from root installs all dependencies without errors
 2. `pnpm dev` starts both frontend and backend development servers
 3. Both apps have TypeScript configured with strict mode
 4. Workspace structure has `apps/frontend`, `apps/backend`, and empty `packages/` directory
+
+Plans:
+- [ ] 01-01-PLAN.md — Create shared tsconfig and eslint-config packages (Wave 1)
+- [ ] 01-02-PLAN.md — Set up backend with Fastify + TypeScript + Vitest (Wave 2)
+- [ ] 01-03-PLAN.md — Set up frontend with Vite + React + Tailwind + Vitest (Wave 2)
+- [ ] 01-04-PLAN.md — Configure turbo.json and root scripts (Wave 3)
 
 ---
 
