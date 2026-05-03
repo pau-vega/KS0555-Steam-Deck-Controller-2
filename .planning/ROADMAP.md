@@ -15,10 +15,10 @@
 4. Workspace structure has `apps/frontend`, `apps/backend`, and empty `packages/` directory
 
 Plans:
-- [ ] 01-01-PLAN.md — Create shared tsconfig and eslint-config packages (Wave 1)
-- [ ] 01-02-PLAN.md — Set up backend with Fastify + TypeScript + Vitest (Wave 2)
-- [ ] 01-03-PLAN.md — Set up frontend with Vite + React + Tailwind + Vitest (Wave 2)
-- [ ] 01-04-PLAN.md — Configure turbo.json and root scripts (Wave 3)
+- [x] 01-01-PLAN.md — Create shared tsconfig and eslint-config packages (Wave 1)
+- [x] 01-02-PLAN.md — Set up backend with Fastify + TypeScript + Vitest (Wave 2)
+- [x] 01-03-PLAN.md — Set up frontend with Vite + React + Tailwind + Vitest (Wave 2)
+- [x] 01-04-PLAN.md — Configure turbo.json and root scripts (Wave 3)
 
 ---
 
