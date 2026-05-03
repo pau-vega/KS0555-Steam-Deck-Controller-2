@@ -13,13 +13,13 @@
 - [ ] **MONO-04**: `pnpm install` and `pnpm dev` work from root
 
 ### Backend
-
-- [ ] **BACK-01**: WebSocket server accepts frontend connections
-- [ ] **BACK-02**: Connects to DX-BT24 via serialport on `/dev/rfcomm0` at 9600 baud
+ 
+- [x] **BACK-01**: WebSocket server accepts frontend connections
+- [x] **BACK-02**: Connects to DX-BT24 via serialport on `/dev/rfcomm0` at 9600 baud
 - [ ] **BACK-03**: Forwards incoming WebSocket commands (F/B/L/R/S) to serial port
-- [ ] **BACK-04**: Auto-reconnects to serial port if connection drops
+- [x] **BACK-04**: Auto-reconnects to serial port if connection drops
 - [ ] **BACK-05**: Sends "S" (stop) command when WebSocket client disconnects
-- [ ] **BACK-06**: Logs received commands and serial connection status to console
+- [x] **BACK-06**: Logs received commands and serial connection status to console
 
 ### Frontend
 
@@ -76,12 +76,12 @@
 | MONO-02 | Phase 1 | Complete |
 | MONO-03 | Phase 1 | Complete |
 | MONO-04 | Phase 1 | Complete |
-| BACK-01 | Phase 2 | Pending |
-| BACK-02 | Phase 2 | Pending |
+| BACK-01 | Phase 2 | Complete |
+| BACK-02 | Phase 2 | Complete |
 | BACK-03 | Phase 2 | Pending |
-| BACK-04 | Phase 2 | Pending |
+| BACK-04 | Phase 2 | Complete |
 | BACK-05 | Phase 2 | Pending |
-| BACK-06 | Phase 2 | Pending |
+| BACK-06 | Phase 2 | Complete |
 | FRONT-01 | Phase 3 | Pending |
 | FRONT-02 | Phase 3 | Pending |
 | FRONT-03 | Phase 3 | Pending |
@@ -91,7 +91,7 @@
 | FRONT-07 | Phase 3 | Pending |
 | FRONT-08 | Phase 3 | Pending |
 | SAFE-01 | Phase 2 | Pending |
-| SAFE-02 | Phase 2 | Pending |
+| SAFE-02 | Phase 2 | Complete |
 
 **Coverage:**
 - v1 requirements: 20 total
@@ -100,4 +100,4 @@
 
 ---
 *Requirements defined: 2026-05-03*
-*Last updated: 2026-05-03 after initial definition*
+*Last updated: 2026-05-03 after completing 02-01 plan*
