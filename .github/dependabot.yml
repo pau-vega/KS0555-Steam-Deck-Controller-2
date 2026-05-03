@@ -1,0 +1,34 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: UTC
+    open-pull-requests-limit: 10
+    groups:
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+      tailwind:
+        patterns: ["tailwindcss", "@tailwindcss/*", "tw-animate-css"]
+      testing:
+        patterns: ["vitest", "@vitest/*", "@testing-library/*", "jsdom"]
+      typescript:
+        patterns: ["typescript", "typescript-eslint", "@tsconfig/*"]
+      eslint:
+        patterns: ["eslint*", "@eslint/*", "@eslint-react/*"]
+      build-tools:
+        patterns: ["tsup", "turbo", "vite", "@vitejs/*", "rimraf"]
+    ignore:
+      - dependency-name: "recharts"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
