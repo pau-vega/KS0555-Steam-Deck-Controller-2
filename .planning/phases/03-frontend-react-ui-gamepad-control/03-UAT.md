@@ -1,18 +1,14 @@
 ---
-status: testing
+status: complete
 phase: 03-frontend-react-ui-gamepad-control
 source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md]
 started: 2026-05-04T12:30:00Z
-updated: 2026-05-04T12:42:00Z
+updated: 2026-05-04T13:10:00Z
 ---
 
 ## Current Test
 
-number: 5
-name: Gamepad Direction Mapping
-expected: |
-  Connect Steam Deck gamepad (or any gamepad). Moving analog stick left/right/up/down maps to L/R/F/B commands respectively. On-screen direction feedback (e.g., "Direction: F") updates accordingly.
-awaiting: user response
+[testing complete]
 
 ## Tests
 
@@ -36,27 +32,31 @@ result: pass
 
 ### 5. Gamepad Direction Mapping
 expected: Connect Steam Deck gamepad (or any gamepad). Moving analog stick left/right/up/down maps to L/R/F/B commands respectively. On-screen direction feedback (e.g., "Direction: F") updates accordingly.
-result: [pending]
+result: issue
+reported: "it does not work with the gamepad. Only works if I click in the screen"
+severity: major
 
 ### 6. Deadzone Behavior
 expected: Small analog stick movements within ~0.15 threshold do NOT trigger commands. Only deliberate movements beyond deadzone send commands.
-result: [pending]
+result: skipped
+reason: gamepad input not working (blocked by test 5 issue)
 
 ### 7. Direction-Change-Only Sending
 expected: Holding analog stick in one direction sends command only once (on initial direction change), not continuously. Releasing and re-pushing in same direction sends again.
-result: [pending]
+result: skipped
+reason: gamepad input not working (blocked by test 5 issue)
 
 ### 8. WebSocket Auto-Reconnect
 expected: Stop/restart backend server. UI shows "⟳ Connecting..." then "✓ Backend" when backend comes back. Commands work after reconnect.
-result: [pending]
+result: pass
 
 ## Summary
 
 total: 8
-passed: 3
-issues: 1
-pending: 4
-skipped: 0
+passed: 4
+issues: 2
+pending: 0
+skipped: 2
 blocked: 0
 
 ## Gaps
@@ -75,4 +75,14 @@ blocked: 0
   missing:
     - "Update VITE_WS_URL in .env to include /ws path suffix"
     - "Update WS_URL fallback in use-websocket.ts to include /ws path"
+  debug_session: ""
+
+- truth: "Moving analog stick maps to L/R/F/B commands, on-screen direction feedback updates"
+  status: failed
+  reason: "User reported: it does not work with the gamepad. Only works if I click in the screen"
+  severity: major
+  test: 5
+  root_cause: ""
+  artifacts: []
+  missing: []
   debug_session: ""
