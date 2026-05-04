@@ -23,14 +23,14 @@
 
 ### Frontend
 
-- [ ] **FRONT-01**: Displays Bluetooth connection status (connected/disconnected)
-- [ ] **FRONT-02**: Provides manual control buttons: Forward, Backward, Left, Right, Stop
-- [ ] **FRONT-03**: Displays the last command sent
-- [ ] **FRONT-04**: Gamepad support via `navigator.getGamepads()` with polling loop
-- [ ] **FRONT-05**: Maps left analog stick to robot commands (up=F, down=B, left=L, right=R, neutral=S)
-- [ ] **FRONT-06**: Deadzone handling for analog sticks (~0.15 threshold)
-- [ ] **FRONT-07**: Only sends command on direction change (no continuous spam)
-- [ ] **FRONT-08**: WebSocket connection to backend with reconnection logic
+- [x] **FRONT-01**: Displays connection status that updates when WebSocket connects/disconnects
+- [x] **FRONT-02**: Manual buttons (F, B, L, R, S) send commands via WebSocket when clicked
+- [x] **FRONT-03**: Last sent command is displayed on screen
+- [x] **FRONT-04**: Gamepad stick input maps to correct robot commands with visible feedback
+- [x] **FRONT-05**: Maps left analog stick to robot commands (up=F, down=B, left=L, right=R, neutral=S)
+- [x] **FRONT-06**: Analog stick deadzone prevents jitter from triggering commands
+- [x] **FRONT-07**: Commands only sent on direction change, not continuously
+- [x] **FRONT-08**: WebSocket auto-reconnects if backend restarts
 
 ### Safety
 
