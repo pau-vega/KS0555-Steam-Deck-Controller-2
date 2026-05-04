@@ -78,11 +78,14 @@ blocked: 0
   debug_session: ""
 
 - truth: "Moving analog stick maps to L/R/F/B commands, on-screen direction feedback updates"
-  status: failed
+  status: fixed
   reason: "User reported: it does not work with the gamepad. Only works if I click in the screen"
   severity: major
   test: 5
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "pollGamepad callback had gamepadConnected in deps array — on first connect setGamepadConnected(true) recreated the callback, restarted the RAF loop, interrupting polling"
+  artifacts:
+    - path: "apps/frontend/src/hooks/use-gamepad.ts"
+      issue: "gamepadConnected state in deps caused callback recreation on connect"
+  missing:
+    - "Use connectedRef.current instead of gamepadConnected state in pollGamepad to keep deps []"
   debug_session: ""
