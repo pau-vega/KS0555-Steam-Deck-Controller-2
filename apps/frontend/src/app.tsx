@@ -8,7 +8,7 @@ type Direction = "F" | "B" | "L" | "R" | "S";
 
 export function App() {
   const [lastCommand, setLastCommand] = useState<Direction>("S");
-  const { connected: wsConnected, send, autoReconnect } = useWebSocket("ws://localhost:8080");
+  const { connected: wsConnected, connecting, send, autoReconnect } = useWebSocket();
   const { direction, gamepadConnected } = useGamepad();
   const prevDirection = useRef<Direction>("S");
 
@@ -36,8 +36,8 @@ export function App() {
       <h1>🤖 Robot Controller</h1>
       <StatusBar wsConnected={wsConnected} gamepadConnected={gamepadConnected} />
       <ControlPad onCommand={sendCommand} disabled={!wsConnected} />
-      <div className="last-command">
-        Last command: <strong>{lastCommand}</strong>
+      <div className="text-lg p-3 bg-surface rounded-lg border border-border">
+        Last command: <strong className="text-accent text-xl">{lastCommand}</strong>
       </div>
     </div>
   );
