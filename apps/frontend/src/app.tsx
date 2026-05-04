@@ -14,7 +14,7 @@ export function App() {
 
   const sendCommand = useCallback(
     (cmd: Direction) => {
-      send(JSON.stringify({ type: "command", command: cmd }));
+      send(cmd);
       setLastCommand(cmd);
     },
     [send],
