@@ -34,7 +34,7 @@ export function App() {
   return (
     <div className="app">
       <h1>🤖 Robot Controller</h1>
-      <StatusBar wsConnected={wsConnected} gamepadConnected={gamepadConnected} />
+      <StatusBar wsConnected={wsConnected} gamepadConnected={gamepadConnected} connecting={connecting} />
       <ControlPad onCommand={sendCommand} disabled={!wsConnected} />
       <div className="text-lg p-3 bg-surface rounded-lg border border-border">
         Last command: <strong className="text-accent text-xl">{lastCommand}</strong>
