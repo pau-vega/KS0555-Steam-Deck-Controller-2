@@ -62,6 +62,6 @@ Plans:
 7. WebSocket auto-reconnects if backend restarts
 
 Plans:
-- [ ] 03-01-PLAN.md — Migrate to Tailwind CSS, configure WebSocket URL via env, update StatusBar labels (Wave 1)
-- [ ] 03-02-PLAN.md — Gamepad support, direction-change-only sending, WebSocket auto-reconnect (Wave 2)
-- [ ] 03-03-PLAN.md — Test suite for hooks and components with Vitest (Wave 3)
+- [x] 03-01-PLAN.md — Migrate to Tailwind CSS, configure WebSocket URL via env, update StatusBar labels (Wave 1)
+- [x] 03-02-PLAN.md — Gamepad support, direction-change-only sending, WebSocket auto-reconnect (Wave 2)
+- [x] 03-03-PLAN.md — Test suite for hooks and components with Vitest (Wave 3)
