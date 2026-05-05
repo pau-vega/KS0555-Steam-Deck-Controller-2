@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-05-05)
 Phase: Phase 5 — ESLint Config TypeScript Conversion
 Plan: 05-01 (Pending)
 Status: Ready
-Last activity: 2026-05-05 — Phase 4 complete: validation gates pass (build, typecheck, lint)
+Last activity: 2026-05-05 — Phase4 complete: gap closure plan 04-04 executed, VERIFICATION.md gaps closed
 
 ## Progress
 
@@ -21,7 +21,7 @@ Last activity: 2026-05-05 — Phase 4 complete: validation gates pass (build, ty
 | v1.0 Phase 1 | ✅ | 4/4 | 100% |
 | v1.0 Phase 2 | ✅ | 2/2 | 100% |
 | v1.0 Phase 3 | ✅ | 3/3 | 100% |
-| v1.1 Phase 4 | ✅ | 3/3 | 100% |
+| v1.1 Phase 4 | ✅ | 4/4 | 100% |
 | v1.1 Phase 5 | ⬜ | 0/? | 0% |
 
 ## Decisions Made
@@ -34,6 +34,7 @@ Last activity: 2026-05-05 — Phase 4 complete: validation gates pass (build, ty
 - D-14: Use non-null assertions (!) for mock instances guaranteed by beforeEach setup
 - D-15: Added @typescript-eslint/parser to react.js ESLint config for TypeScript parsing
 - D-16: Set tsconfigRootDir to process.cwd() in node.js ESLint config for correct tsconfig resolution
+- D-17: Add ESLint overrides for *.config.ts files to exclude from type-aware linting
 
 ## Accumulated Context
 
@@ -41,8 +42,9 @@ Last activity: 2026-05-05 — Phase 4 complete: validation gates pass (build, ty
 - 13 leftover `.js` files deleted from `apps/frontend/src/` (Phase 4 Plan 04-01)
 - TS anti-patterns eliminated: `any` types (0 remaining), `import type` syntax fixed, return types confirmed (Phase 4 Plan 04-02)
 - Plan 04-03 complete: validation gates pass (build ✅, typecheck ✅, lint ✅)
+- Plan 04-04 complete: gap closure — TS6059 fixed, react.js tsconfigRootDir added, ESLint override for config files
 - Zero TypeScript suppressions (`@ts-ignore`, `@ts-nocheck`, `@ts-expect-error`) in codebase
-- ESLint configs fixed: react.js now has @typescript-eslint/parser, node.js has correct tsconfigRootDir
+- ESLint configs fixed: react.js now has @typescript-eslint/parser + tsconfigRootDir, node.js has override for *config.ts
 - All 51 tests pass (39 frontend + 12 backend)
 - Phase 4 COMPLETE — ready for Phase 5 (eslint-config TypeScript conversion)
 
