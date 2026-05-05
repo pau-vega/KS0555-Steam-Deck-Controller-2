@@ -66,8 +66,9 @@ Each task was committed atomically:
 
 1. **Task 1: Create tsup.config.ts** - `0c92840` (feat)
 2. **Task 2: Update package.json** - `7bf4e36` (feat)
+3. **Auto-fix: Fix build issues** - `84cf43d` (fix)
 
-**Plan metadata:** (will be added after SUMMARY commit)
+**Plan metadata:** `62e3b2b` (docs: complete plan)
 
 ## Files Created/Modified
 
@@ -82,7 +83,40 @@ Each task was committed atomically:
 
 ## Deviations from Plan
 
-None - plan executed exactly as written
+### Auto-fixed Issues
+
+**1. [Rule 3 - Blocking] Installed missing tsup and typescript dependencies**
+- **Found during:** Task 1 (Create tsup.config.ts)
+- **Issue:** `tsup` command not found - package not in devDependencies
+- **Fix:** Ran `pnpm --filter @ks0555/eslint-config install tsup typescript --save-dev`
+- **Files modified:** packages/eslint-config/package.json, pnpm-lock.yaml
+- **Verification:** `tsup --version` works after install
+
+**2. [Rule 3 - Blocking] Added tsconfig.json with correct moduleResolution**
+- **Found during:** First build attempt
+- **Issue:** TypeScript compilation failed - couldn't find modules, `require` not recognized
+- **Fix:** Created `packages/eslint-config/tsconfig.json` with `moduleResolution: "node"` and `@types/node` installed
+- **Files modified:** packages/eslint-config/tsconfig.json
+- **Verification:** Build progress after fix
+
+**3. [Rule 3 - Blocking] Fixed tsconfig path to use relative reference**
+- **Found during:** Build after adding tsconfig.json
+- **Issue:** `@ks0555/tsconfig/tsconfig.node.json` not found (workspace package not resolved during tsup build)
+- **Fix:** Changed to relative path `../../packages/tsconfig/tsconfig.node.json`
+- **Files modified:** packages/eslint-config/tsconfig.json
+- **Verification:** Build progressed past tsconfig error
+
+**4. [Rule 3 - Blocking] Disabled dts generation in tsup.config.ts**
+- **Found during:** Build - DTS Build step
+- **Issue:** `eslint-plugin-perfectionist` has no exported member `Plugin` - type declarations can't be generated
+- **Fix:** Set `dts: false` in tsup.config.ts (ESLint configs don't need .d.ts files for runtime)
+- **Files modified:** packages/eslint-config/tsup.config.ts
+- **Verification:** Build succeeded (ESM output generated)
+
+---
+
+**Total deviations:** 4 auto-fixed (all blocking)
+**Impact on plan:** All auto-fixes essential for build to succeed. No scope creep - only fixed blocking issues that prevented the plan's tasks from completing.
 
 ## Issues Encountered
 
