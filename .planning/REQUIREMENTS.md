@@ -23,9 +23,9 @@ All requirements from initial milestone shipped across Phases 1–3.
 
 ### TypeScript Quality
 
-- [ ] **TS-01**: Zero `any` types remain across all `.ts`/`.tsx` files in the monorepo
-- [ ] **TS-02**: All top-level non-hook/non-component functions have explicit return types
-- [ ] **TS-03**: All type-only imports use `import type` syntax throughout the codebase
+- [x] **TS-01**: Zero `any` types remain across all `.ts`/`.tsx` files in the monorepo — Phase 4 Plan 04-02
+- [x] **TS-02**: All top-level non-hook/non-component functions have explicit return types — Phase 4 Plan 04-01/04-02
+- [x] **TS-03**: All type-only imports use `import type` syntax throughout the codebase — Phase 4 Plan 04-02
 
 ### Validation Gates
 
@@ -91,9 +91,9 @@ All requirements from initial milestone shipped across Phases 1–3.
 | FRONT-07 | Phase 3 | Done |
 | FRONT-08 | Phase 3 | Done |
 | CLEAN-01 | Phase 4 | Done |
-| TS-01 | Phase 4 | Pending |
-| TS-02 | Phase 4 | Pending |
-| TS-03 | Phase 4 | Pending |
+| TS-01 | Phase 4 | Done |
+| TS-02 | Phase 4 | Done |
+| TS-03 | Phase 4 | Done |
 | VAL-01 | Phase 4 | Pending |
 | VAL-02 | Phase 4 | Pending |
 | VAL-03 | Phase 4 | Pending |
