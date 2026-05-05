@@ -70,10 +70,27 @@ All requirements from initial milestone shipped across Phases 1–3.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| MONO-01 | Phase 1 | Done |
+| MONO-02 | Phase 1 | Done |
+| MONO-03 | Phase 1 | Done |
+| MONO-04 | Phase 1 | Done |
+| BACK-01 | Phase 2 | Done |
+| BACK-02 | Phase 2 | Done |
+| BACK-03 | Phase 2 | Done |
+| BACK-04 | Phase 2 | Done |
+| BACK-05 | Phase 2 | Done |
+| BACK-06 | Phase 2 | Done |
+| SAFE-01 | Phase 2 | Done |
+| SAFE-02 | Phase 3 | Done |
+| FRONT-01 | Phase 3 | Done |
+| FRONT-02 | Phase 3 | Done |
+| FRONT-03 | Phase 3 | Done |
+| FRONT-04 | Phase 3 | Done |
+| FRONT-05 | Phase 3 | Done |
+| FRONT-06 | Phase 3 | Done |
+| FRONT-07 | Phase 3 | Done |
+| FRONT-08 | Phase 3 | Done |
 | CLEAN-01 | Phase 4 | Pending |
-| CLEAN-02 | Phase 5 | Pending |
-| CLEAN-03 | Phase 5 | Pending |
-| CLEAN-04 | Phase 5 | Pending |
 | TS-01 | Phase 4 | Pending |
 | TS-02 | Phase 4 | Pending |
 | TS-03 | Phase 4 | Pending |
@@ -81,12 +98,15 @@ All requirements from initial milestone shipped across Phases 1–3.
 | VAL-02 | Phase 4 | Pending |
 | VAL-03 | Phase 4 | Pending |
 | VAL-04 | Phase 4 | Pending |
+| CLEAN-02 | Phase 5 | Pending |
+| CLEAN-03 | Phase 5 | Pending |
+| CLEAN-04 | Phase 5 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 11 total
-- Mapped to phases: TBD (roadmapper will finalize)
+- Mapped to phases: 11/11 ✓
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-05*
-*Last updated: 2026-05-05 after milestone v1.1 definition*
+*Last updated: 2026-05-05 after milestone v1.1 roadmap created*

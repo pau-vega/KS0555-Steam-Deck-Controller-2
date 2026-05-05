@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-05-05)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: Phase 4 — TypeScript Quality Hardening
 Plan: —
-Status: Defining requirements
-Last activity: 2026-05-05 — Milestone v1.1 started
+Status: Not started
+Last activity: 2026-05-05 — v1.1 roadmap created (Phases 4–5)
 
 ## Progress
 
@@ -21,6 +21,8 @@ Last activity: 2026-05-05 — Milestone v1.1 started
 | v1.0 Phase 1 | ✅ | 4/4 | 100% |
 | v1.0 Phase 2 | ✅ | 2/2 | 100% |
 | v1.0 Phase 3 | ✅ | 3/3 | 100% |
+| v1.1 Phase 4 | ⬜ | 0/? | 0% |
+| v1.1 Phase 5 | ⬜ | 0/? | 0% |
 
 ## Decisions Made
 
@@ -28,3 +30,16 @@ Last activity: 2026-05-05 — Milestone v1.1 started
 - D-07: Backend ESLint uses packages/eslint-config/src/node.ts
 - D-10: Frontend extends @ks0555/tsconfig/tsconfig.react.json
 - D-12: Frontend ESLint uses packages/eslint-config/src/react.ts
+
+## Accumulated Context
+
+### Phase 4 Notes
+- 13 leftover `.js` files to delete from `apps/frontend/src/` (exact list to be confirmed at plan time)
+- TS anti-patterns to eliminate: `any`, missing return types on top-level functions, `import { type X }` instead of `import type { X }`
+- Validation gate: all three of `pnpm build`, `pnpm typecheck`, `pnpm lint` must pass at phase end
+
+### Phase 5 Notes
+- Two files to convert: `packages/eslint-config/src/node.js` and `packages/eslint-config/src/react.js`
+- No new ESLint rules — only convert existing rules to TypeScript (per Out of Scope)
+- Both frontend and backend must import cleanly after conversion
+- Depends on Phase 4 being clean so the conversion starts from a zero-error baseline
