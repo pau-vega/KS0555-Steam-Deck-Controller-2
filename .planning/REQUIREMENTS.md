@@ -1,112 +1,112 @@
 # Requirements: Steam Deck Robot Controller
 
 **Defined:** 2026-05-05
-**Core Value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
+**Core Value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly through native Bluetooth LE and gamepad APIs.
 
-## v1.0 Requirements (Completed)
+## v2.0 Requirements (Tauri Migration)
 
-All requirements from initial milestone shipped across Phases 1–3.
+Requirements for Tauri v2 migration milestone. Each maps to roadmap phases.
 
-- ✓ **MONO-01–04**: pnpm monorepo with frontend + backend, TypeScript, dev scripts — Phase 1
-- ✓ **BACK-01–06**: WebSocket server, Bluetooth serial bridge, auto-reconnect, command logging — Phase 2
-- ✓ **FRONT-01–08**: React UI, manual controls, gamepad input, deadzone, direction-change guard, auto-reconnect — Phase 3
-- ✓ **SAFE-01–02**: Stop on gamepad disconnect, stop on WebSocket disconnect — Phases 2–3
+### Tauri Infrastructure
 
-## v1.1 Requirements
+- [ ] **TAUR-01**: Initialize Tauri v2 project inside apps/frontend/src-tauri/ with Cargo.toml, tauri.conf.json, and main.rs entrypoint
+- [ ] **TAUR-02**: Configure tauri.conf.json with productName "Robot Controller", identifier "com.ks0555.robotcontroller", devUrl "http://localhost:5173", and AppImage bundle target for Linux
+- [ ] **TAUR-03**: Add @tauri-apps/cli@^2 and @tauri-apps/api@^2 to apps/frontend with pnpm, add tauri and tauri:build scripts
+- [ ] **TAUR-04**: Configure vite.config.ts with Tauri integration: clearScreen false, strictPort true, port 5173, and watch ignore for src-tauri/
+- [ ] **TAUR-05**: Add btleplug@^0.12, gilrs@^0.11, serde, and tokio to src-tauri/Cargo.toml with Rust edition 2021
 
-### JS Cleanup
+### BLE Communication (btleplug)
 
-- [x] **CLEAN-01**: All leftover `.js` files in `apps/frontend/src/` deleted — 13 files superseded by `.ts`/`.tsx` equivalents
-- [ ] **CLEAN-02**: `packages/eslint-config/src/node.js` converted to TypeScript ESM module
-- [ ] **CLEAN-03**: `packages/eslint-config/src/react.js` converted to TypeScript ESM module
-- [ ] **CLEAN-04**: All consuming apps continue importing eslint-config without errors after conversion
+- [ ] **BLE-01**: Implement ble_connect Tauri command that scans for BT24 device (filter by name "BT24", service UUID 0000ffe0-0000-1000-8000-00805f9b34fb), connects, and emits "ble-state-changed" with "connecting" then "connected"
+- [ ] **BLE-02**: Implement ble_disconnect Tauri command that disconnects from BT24 peripheral and emits "ble-state-changed" with "disconnected"
+- [ ] **BLE-03**: Implement ble_send Tauri command that writes command string (F/B/L/R/S) to BT24 characteristic UUID 0000ffe1-0000-1000-8000-00805f9b34fb using WriteType::WithoutResponse
+- [ ] **BLE-04**: Store connected Peripheral in Tauri managed state (app.manage()) for access across commands
+- [ ] **BLE-05**: Handle btleplug CentralEvent::DeviceDisconnected to auto-emit "ble-state-changed" with "disconnected" when robot disconnects unexpectedly
+- [ ] **BLE-06**: Post-filter scan results by device name "BT24" on Linux since BlueZ merges discovery filters across all D-Bus clients
 
-### TypeScript Quality
+### Gamepad Input (gilrs)
 
-- [x] **TS-01**: Zero `any` types remain across all `.ts`/`.tsx` files in the monorepo — Phase 4 Plan 04-02
-- [x] **TS-02**: All top-level non-hook/non-component functions have explicit return types — Phase 4 Plan 04-01/04-02
-- [x] **TS-03**: All type-only imports use `import type` syntax throughout the codebase — Phase 4 Plan 04-02
+- [ ] **GPAD-01**: Spawn gilrs background thread in Tauri setup() hook that continuously calls next_event() to detect gamepad connect/disconnect and direction changes
+- [ ] **GPAD-02**: Emit "gamepad-connected" event when gilrs detects EventType::Connected, and "gamepad-disconnected" when EventType::Disconnected fires
+- [ ] **GPAD-03**: Implement direction detection logic in Rust: read Axis::LeftStickX/Y, apply 0.15 deadzone, output "F"/"B"/"L"/"R"/"S" using same logic as getDirectionFromAxes() in current use-gamepad.ts
+- [ ] **GPAD-04**: Emit "gamepad-direction" event only when direction actually changes (direction change guard), not on every poll, to prevent Tauri event rate limiting crashes
+- [ ] **GPAD-05**: Prefer Steam Deck built-in controller by checking gamepad.name() contains "Steam" (same logic as current use-gamepad.ts index 0 fallback)
+- [ ] **GPAD-06**: Use std::thread::spawn or tauri::async_runtime::spawn with cloned AppHandle (not Window) for cross-thread event emitting to avoid Rust Send trait violations
 
-### Validation Gates
+### Frontend Hooks (Stable Interfaces)
 
-- [x] **VAL-01**: `pnpm build` completes with zero errors across all packages
-- [x] **VAL-02**: `pnpm typecheck` (tsc --noEmit) passes with zero errors across all packages
-- [x] **VAL-03**: `pnpm lint` passes with zero errors across all packages
-- [x] **VAL-04**: TypeScript rules agent (ts-reviewer) runs and passes at end of each phase
+- [ ] **HOOK-01**: Rewrite use-bluetooth.ts to use invoke("ble_connect"), invoke("ble_disconnect"), invoke("ble_send", { command }) and listen("ble-state-changed") for state updates
+- [ ] **HOOK-02**: Rewrite use-gamepad.ts to use listen("gamepad-direction"), listen("gamepad-connected"), listen("gamepad-disconnected") for direction and connection state
+- [ ] **HOOK-03**: Preserve useBluetooth() return shape: { connected, connecting, unsupported, connect, send } — app.tsx, control-pad.tsx, status-bar.tsx must be unchanged
+- [ ] **HOOK-04**: Preserve useGamepad() return shape: { direction, gamepadConnected } — app.tsx, control-pad.tsx, status-bar.tsx must be unchanged
+- [ ] **HOOK-05**: Remove @types/web-bluetooth from apps/frontend dependencies (no longer needed after Tauri migration)
 
-## v2 Requirements
+### Validation
 
-### Motor Speed Control
+- [ ] **VAL-01**: `pnpm --filter @ks0555/frontend tauri dev` starts without errors on Linux/SteamOS
+- [ ] **VAL-02**: Gamepad events flow through Rust gilrs → Tauri event → React without using navigator.getGamepads()
+- [ ] **VAL-03**: BLE connect/send works through Rust btleplug without using navigator.bluetooth
+- [ ] **VAL-04**: app.tsx is unchanged after migration (verify with git diff)
 
-- **MOTOR-01**: UI sliders for left/right motor speed
-- **MOTOR-02**: Send `u<number>#` and `v<number>#` commands
+## v2.1 Requirements (Deferred)
 
-### Connection Management
+### Enhanced Features
 
-- **CONN-01**: Bluetooth device discovery and pairing from UI
-- **CONN-02**: Connection history and diagnostics
-- **CONN-03**: Configurable WebSocket server port
-
-### Customization
-
-- **CUST-01**: Customizable gamepad button/axis mapping
-- **CUST-02**: Multiple robot profiles
-- **CUST-03**: Adjustable deadzone threshold
+- **MTRS-01**: Motor speed control (u<number>#, v<number># commands) — adds protocol complexity, not needed for MVP
+- **MTRS-02**: Multiple robot profiles — save/load BT24 device mappings for different robots
+- **RECN-01**: Auto-reconnect on BLE disconnect with exponential backoff — nice-to-have, not core to MVP
+- **FLAT-01**: Flatpak packaging — AppImage works for Steam Deck distribution, Flatpak deferred
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Authentication | Single-user local device, no security needed |
-| Mobile app | Steam Deck Desktop Mode only |
-| Cloud connectivity | Local control only |
-| Video feed | Adds complexity, not core to control |
-| Autonomous/path planning | Manual control only |
-| Tauri/Electron/Rust | Browser is sufficient |
-| Flatpak packaging | Run from source |
-| ESLint rule additions | Only convert existing rules to TypeScript — no new lint rules |
+| Windows/macOS builds | Target is Linux/SteamOS only |
+| apps/backend (Fastify + WebSocket) | Replaced by Tauri Rust backend, no longer needed |
+| Motor speed control (u/v commands) | Deferred to v2.1, not needed for MVP |
+| Multiple robot support | Single BT24 device is the use case |
+| Flatpak packaging | AppImage sufficient for Steam Deck |
+| Production-grade authentication | Single-user local device |
+| New UI components | Only infrastructure changes, no UI modifications |
 
 ## Traceability
 
+Which phases cover which requirements. Updated during roadmap creation.
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MONO-01 | Phase 1 | Done |
-| MONO-02 | Phase 1 | Done |
-| MONO-03 | Phase 1 | Done |
-| MONO-04 | Phase 1 | Done |
-| BACK-01 | Phase 2 | Done |
-| BACK-02 | Phase 2 | Done |
-| BACK-03 | Phase 2 | Done |
-| BACK-04 | Phase 2 | Done |
-| BACK-05 | Phase 2 | Done |
-| BACK-06 | Phase 2 | Done |
-| SAFE-01 | Phase 2 | Done |
-| SAFE-02 | Phase 3 | Done |
-| FRONT-01 | Phase 3 | Done |
-| FRONT-02 | Phase 3 | Done |
-| FRONT-03 | Phase 3 | Done |
-| FRONT-04 | Phase 3 | Done |
-| FRONT-05 | Phase 3 | Done |
-| FRONT-06 | Phase 3 | Done |
-| FRONT-07 | Phase 3 | Done |
-| FRONT-08 | Phase 3 | Done |
-| CLEAN-01 | Phase 4 | Done |
-| TS-01 | Phase 4 | Done |
-| TS-02 | Phase 4 | Done |
-| TS-03 | Phase 4 | Done |
-| VAL-01 | Phase 4 | Done |
-| VAL-02 | Phase 4 | Done |
-| VAL-03 | Phase 4 | Done |
-| VAL-04 | Phase 4 | Done |
-| CLEAN-02 | Phase 5 | Pending |
-| CLEAN-03 | Phase 5 | Pending |
-| CLEAN-04 | Phase 5 | Pending |
+| TAUR-01 | Phase 1 | Pending |
+| TAUR-02 | Phase 1 | Pending |
+| TAUR-03 | Phase 1 | Pending |
+| TAUR-04 | Phase 1 | Pending |
+| TAUR-05 | Phase 1 | Pending |
+| BLE-01 | Phase 2 | Pending |
+| BLE-02 | Phase 2 | Pending |
+| BLE-03 | Phase 2 | Pending |
+| BLE-04 | Phase 2 | Pending |
+| BLE-05 | Phase 2 | Pending |
+| BLE-06 | Phase 2 | Pending |
+| GPAD-01 | Phase 3 | Pending |
+| GPAD-02 | Phase 3 | Pending |
+| GPAD-03 | Phase 3 | Pending |
+| GPAD-04 | Phase 3 | Pending |
+| GPAD-05 | Phase 3 | Pending |
+| GPAD-06 | Phase 3 | Pending |
+| HOOK-01 | Phase 4 | Pending |
+| HOOK-02 | Phase 4 | Pending |
+| HOOK-03 | Phase 4 | Pending |
+| HOOK-04 | Phase 4 | Pending |
+| HOOK-05 | Phase 4 | Pending |
+| VAL-01 | Phase 5 | Pending |
+| VAL-02 | Phase 5 | Pending |
+| VAL-03 | Phase 5 | Pending |
+| VAL-04 | Phase 5 | Pending |
 
 **Coverage:**
-- v1.1 requirements: 11 total
-- Mapped to phases: 11/11 ✓
+- v2.0 requirements: 26 total
+- Mapped to phases: 26
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-05*
-*Last updated: 2026-05-05 after milestone v1.1 roadmap created*
+*Last updated: 2026-05-05 after Tauri Migration milestone definition*
