@@ -77,14 +77,19 @@ Plans:
   3. Both `apps/frontend` and `apps/backend` import from eslint-config without any import errors or type errors
   4. `pnpm build`, `pnpm typecheck`, and `pnpm lint` all complete with zero errors after the conversion
   5. ts-reviewer agent passes on the converted eslint-config package
-**Plans**: TBD
+**Plans**: 3 plans
 
+Plans:
+- [ ] 05-01-PLAN.md — Convert node.js and react.js to TypeScript ESM modules
+- [ ] 05-02-PLAN.md — Add tsup config and update package.json with ESM + types
+- [ ] 05-03-PLAN.md — Update lint scripts and validate conversion with build/typecheck/lint
+ 
 ## Progress Table
-
+ 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Monorepo Foundation | 4/4 | Done | 2026-05-05 |
 | 2. Backend — WebSocket + Bluetooth Serial | 2/2 | Done | 2026-05-05 |
 | 3. Frontend — React UI + Gamepad Control | 3/3 | Done | 2026-05-05 |
 | 4. TypeScript Quality Hardening | 4/4 | Done | 2026-05-05 |
-| 5. ESLint Config TypeScript Conversion | 0/? | Not started | - |
+| 5. ESLint Config TypeScript Conversion | 0/3 | Not started | - |
