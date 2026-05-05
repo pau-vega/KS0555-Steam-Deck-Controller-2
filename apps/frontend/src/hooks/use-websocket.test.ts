@@ -2,10 +2,20 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { useWebSocket } from './use-websocket'
 
+import type { Mock } from 'vitest'
+
 // Store the mock instance for tests to access
-let mockWsInstance: any = null
-let mockSendFn: any = null
-let mockCloseFn: any = null
+let mockWsInstance: MockWebSocketInstance | null = null
+let mockSendFn: Mock = null as unknown as Mock
+let mockCloseFn: Mock = null as unknown as Mock
+
+interface MockWebSocketInstance {
+  url: string
+  readyState: number
+  onopen: (() => void) | null
+  onclose: (() => void) | null
+  onerror: ((event: Event) => void) | null
+}
 
 // WebSocket constants
 const WS_OPEN = 1
@@ -20,7 +30,7 @@ describe('useWebSocket', () => {
     mockCloseFn = vi.fn()
 
     // Create a proper mock WebSocket constructor
-    const MockWebSocket = function (this: any, url: string) {
+    const MockWebSocket = function (this: MockWebSocketInstance, url: string) {
       this.url = url
       this.readyState = WS_CONNECTING
       this.onopen = null
@@ -41,7 +51,7 @@ describe('useWebSocket', () => {
       }, 0)
 
       return this
-    } as any
+    }
 
     // Add static properties
     MockWebSocket.OPEN = WS_OPEN
@@ -68,7 +78,7 @@ describe('useWebSocket', () => {
       expect(mockWsInstance).not.toBeNull()
     })
 
-    expect(mockWsInstance.url).toContain('ws://')
+    expect(mockWsInstance!.url).toContain('ws://')
   })
 
   it('sets connected=true on open', async () => {
@@ -87,9 +97,9 @@ describe('useWebSocket', () => {
 
     // Simulate close
     act(() => {
-      mockWsInstance.readyState = WS_CLOSED
-      if (mockWsInstance.onclose) {
-        mockWsInstance.onclose()
+      mockWsInstance!.readyState = WS_CLOSED
+      if (mockWsInstance!.onclose) {
+        mockWsInstance!.onclose()
       }
     })
 
@@ -98,13 +108,13 @@ describe('useWebSocket', () => {
 
   it('sets connecting state during connection', () => {
     // Override to not auto-connect
-    const MockWebSocket = function (this: any) {
+    const MockWebSocket = function (this: MockWebSocketInstance) {
       this.readyState = WS_CONNECTING
       this.onopen = null
       this.onclose = null
       mockWsInstance = this
       return this
-    } as any
+    }
     MockWebSocket.OPEN = WS_OPEN
     MockWebSocket.CLOSED = WS_CLOSED
     MockWebSocket.CONNECTING = WS_CONNECTING
@@ -134,7 +144,7 @@ describe('useWebSocket', () => {
 
     // Don't wait for connection - send while still connecting/disconnected
     // Override readyState to CLOSED
-    mockWsInstance.readyState = WS_CLOSED
+    mockWsInstance!.readyState = WS_CLOSED
 
     act(() => {
       result.current.send('test-command')
@@ -150,9 +160,9 @@ describe('useWebSocket', () => {
 
     // Disconnect
     act(() => {
-      mockWsInstance.readyState = WS_CLOSED
-      if (mockWsInstance.onclose) {
-        mockWsInstance.onclose()
+      mockWsInstance!.readyState = WS_CLOSED
+      if (mockWsInstance!.onclose) {
+        mockWsInstance!.onclose()
       }
     })
 

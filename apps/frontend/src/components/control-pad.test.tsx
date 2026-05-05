@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import type { Mock } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { ControlPad } from './control-pad'
+import type { Direction } from '../types'
 
 describe('ControlPad', () => {
-  let mockOnCommand: any;
+  let mockOnCommand: Mock<(command: Direction) => void>;
 
   beforeEach(() => {
     vi.clearAllMocks()

@@ -2,9 +2,23 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { useGamepad } from './use-gamepad'
 
+function createMockGamepad(axes: number[], id = 'Steam Deck Gamepad'): Gamepad {
+  return {
+    axes,
+    id,
+    connected: true,
+    timestamp: 0,
+    mapping: 'standard' as GamepadMappingType,
+    index: 0,
+    buttons: [],
+    hapticActuators: [],
+    vibrationActuator: null,
+  } as unknown as Gamepad
+}
+
 describe('useGamepad', () => {
-  let originalGetGamepads: any
-  let originalRAF: any
+  let originalGetGamepads: typeof navigator.getGamepads
+  let originalRAF: typeof window.requestAnimationFrame
   let rafCallbacks: Array<(time: number) => void> = []
 
   beforeEach(() => {
@@ -16,10 +30,10 @@ describe('useGamepad', () => {
     originalRAF = window.requestAnimationFrame
 
     // Mock requestAnimationFrame to capture callbacks
-    window.requestAnimationFrame = vi.fn((callback: any) => {
+    window.requestAnimationFrame = vi.fn((callback: FrameRequestCallback) => {
       rafCallbacks.push(callback)
-      return rafCallbacks.length // Return an ID
-    }) as any
+      return rafCallbacks.length
+    })
 
     // Mock cancelAnimationFrame
     window.cancelAnimationFrame = vi.fn()
@@ -41,12 +55,7 @@ describe('useGamepad', () => {
   it('returns direction S when axes are neutral (within deadzone)', async () => {
     // Mock gamepad with neutral axes (within deadzone of 0.15)
     navigator.getGamepads = vi.fn(() => {
-      return [
-        {
-          axes: [0, 0], // Neutral position
-          id: 'Steam Deck Gamepad',
-        } as any,
-      ]
+      return [createMockGamepad([0, 0])]
     })
 
     const { result } = renderHook(() => useGamepad())
@@ -63,12 +72,7 @@ describe('useGamepad', () => {
 
   it('returns direction F when Y axis negative (forward)', async () => {
     navigator.getGamepads = vi.fn(() => {
-      return [
-        {
-          axes: [0, -0.5], // Forward (negative Y)
-          id: 'Steam Deck Gamepad',
-        } as any,
-      ]
+      return [createMockGamepad([0, -0.5])]
     })
 
     const { result } = renderHook(() => useGamepad())
@@ -84,12 +88,7 @@ describe('useGamepad', () => {
 
   it('returns direction B when Y axis positive (backward)', async () => {
     navigator.getGamepads = vi.fn(() => {
-      return [
-        {
-          axes: [0, 0.5], // Backward (positive Y)
-          id: 'Steam Deck Gamepad',
-        } as any,
-      ]
+      return [createMockGamepad([0, 0.5])]
     })
 
     const { result } = renderHook(() => useGamepad())
@@ -105,12 +104,7 @@ describe('useGamepad', () => {
 
   it('returns direction L when X axis negative (left)', async () => {
     navigator.getGamepads = vi.fn(() => {
-      return [
-        {
-          axes: [-0.5, 0], // Left (negative X)
-          id: 'Steam Deck Gamepad',
-        } as any,
-      ]
+      return [createMockGamepad([-0.5, 0])]
     })
 
     const { result } = renderHook(() => useGamepad())
@@ -126,12 +120,7 @@ describe('useGamepad', () => {
 
   it('returns direction R when X axis positive (right)', async () => {
     navigator.getGamepads = vi.fn(() => {
-      return [
-        {
-          axes: [0.5, 0], // Right (positive X)
-          id: 'Steam Deck Gamepad',
-        } as any,
-      ]
+      return [createMockGamepad([0.5, 0])]
     })
 
     const { result } = renderHook(() => useGamepad())
@@ -147,12 +136,7 @@ describe('useGamepad', () => {
 
   it('sets gamepadConnected=true when gamepad present', async () => {
     navigator.getGamepads = vi.fn(() => {
-      return [
-        {
-          axes: [0, 0],
-          id: 'Steam Deck Gamepad',
-        } as any,
-      ]
+      return [createMockGamepad([0, 0])]
     })
 
     const { result } = renderHook(() => useGamepad())
@@ -184,12 +168,7 @@ describe('useGamepad', () => {
 
   it('deadzone: does not change direction for small movements', async () => {
     navigator.getGamepads = vi.fn(() => {
-      return [
-        {
-          axes: [0.1, 0.1], // Within deadzone (0.15)
-          id: 'Steam Deck Gamepad',
-        } as any,
-      ]
+      return [createMockGamepad([0.1, 0.1])]
     })
 
     const { result } = renderHook(() => useGamepad())

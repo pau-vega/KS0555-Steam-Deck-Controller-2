@@ -9,7 +9,7 @@ vi.mock('serialport', () => {
       isOpen = false
       callbacks: Record<string, Function> = {}
 
-      constructor(config: any) {
+      constructor(config: Record<string, unknown>) {
         // Simulate async open
         setTimeout(() => {
           this.isOpen = true
