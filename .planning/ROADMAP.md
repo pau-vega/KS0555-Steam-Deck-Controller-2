@@ -59,7 +59,12 @@
   3. Every top-level non-hook/non-component function in `.ts`/`.tsx` files has an explicit return type annotation
   4. All type-only imports across the monorepo use `import type` syntax
   5. `pnpm build`, `pnpm typecheck`, and `pnpm lint` all complete with zero errors
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Delete 13 leftover JS files from apps/frontend/src/
+- [ ] 04-02-PLAN.md — Fix TS anti-patterns (any, import type, return types)
+- [ ] 04-03-PLAN.md — Validation gate (build, typecheck, lint, TS rules)
 
 ### Phase 5: ESLint Config TypeScript Conversion
 **Goal**: Convert the shared eslint-config package from plain JavaScript to TypeScript ESM so the package itself is type-safe and consistent with the rest of the monorepo.
