@@ -5,20 +5,23 @@
   "type": "module",
   "main": "dist/node.js",
   "types": "dist/node.d.ts",
-  "files": ["dist/"],
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "build": "tsup"
   },
   "peerDependencies": {
-    "eslint": ">=9.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
+    "eslint": ">=9.0.0",
+    "eslint-plugin-perfectionist": "^5.0.0",
     "eslint-plugin-react": "^7.0.0",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-perfectionist": "^5.0.0"
+    "eslint-plugin-react-hooks": "^5.0.0"
   },
   "devDependencies": {
-    "tsup": "^8.0.0",
-    "typescript": "^5.0.0"
+    "@types/node": "^22.19.17",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   }
 }
