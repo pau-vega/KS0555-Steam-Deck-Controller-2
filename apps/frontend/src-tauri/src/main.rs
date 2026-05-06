@@ -1,7 +1,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod ble;
+mod gamepad;
 use ble::{BleState, setup_event_listener, ble_connect, ble_disconnect, ble_send};
+use gamepad::setup_gamepad_monitor;
 use tauri::Manager;
 
 fn main() {
@@ -13,6 +15,9 @@ fn main() {
 
             // Setup event listener for auto-disconnect (BLE-05)
             setup_event_listener(app.handle().clone(), ble_state);
+
+            // Setup gamepad monitoring (GPAD-01, GPAD-06)
+            setup_gamepad_monitor(app)?;
 
             Ok(())
         })
