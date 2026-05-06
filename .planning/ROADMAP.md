@@ -8,7 +8,7 @@
 
 ## Phases
 
-- [ ] **Phase 6: Tauri Shell Setup** - Initialize Tauri v2 project with Cargo.toml, tauri.conf.json, Vite integration
+- [x] **Phase 6: Tauri Shell Setup** - Initialize Tauri v2 project with Cargo.toml, tauri.conf.json, Vite integration
 - [ ] **Phase 7: BLE Commands with btleplug** - Implement Rust BLE module for BT24 robot communication via Tauri commands
 - [ ] **Phase 8: Gamepad Monitoring with gilrs** - Background thread polling gilrs and emitting gamepad events
 - [ ] **Phase 9: Hook Rewrites** - Rewrite use-bluetooth.ts and use-gamepad.ts to use Tauri IPC with stable interfaces
@@ -31,8 +31,8 @@
 **Plans**: 2 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Initialize Tauri v2 project with Cargo.toml, tauri.conf.json, main.rs, and update frontend package.json with Tauri dependencies
-- [ ] 06-02-PLAN.md — Configure Vite for Tauri integration (clearScreen, strictPort, port 5173, watch ignore)
+- [x] 06-01-PLAN.md — Initialize Tauri v2 project with Cargo.toml, tauri.conf.json, main.rs, and update frontend package.json with Tauri dependencies
+- [x] 06-02-PLAN.md — Configure Vite for Tauri integration (clearScreen, strictPort, port 5173, watch ignore)
 
 ### Phase 7: BLE Commands with btleplug
 **Goal**: Rust BLE module implemented with Tauri commands for BT24 robot communication
@@ -86,7 +86,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 6. Tauri Shell Setup | 0/3 | Not started | - |
+| 6. Tauri Shell Setup | 2/2 | Complete | ✓ |
 | 7. BLE Commands with btleplug | 0/3 | Not started | - |
 | 8. Gamepad Monitoring with gilrs | 0/3 | Not started | - |
 | 9. Hook Rewrites | 0/2 | Not started | - |

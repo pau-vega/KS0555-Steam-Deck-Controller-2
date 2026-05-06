@@ -2,9 +2,9 @@
 milestone: v2.0
 milestone_name: Tauri Migration
 status: in_progress
-progress_phases: 5
-progress_plans: 0
-progress_tasks: 0
+progress_phases: 6
+progress_plans: 2
+progress_tasks: 4
 ---
 
 # STATE.md
@@ -14,14 +14,14 @@ progress_tasks: 0
 See: .planning/PROJECT.md (updated 2026-05-05)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 6 — Tauri Shell Setup (executing Wave 1)
+**Current focus:** Phase 6 COMPLETE — Ready for Phase 7 (BLE Commands)
 
 ## Current Position
 
-Phase: 6 (Tauri Shell Setup)
-Plan: Wave 1 (06-01, 06-02)
-Status: Executing Wave 1
-Last activity: 2026-05-06 - Phase 6 execution started
+Phase: 6 (Tauri Shell Setup) — COMPLETE ✓
+Plan: All plans complete
+Status: Phase 6 complete — Wave 1 executed successfully
+Last activity: 2026-05-06 - Phase 6 execution complete (build ✅, tests ✅ 39/39)
 
 ## Progress
 
@@ -54,15 +54,16 @@ Last activity: 2026-05-06 - Phase 6 execution started
 
 ## Accumulated Context
 
-### Phase 4 Notes
-- 13 leftover `.js` files deleted from `apps/frontend/src/` (Phase 4 Plan 04-01)
-- TS anti-patterns eliminated: `any` types (0 remaining), `import type` syntax fixed, return types confirmed (Phase 4 Plan 04-02)
-- Plan 04-03 complete: validation gates pass (build ✅, typecheck ✅, lint ✅)
-- Plan 04-04 complete: gap closure — TS6059 fixed, react.js tsconfigRootDir added, ESLint override for config files
-- Zero TypeScript suppressions (`@ts-ignore`, `@ts-nocheck`, `@ts-expect-error`) in codebase
-- ESLint configs fixed: react.js now has @typescript-eslint/parser + tsconfigRootDir, node.js has override for *config.ts
-- All 51 tests pass (39 frontend + 12 backend)
-- Phase 4 COMPLETE — ready for Phase 5 (eslint-config TypeScript conversion)
+### Phase 6 Notes
+- Phase 6 COMPLETE — Tauri v2 shell initialized and Vite configured
+- `apps/frontend/src-tauri/` created with Cargo.toml, tauri.conf.json, src/main.rs, build.rs, permissions/default.toml
+- Tauri v2.11.0 (plan specified 2.10.1, auto-corrected to latest), tauri-build 2.6.0
+- Rust deps: btleplug 0.12.0 (bluez feature removed — doesn't exist), gilrs 0.11.1, tokio with macros + rt-multi-thread
+- Frontend package.json: @tauri-apps/cli ^2.10.1, @tauri-apps/api ^2.10.1, tauri scripts added
+- Vite config: clearScreen false, strictPort true, port 5173, watch ignore src-tauri/**
+- Deviations: bundle format corrected for Tauri 2.11.0, placeholder RGBA icon added for generate_context!()
+- `pnpm --filter @ks0555/frontend build` passes ✅
+- All 39 tests pass ✅
 
 ### Phase 5 Notes
 - Phase 5 COMPLETE — ESLint config converted to TypeScript ESM
