@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-06T16:05:00.000Z"
+last_updated: "2026-05-06T17:00:00.000Z"
 last_activity: 2026-05-06
 progress:
   total_phases: 5
@@ -20,13 +20,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-05)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 9 Hook Rewrites — Complete ✓ (2/2 plans)
+**Current focus:** Phase 10 Build and Test on SteamOS — Context gathered
  
 ## Current Position
 
-Phase: 09
-Plan: 02/02
-Status: Complete
+Phase: 10
+Plan: -/2
+Status: Context gathered
 Last activity: 2026-05-06
 
 ## Progress
@@ -75,6 +75,12 @@ Last activity: 2026-05-06
 - D-40: (Phase 8) Auto-reconnect on disconnect (wait for new Connected event)
 - D-41: (Phase 8) Direction change guard in gilrs thread (store last_direction)
 - D-42: (Phase 8) Use Axis::LeftStickX/Y, deadzone 0.15, port getDirectionFromAxes()
+- D-43: (Phase 10) Docker cross-compile via tauri-action GitHub Action for Linux AppImage
+- D-44: (Phase 10) Build trigger: tag push + manual dispatch only
+- D-45: (Phase 10) Rust #[cfg(test)] integration tests mock btleplug/gilrs for VAL-02/VAL-03
+- D-46: (Phase 10) Pragmatic pass model — CI validation sufficient, hardware test doc is non-blocking
+- D-47: (Phase 10) Focus SteamOS setup on read-only filesystem + Bluetooth permissions
+- D-48: (Phase 10) Add custom app icon and desktop metadata (replace Phase 6 placeholder)
 
 ## Accumulated Context
 
@@ -120,7 +126,15 @@ Last activity: 2026-05-06
 - `pnpm build` passes ✅
 - app.tsx, control-pad.tsx, status-bar.tsx unchanged ✅
 
-### Phase 5 Notes
+### Phase 10 Notes
+
+- Phase 10 CONTEXT GATHERED — Ready for planning
+- Build approach: Docker cross-compile via tauri-action (GitHub Actions), not native macOS build
+- CI pipeline: `.github/workflows/build.yml` with tag + manual trigger
+- Validation: Rust integration tests for event pipeline (mocked), git diff for app.tsx integrity
+- Hardware test procedure documented inline in plan (non-blocking)
+- SteamOS setup: read-only fs handling, Bluetooth permissions, custom AppImage icon
+- Same constraints as prior phases: no app.tsx changes, no new UI components
 
 - Phase 5 COMPLETE — ESLint config converted to TypeScript ESM
 - `node.js` → `node.ts`, `react.js` → `react.ts` (ESM export default)
