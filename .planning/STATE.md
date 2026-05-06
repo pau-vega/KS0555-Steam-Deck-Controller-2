@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
-status: planning
-last_updated: "2026-05-06T11:28:48.701Z"
+status: executing
+last_updated: "2026-05-06T13:52:00.000Z"
 last_activity: 2026-05-06
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
+  completed_phases: 3
+  total_plans: 8
+  completed_plans: 8
   percent: 100
 ---
 
@@ -20,13 +20,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-05)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 8 Gamepad Monitoring — Context gathered ✓
+**Current focus:** Phase 8 Gamepad Monitoring — Execution complete ✓
  
 ## Current Position
 
 Phase: 08
-Plan: Not started
-Status: Ready for planning
+Plan: 03/03
+Status: Complete
 Last activity: 2026-05-06
 
 ## Progress
@@ -35,7 +35,7 @@ Last activity: 2026-05-06
 |-------|--------|-------|----------|
 | 6. Tauri Shell Setup | Complete | 2/2 | 100% |
 | 7. BLE Commands with btleplug | Executing | 3/3 | 100% |
-| 8. Gamepad Monitoring with gilrs | Context Gathered | 0/3 | 0% |
+| 8. Gamepad Monitoring with gilrs | Complete | 3/3 | 100% |
 | 9. Hook Rewrites | Not started | 0/2 | 0% |
 | 10. Build and Test on SteamOS | Not started | 0/2 | 0% |
 
@@ -101,13 +101,13 @@ Last activity: 2026-05-06
 
 ### Phase 8 Notes
 
-- Phase 8 CONTEXT COMPLETE — Ready for planning
-- Decisions captured: std::thread::spawn (D-32), Clone AppHandle (D-33), spawn in setup() (D-34)
-- Event payloads: direction char only (D-35), name only for connect/disconnect (D-36)
-- No rate limiting (D-37), ignore emit errors (D-38)
-- Gamepad selection: first "Steam" named (D-39), auto-reconnect (D-40)
-- Direction guard in thread (D-41), LeftStickX/Y + deadzone 0.15 + port getDirectionFromAxes() (D-42)
-- gilrs 0.11.1 already in Cargo.toml from Phase 6
+- Phase 8 COMPLETE — Gamepad monitoring module executed ✓
+- `apps/frontend/src-tauri/src/gamepad/mod.rs` created with gilrs thread spawn, Steam filter, direction detection
+- Connected/Disconnected events emit with `{ name: '...' }` payload
+- AxisChanged reads LeftStickX/Y with 0.15 deadzone, emits `{ direction: 'F' }` on direction change
+- Direction change guard (`last_direction`) prevents event spam
+- `cargo check` passes, all 46 frontend tests pass
+- Ready for Phase 9 Hook Rewrites (use-gamepad.ts → listen("gamepad-direction"))
 
 ### Phase 5 Notes
 

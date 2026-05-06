@@ -10,7 +10,7 @@
 
 - [x] **Phase 6: Tauri Shell Setup** - Initialize Tauri v2 project with Cargo.toml, tauri.conf.json, Vite integration
 - [x] **Phase 7: BLE Commands with btleplug** - Implement Rust BLE module for BT24 robot communication via Tauri commands (completed 2026-05-06)
-- [ ] **Phase 8: Gamepad Monitoring with gilrs** - Background thread polling gilrs and emitting gamepad events
+- [x] **Phase 8: Gamepad Monitoring with gilrs** - Background thread polling gilrs and emitting gamepad events
 - [ ] **Phase 9: Hook Rewrites** - Rewrite use-bluetooth.ts and use-gamepad.ts to use Tauri IPC with stable interfaces
 - [ ] **Phase 10: Build and Test on SteamOS** - Validate full stack on target platform with production AppImage
 
@@ -61,7 +61,12 @@ Plans:
   3. Controller disconnect emits "gamepad-disconnected" event on EventType::Disconnected
   4. Background thread uses std::thread::spawn or tauri::async_runtime::spawn with cloned AppHandle (not Window) for cross-thread event emitting
   5. Scan results post-filtered by device name "BT24" on Linux since BlueZ merges discovery filters across all D-Bus clients
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [x] 08-01-PLAN.md — Create gamepad module with gilrs thread spawn and main.rs integration
+- [x] 08-02-PLAN.md — Add Steam Deck gamepad discovery and connect/disconnect events
+- [x] 08-03-PLAN.md — Add direction detection with deadzone and change guard
 
 ### Phase 9: Hook Rewrites
 **Goal**: Frontend hooks rewritten to use Tauri IPC instead of Web APIs while preserving interfaces
@@ -93,7 +98,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 6. Tauri Shell Setup | 2/2 | Complete | ✓ |
 | 7. BLE Commands with btleplug | 3/3 | Complete    | 2026-05-06 |
-| 8. Gamepad Monitoring with gilrs | 0/3 | Not started | - |
+| 8. Gamepad Monitoring with gilrs | 3/3 | Complete | 2026-05-06 |
 | 9. Hook Rewrites | 0/2 | Not started | - |
 | 10. Build and Test on SteamOS | 0/2 | Not started | - |
 
