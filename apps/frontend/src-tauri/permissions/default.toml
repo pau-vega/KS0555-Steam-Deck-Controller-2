@@ -1,2 +1,7 @@
-# Tauri v2 permissions - Phase 6 shell only
-# Commands and events will be added in Phase 7-8
+# Tauri v2 permissions - Phase 7 BLE commands added
+
+# Include BLE permissions
+"ble.toml"
+
+# Future: Phase 8 gamepad permissions will be added here
+# "gamepad.toml"
