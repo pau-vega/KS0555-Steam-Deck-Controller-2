@@ -9,11 +9,11 @@ Requirements for Tauri v2 migration milestone. Each maps to roadmap phases.
 
 ### Tauri Infrastructure
 
-- [ ] **TAUR-01**: Initialize Tauri v2 project inside apps/frontend/src-tauri/ with Cargo.toml, tauri.conf.json, and main.rs entrypoint
-- [ ] **TAUR-02**: Configure tauri.conf.json with productName "Robot Controller", identifier "com.ks0555.robotcontroller", devUrl "http://localhost:5173", and AppImage bundle target for Linux
-- [ ] **TAUR-03**: Add @tauri-apps/cli@^2.10.1 and @tauri-apps/api@^2.10.1 to apps/frontend with pnpm, add tauri and tauri:build scripts
-- [ ] **TAUR-04**: Configure vite.config.ts with Tauri integration: clearScreen false, strictPort true, port 5173, and watch ignore for src-tauri/
-- [ ] **TAUR-05**: Add btleplug@0.12.0, gilrs@0.11.1, serde, and tokio to src-tauri/Cargo.toml with Rust edition 2021
+- [x] **TAUR-01**: Initialize Tauri v2 project inside apps/frontend/src-tauri/ with Cargo.toml, tauri.conf.json, and main.rs entrypoint
+- [x] **TAUR-02**: Configure tauri.conf.json with productName "Robot Controller", identifier "com.ks0555.robotcontroller", devUrl "http://localhost:5173", and AppImage bundle target for Linux
+- [x] **TAUR-03**: Add @tauri-apps/cli@^2.10.1 and @tauri-apps/api@^2.10.1 to apps/frontend with pnpm, add tauri and tauri:build scripts
+- [x] **TAUR-04**: Configure vite.config.ts with Tauri integration: clearScreen false, strictPort true, port 5173, and watch ignore for src-tauri/
+- [x] **TAUR-05**: Add btleplug@0.12.0, gilrs@0.11.1, serde, and tokio to src-tauri/Cargo.toml with Rust edition 2021
 
 ### BLE Communication (btleplug)
 
@@ -26,27 +26,27 @@ Requirements for Tauri v2 migration milestone. Each maps to roadmap phases.
 
 ### Gamepad Input (gilrs)
 
-- [ ] **GPAD-01**: Spawn gilrs background thread in Tauri setup() hook that continuously calls next_event() to detect gamepad connect/disconnect and direction changes
-- [ ] **GPAD-02**: Emit "gamepad-connected" event when gilrs detects EventType::Connected, and "gamepad-disconnected" when EventType::Disconnected fires
-- [ ] **GPAD-03**: Implement direction detection logic in Rust: read Axis::LeftStickX/Y, apply 0.15 deadzone, output "F"/"B"/"L"/"R"/"S" using same logic as getDirectionFromAxes() in current use-gamepad.ts
-- [ ] **GPAD-04**: Emit "gamepad-direction" event only when direction actually changes (direction change guard), not on every poll, to prevent Tauri event rate limiting crashes
-- [ ] **GPAD-05**: Prefer Steam Deck built-in controller by checking gamepad.name() contains "Steam" (same logic as current use-gamepad.ts index 0 fallback)
-- [ ] **GPAD-06**: Use std::thread::spawn or tauri::async_runtime::spawn with cloned AppHandle (not Window) for cross-thread event emitting to avoid Rust Send trait violations
+- [x] **GPAD-01**: Spawn gilrs background thread in Tauri setup() hook that continuously calls next_event() to detect gamepad connect/disconnect and direction changes
+- [x] **GPAD-02**: Emit "gamepad-connected" event when gilrs detects EventType::Connected, and "gamepad-disconnected" when EventType::Disconnected fires
+- [x] **GPAD-03**: Implement direction detection logic in Rust: read Axis::LeftStickX/Y, apply 0.15 deadzone, output "F"/"B"/"L"/"R"/"S" using same logic as getDirectionFromAxes() in current use-gamepad.ts
+- [x] **GPAD-04**: Emit "gamepad-direction" event only when direction actually changes (direction change guard), not on every poll, to prevent Tauri event rate limiting crashes
+- [x] **GPAD-05**: Prefer Steam Deck built-in controller by checking gamepad.name() contains "Steam" (same logic as current use-gamepad.ts index 0 fallback)
+- [x] **GPAD-06**: Use std::thread::spawn or tauri::async_runtime::spawn with cloned AppHandle (not Window) for cross-thread event emitting to avoid Rust Send trait violations
 
 ### Frontend Hooks (Stable Interfaces)
 
-- [ ] **HOOK-01**: Rewrite use-bluetooth.ts to use invoke("ble_connect"), invoke("ble_disconnect"), invoke("ble_send", { command }) and listen("ble-state-changed") for state updates
-- [ ] **HOOK-02**: Rewrite use-gamepad.ts to use listen("gamepad-direction"), listen("gamepad-connected"), listen("gamepad-disconnected") for direction and connection state
-- [ ] **HOOK-03**: Preserve useBluetooth() return shape: { connected, connecting, unsupported, connect, send } — app.tsx, control-pad.tsx, status-bar.tsx must be unchanged
-- [ ] **HOOK-04**: Preserve useGamepad() return shape: { direction, gamepadConnected } — app.tsx, control-pad.tsx, status-bar.tsx must be unchanged
-- [ ] **HOOK-05**: Remove @types/web-bluetooth from apps/frontend dependencies (no longer needed after Tauri migration)
+- [x] **HOOK-01**: Rewrite use-bluetooth.ts to use invoke("ble_connect"), invoke("ble_disconnect"), invoke("ble_send", { command }) and listen("ble-state-changed") for state updates
+- [x] **HOOK-02**: Rewrite use-gamepad.ts to use listen("gamepad-direction"), listen("gamepad-connected"), listen("gamepad-disconnected") for direction and connection state
+- [x] **HOOK-03**: Preserve useBluetooth() return shape: { connected, connecting, unsupported, connect, send } — app.tsx, control-pad.tsx, status-bar.tsx must be unchanged
+- [x] **HOOK-04**: Preserve useGamepad() return shape: { direction, gamepadConnected } — app.tsx, control-pad.tsx, status-bar.tsx must be unchanged
+- [x] **HOOK-05**: Remove @types/web-bluetooth from apps/frontend dependencies (no longer needed after Tauri migration)
 
 ### Validation
 
 - [x] **VAL-01**: `pnpm --filter @ks0555/frontend tauri dev` starts without errors on Linux/SteamOS
-- [ ] **VAL-02**: Gamepad events flow through Rust gilrs → Tauri event → React without using navigator.getGamepads()
-- [ ] **VAL-03**: BLE connect/send works through Rust btleplug without using navigator.bluetooth
-- [ ] **VAL-04**: app.tsx is unchanged after migration (verify with git diff)
+- [x] **VAL-02**: Gamepad events flow through Rust gilrs → Tauri event → React without using navigator.getGamepads()
+- [x] **VAL-03**: BLE connect/send works through Rust btleplug without using navigator.bluetooth
+- [x] **VAL-04**: app.tsx is unchanged after migration (verify with git diff)
 
 ## v2.1 Requirements (Deferred)
 
@@ -75,39 +75,40 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TAUR-01 | Phase 6 | Pending |
-| TAUR-02 | Phase 6 | Pending |
-| TAUR-03 | Phase 6 | Pending |
-| TAUR-04 | Phase 6 | Pending |
-| TAUR-05 | Phase 6 | Pending |
+| TAUR-01 | Phase 6 | Complete |
+| TAUR-02 | Phase 6 | Complete |
+| TAUR-03 | Phase 6 | Complete |
+| TAUR-04 | Phase 6 | Complete |
+| TAUR-05 | Phase 6 | Complete |
 | BLE-01 | Phase 7 | Complete |
 | BLE-02 | Phase 7 | Complete |
 | BLE-03 | Phase 7 | Complete |
 | BLE-04 | Phase 7 | Complete |
 | BLE-05 | Phase 7 | Complete |
 | BLE-06 | Phase 7 | Complete |
-| GPAD-01 | Phase 8 | Pending |
-| GPAD-02 | Phase 8 | Pending |
-| GPAD-03 | Phase 8 | Pending |
-| GPAD-04 | Phase 8 | Pending |
-| GPAD-05 | Phase 8 | Pending |
-| GPAD-06 | Phase 8 | Pending |
-| HOOK-01 | Phase 9 | Pending |
-| HOOK-02 | Phase 9 | Pending |
-| HOOK-03 | Phase 9 | Pending |
-| HOOK-04 | Phase 9 | Pending |
-| HOOK-05 | Phase 9 | Pending |
+| GPAD-01 | Phase 8 | Complete |
+| GPAD-02 | Phase 8 | Complete |
+| GPAD-03 | Phase 8 | Complete |
+| GPAD-04 | Phase 8 | Complete |
+| GPAD-05 | Phase 8 | Complete |
+| GPAD-06 | Phase 8 | Complete |
+| HOOK-01 | Phase 9 | Complete |
+| HOOK-02 | Phase 9 | Complete |
+| HOOK-03 | Phase 9 | Complete |
+| HOOK-04 | Phase 9 | Complete |
+| HOOK-05 | Phase 9 | Complete |
 | VAL-01 | Phase 10 | Complete |
-| VAL-02 | Phase 10 | Pending |
-| VAL-03 | Phase 10 | Pending |
-| VAL-04 | Phase 10 | Pending |
+| VAL-02 | Phase 10 | Complete |
+| VAL-03 | Phase 10 | Complete |
+| VAL-04 | Phase 10 | Complete |
 
 **Coverage:**
 - v2.0 requirements: 26 total
 - Mapped to phases: 26 ✓
 - Unmapped: 0 ✓
 - Phase range: Phase 6 through Phase 10
+- All requirements complete: 26/26 ✓
 
 ---
 *Requirements defined: 2026-05-05*
-*Last updated: 2026-05-05 after Tauri Migration milestone definition*
+*Last updated: 2026-05-06 after Phase 10 completion*

@@ -12,7 +12,7 @@
 - [x] **Phase 7: BLE Commands with btleplug** - Implement Rust BLE module for BT24 robot communication via Tauri commands (completed 2026-05-06)
 - [x] **Phase 8: Gamepad Monitoring with gilrs** - Background thread polling gilrs and emitting gamepad events
 - [x] **Phase 9: Hook Rewrites** - Rewrite use-bluetooth.ts and use-gamepad.ts to use Tauri IPC with stable interfaces (completed 2026-05-06)
-- [ ] **Phase 10: Build and Test on SteamOS** - Validate full stack on target platform with production AppImage
+- [x] **Phase 10: Build and Test on SteamOS** - Validate full stack on target platform with production AppImage (completed 2026-05-06)
 
 ---
 
@@ -96,7 +96,7 @@ Plans:
 
 Plans:
 - [x] 10-01-PLAN.md — CI Pipeline + AppIcon + Tauri Build Config (VAL-01)
-- [ ] 10-02-PLAN.md — Rust Integration Tests + Validation + CI app.tsx Check (VAL-02, VAL-03, VAL-04)
+- [x] 10-02-PLAN.md — Rust Integration Tests + Validation + CI app.tsx Check (VAL-02, VAL-03, VAL-04)
 
 ---
 
@@ -108,7 +108,7 @@ Plans:
 | 7. BLE Commands with btleplug | 3/3 | Complete    | 2026-05-06 |
 | 8. Gamepad Monitoring with gilrs | 3/3 | Complete | 2026-05-06 |
 | 9. Hook Rewrites | 2/2 | Complete | 2026-05-06 |
-| 10. Build and Test on SteamOS | 1/2 | In progress | - |
+| 10. Build and Test on SteamOS | 2/2 | Complete | 2026-05-06 |
 
 ---
 
