@@ -14,14 +14,14 @@ progress_tasks: 4
 See: .planning/PROJECT.md (updated 2026-05-05)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 7 BLE Commands — Context gathered ✓
-
+**Current focus:** Phase 8 Gamepad Monitoring — Context gathered ✓
+ 
 ## Current Position
 
-Phase: 7 (BLE Commands with btleplug) — EXECUTING ✓
-Plan: 07-03 complete
-Status: 3/3 plans complete
-Last activity: 2026-05-06 - Phase 7 plans executed
+Phase: 8 (Gamepad Monitoring with gilrs) — CONTEXT GATHERED ✓
+Plan: 0/3
+Status: Ready for planning
+Last activity: 2026-05-06 - Phase 8 context gathered
 
 ## Progress
 
@@ -29,7 +29,7 @@ Last activity: 2026-05-06 - Phase 7 plans executed
 |-------|--------|-------|----------|
 | 6. Tauri Shell Setup | Complete | 2/2 | 100% |
 | 7. BLE Commands with btleplug | Executing | 3/3 | 100% |
-| 8. Gamepad Monitoring with gilrs | Not started | 0/3 | 0% |
+| 8. Gamepad Monitoring with gilrs | Context Gathered | 0/3 | 0% |
 | 9. Hook Rewrites | Not started | 0/2 | 0% |
 | 10. Build and Test on SteamOS | Not started | 0/2 | 0% |
 
@@ -58,6 +58,17 @@ Last activity: 2026-05-06 - Phase 7 plans executed
 - D-29: (Phase 7) Use [default] section with permissions array in default.toml (Tauri v2 format)
 - D-30: (Phase 7) Post-filter BLE scan results by device name 'BT24' on Linux for BLE-06 (Pitfall 2)
 - D-31: (Phase 7) Add service UUID verification after connection as optional enhancement
+- D-32: (Phase 8) Use std::thread::spawn for gilrs background thread
+- D-33: (Phase 8) Clone AppHandle and move into thread (no Arc needed)
+- D-34: (Phase 8) Spawn thread in setup() hook, no lifecycle management
+- D-35: (Phase 8) gamepad-direction payload: { direction: 'F' } (char only)
+- D-36: (Phase 8) gamepad-connected/disconnected payload: { name: '...' } (name only)
+- D-37: (Phase 8) No rate limiting — direction change guard + gilrs event-driven sufficient
+- D-38: (Phase 8) Ignore emit errors silently, no thread lifecycle management
+- D-39: (Phase 8) Pick first gamepad with name containing "Steam", ignore additional
+- D-40: (Phase 8) Auto-reconnect on disconnect (wait for new Connected event)
+- D-41: (Phase 8) Direction change guard in gilrs thread (store last_direction)
+- D-42: (Phase 8) Use Axis::LeftStickX/Y, deadzone 0.15, port getDirectionFromAxes()
 
 ## Accumulated Context
 
@@ -79,6 +90,15 @@ Last activity: 2026-05-06 - Phase 7 plans executed
 - BT24 device: service UUID 0000ffe0-..., char UUID 0000ffe1-..., device name "BT24"
 - Events: ble-state-changed
 - State: Peripheral stored via app.manage()
+
+### Phase 8 Notes
+- Phase 8 CONTEXT COMPLETE — Ready for planning
+- Decisions captured: std::thread::spawn (D-32), Clone AppHandle (D-33), spawn in setup() (D-34)
+- Event payloads: direction char only (D-35), name only for connect/disconnect (D-36)
+- No rate limiting (D-37), ignore emit errors (D-38)
+- Gamepad selection: first "Steam" named (D-39), auto-reconnect (D-40)
+- Direction guard in thread (D-41), LeftStickX/Y + deadzone 0.15 + port getDirectionFromAxes() (D-42)
+- gilrs 0.11.1 already in Cargo.toml from Phase 6
 
 ### Phase 5 Notes
 - Phase 5 COMPLETE — ESLint config converted to TypeScript ESM
