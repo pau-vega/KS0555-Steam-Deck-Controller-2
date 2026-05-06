@@ -77,7 +77,11 @@ Plans:
   2. `useGamepad()` returns identical shape `{ direction, gamepadConnected }` — uses listen("gamepad-direction"), listen("gamepad-connected"), listen("gamepad-disconnected")
   3. app.tsx, control-pad.tsx, status-bar.tsx work unchanged (verified: git diff shows no changes to these files after migration)
   4. @types/web-bluetooth removed from apps/frontend dependencies (no longer needed after Tauri migration)
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Rewrite use-bluetooth.ts to Tauri IPC, rewrite tests, remove @types/web-bluetooth
+- [ ] 09-02-PLAN.md — Rewrite use-gamepad.ts to Tauri event listeners, rewrite tests
 
 ### Phase 10: Build and Test on SteamOS
 **Goal**: Full stack validated on target platform with production build

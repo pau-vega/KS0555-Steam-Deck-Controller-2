@@ -20,13 +20,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-05)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 9 Hook Rewrites — Context updated ✓
+**Current focus:** Phase 9 Hook Rewrites — Plans created ✓ (2 plans)
  
 ## Current Position
 
 Phase: 09
 Plan: 00/TBD
-Status: Context updated
+Status: Plans created
 Last activity: 2026-05-06
 
 ## Progress
@@ -36,7 +36,7 @@ Last activity: 2026-05-06
 | 6. Tauri Shell Setup | Complete | 2/2 | 100% |
 | 7. BLE Commands with btleplug | Executing | 3/3 | 100% |
 | 8. Gamepad Monitoring with gilrs | Complete | 3/3 | 100% |
-| 9. Hook Rewrites | Not started | 0/2 | 0% |
+| 9. Hook Rewrites | Planned | 0/2 | 0% |
 | 10. Build and Test on SteamOS | Not started | 0/2 | 0% |
 
 ## Decisions Made
