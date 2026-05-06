@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-06T13:52:00.000Z"
+last_updated: "2026-05-06T16:05:00.000Z"
 last_activity: 2026-05-06
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  completed_phases: 4
+  total_plans: 10
+  completed_plans: 10
   percent: 100
 ---
 
@@ -20,13 +20,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-05)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 9 Hook Rewrites — Plans created ✓ (2 plans)
+**Current focus:** Phase 9 Hook Rewrites — Complete ✓ (2/2 plans)
  
 ## Current Position
 
 Phase: 09
-Plan: 00/TBD
-Status: Plans created
+Plan: 02/02
+Status: Complete
 Last activity: 2026-05-06
 
 ## Progress
@@ -34,9 +34,9 @@ Last activity: 2026-05-06
 | Phase | Status | Plans | Progress |
 |-------|--------|-------|----------|
 | 6. Tauri Shell Setup | Complete | 2/2 | 100% |
-| 7. BLE Commands with btleplug | Executing | 3/3 | 100% |
+| 7. BLE Commands with btleplug | Complete | 3/3 | 100% |
 | 8. Gamepad Monitoring with gilrs | Complete | 3/3 | 100% |
-| 9. Hook Rewrites | Planned | 0/2 | 0% |
+| 9. Hook Rewrites | Complete | 2/2 | 100% |
 | 10. Build and Test on SteamOS | Not started | 0/2 | 0% |
 
 ## Decisions Made
@@ -108,6 +108,17 @@ Last activity: 2026-05-06
 - Direction change guard (`last_direction`) prevents event spam
 - `cargo check` passes, all 46 frontend tests pass
 - Ready for Phase 9 Hook Rewrites (use-gamepad.ts → listen("gamepad-direction"))
+
+### Phase 9 Notes
+
+- Phase 9 COMPLETE — Both hooks rewritten to Tauri IPC ✓
+- `use-bluetooth.ts`: Uses `invoke("ble_connect")`, `invoke("ble_send")`, and `listen("ble-state-changed")`. No navigator.bluetooth. Unsupported always false. UnlistenFn cleanup via useRef array.
+- `use-gamepad.ts`: Uses 3 Tauri listeners (`gamepad-direction`, `gamepad-connected`, `gamepad-disconnected`). Direction imported from types.ts. No requestAnimationFrame, no navigator.getGamepads, no DOM events.
+- `@types/web-bluetooth` removed from devDependencies.
+- Hook return shapes preserved: `{ connected, connecting, unsupported, connect, send }` and `{ direction, gamepadConnected }`.
+- All 43 tests pass (6 test files) ✅
+- `pnpm build` passes ✅
+- app.tsx, control-pad.tsx, status-bar.tsx unchanged ✅
 
 ### Phase 5 Notes
 
