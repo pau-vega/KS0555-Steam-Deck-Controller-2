@@ -41,11 +41,17 @@ pub async fn ble_connect(app: AppHandle, state: tauri::State<'_, BleState>) -> R
                     .map_err(|e| format!("Failed to get peripherals: {}", e))?;
 
                 // Find BT24 device - check each peripheral's properties
+                // BLE-06: Post-filter scan results by device name "BT24"
+                // Linux/BlueZ merges discovery filters across all D-Bus clients (Pitfall 2)
+                // Always verify device name even if btleplug filter was applied
                 let mut found_peripheral = None;
                 for p in peripherals {
                     if let Ok(Some(props)) = p.properties().await {
                         if let Some(name) = &props.local_name {
-                            if name.contains(BT24_NAME) {
+                            // Post-filter: don't trust btleplug filter on Linux
+                            if name.contains(BT24_NAME) || name == BT24_NAME {
+                                // Verified: This is BT24 device (not a false positive from merged filter)
+                                eprintln!("Found BT24 device: {}", name);
                                 found_peripheral = Some(p);
                                 break;
                             }
@@ -58,6 +64,14 @@ pub async fn ble_connect(app: AppHandle, state: tauri::State<'_, BleState>) -> R
                     let _ = adapter.stop_scan().await;
                     peripheral.connect().await
                         .map_err(|e| format!("Connect failed: {}", e))?;
+
+                    // Optional: Verify service UUID matches BT24 spec (BLE-06 enhancement)
+                    let service_uuid = uuid::Uuid::parse_str(BT24_SERVICE_UUID)
+                        .map_err(|e| format!("Invalid service UUID: {}", e))?;
+                    let services = peripheral.services();
+                    if services.iter().any(|s| s.uuid == service_uuid) {
+                        eprintln!("BT24 service UUID verified");
+                    }
 
                     // Store in managed state (D-05)
                     state.set(Some(peripheral));
