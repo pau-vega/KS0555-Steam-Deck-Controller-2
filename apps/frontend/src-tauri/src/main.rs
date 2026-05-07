@@ -7,6 +7,18 @@ use gamepad::setup_gamepad_monitor;
 use tauri::Manager;
 
 fn main() {
+    // On SteamOS the system bus socket lives under /run/host/run/dbus/
+    // btleplug uses DBUS_SYSTEM_BUS_ADDRESS to locate it; set it if unset.
+    if std::env::var("DBUS_SYSTEM_BUS_ADDRESS").is_err() {
+        let steamos_socket = "/run/host/run/dbus/system_bus_socket";
+        if std::path::Path::new(steamos_socket).exists() {
+            std::env::set_var(
+                "DBUS_SYSTEM_BUS_ADDRESS",
+                format!("unix:path={}", steamos_socket),
+            );
+        }
+    }
+
     tauri::Builder::default()
         .setup(|app| {
             // Create and manage BLE state (D-05)

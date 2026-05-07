@@ -60,25 +60,23 @@ pub async fn ble_connect(app: AppHandle, state: tauri::State<'_, BleState>) -> R
                 }
 
                 if let Some(peripheral) = found_peripheral {
-                    // Stop scan and connect
+                    eprintln!("[ble] stopping scan, connecting...");
                     let _ = adapter.stop_scan().await;
-                    peripheral.connect().await
-                        .map_err(|e| format!("Connect failed: {}", e))?;
-
-                    // Optional: Verify service UUID matches BT24 spec (BLE-06 enhancement)
-                    let service_uuid = uuid::Uuid::parse_str(BT24_SERVICE_UUID)
-                        .map_err(|e| format!("Invalid service UUID: {}", e))?;
-                    let services = peripheral.services();
-                    if services.iter().any(|s| s.uuid == service_uuid) {
-                        eprintln!("BT24 service UUID verified");
+                    match peripheral.connect().await {
+                        Ok(()) => eprintln!("[ble] connect() returned Ok"),
+                        Err(e) => {
+                            eprintln!("[ble] connect() failed: {}", e);
+                            return Err(format!("Connect failed: {}", e));
+                        }
                     }
 
                     // Store in managed state (D-05)
+                    eprintln!("[ble] storing peripheral, emitting connected");
                     state.set(Some(peripheral));
 
-                    // Emit "connected" state
                     app.emit("ble-state-changed", "connected")
                         .map_err(|e| format!("Failed to emit connected: {}", e))?;
+                    eprintln!("[ble] emitted connected");
                     return Ok(());
                 }
             }

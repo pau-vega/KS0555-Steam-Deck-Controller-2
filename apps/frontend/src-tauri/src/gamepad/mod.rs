@@ -62,17 +62,33 @@ pub fn setup_gamepad_monitor(app: &tauri::App) -> Result<(), String> {
         // D-13, D-41: Direction change guard prevents event spam
         let mut last_direction: Option<Direction> = None;
 
+        // Enumerate gamepads already connected before thread started
+        for (id, gamepad) in gilrs.gamepads() {
+            let name = gamepad.name().to_string();
+            eprintln!("[gamepad] found on startup: {:?} name={:?}", id, name);
+            if connected_gamepad_id.is_none() {
+                connected_gamepad_id = Some(id);
+                let _ = app_handle.emit(
+                    "gamepad-connected",
+                    serde_json::json!({ "name": name }),
+                );
+            }
+        }
+        if connected_gamepad_id.is_none() {
+            eprintln!("[gamepad] no gamepads found on startup — waiting for connect events");
+        }
+
         loop {
-            // D-01: next_event() blocks until event is available
+            // next_event() is non-blocking; sleep briefly to avoid busy-spin
             while let Some(event) = gilrs.next_event() {
                 match event.event {
                     EventType::Connected => {
                         let gamepad = gilrs.gamepad(event.id);
                         let name = gamepad.name().to_string();
 
-                        // D-09: Pick first gamepad with name containing "Steam"
+                        // D-09: Pick first gamepad — no name filter (Steam Deck varies)
                         // D-11: Ignore additional gamepads — first one wins
-                        if name.contains("Steam") && connected_gamepad_id.is_none() {
+                        if connected_gamepad_id.is_none() {
                             connected_gamepad_id = Some(event.id);
 
                             // D-36: gamepad-connected with { name: '...' }
@@ -131,7 +147,7 @@ pub fn setup_gamepad_monitor(app: &tauri::App) -> Result<(), String> {
                 }
             }
 
-            // D-34: No lifecycle management; thread exits when main drops
+            std::thread::sleep(std::time::Duration::from_millis(8));
         }
     });
 
