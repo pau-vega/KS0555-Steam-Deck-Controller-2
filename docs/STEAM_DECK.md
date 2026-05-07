@@ -4,40 +4,39 @@ This project targets Steam Deck as a primary platform. The app runs natively on 
 
 ## Build for Steam Deck
 
+The Steam Deck APU (Van Gogh / Sephiroth on the OLED) is **AMD x86_64**, not ARM. Build a regular Linux x86_64 AppImage.
+
 ### Prerequisites
 
-```bash
-# Install cross-compilation target for aarch64 (Steam Deck CPU)
-rustup target add aarch64-unknown-linux-gnu
-```
+A stock Rust stable toolchain on any x86_64 Linux box (or via cross-compile from another arch) is enough — no extra `rustup target add` needed.
 
 ### Build Commands
 
 ```bash
-# Build AppImage for Steam Deck (aarch64)
+# Build AppImage for Steam Deck (x86_64)
 cd apps/frontend
-pnpm tauri build --target aarch64-unknown-linux-gnu
+pnpm tauri build
 
-# Output: src-tauri/target/aarch64-unknown-linux-gnu/release/bundle/appimage/
+# Output: src-tauri/target/release/bundle/appimage/
 ```
 
 ### GitHub Actions (CI)
 
-Use `ubuntu-22.04-arm` runner (native ARM, ~10 min builds):
+`ubuntu-22.04` is the matching runner. (The repo's `.github/workflows/build.yml` also produces an `aarch64-unknown-linux-gnu` AppImage in parallel — that one targets ARM SBC-class Linux boxes, **not** the Deck.)
 
 ```yaml
 build-steam-deck:
-  runs-on: ubuntu-22.04-arm
+  runs-on: ubuntu-22.04
   steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version-file: .nvmrc
     - uses: dtolnay/rust-toolchain@stable
-    - run: pnpm install
+    - run: pnpm install --frozen-lockfile
     - uses: tauri-apps/tauri-action@v0
       with:
-        projectPath: ./apps/frontend
+        projectPath: apps/frontend/src-tauri
 ```
 
 ## Controller Mapping
@@ -75,7 +74,7 @@ For advanced gyro/gyro-as-mouse, use Steam Input API via FFI or `tauri-plugin-sh
 
 1. **Text input in gaming mode**: If on-screen keyboard doesn't appear, ensure Steam Overlay is enabled
 2. **Gamepad detection delay**: Steam Deck gamepad may take ~2s to initialize after app launch
-3. **ARM builds**: Must cross-compile from x86 or use ARM runner (ubuntu-22.04-arm)
+3. **AppImage launch in Gaming Mode**: if the AppImage fails to start under Gamescope, the Rust shell already sets `WEBKIT_DISABLE_COMPOSITING_MODE=1` to bypass WebKitGTK's broken GPU compositing path. Check the launch log via Konsole in Desktop Mode if it still fails.
 
 ## Steam Deck Verified Checklist
 

@@ -4,6 +4,8 @@ Drive a Bluetooth Arduino robot (DX-BT24 module) with your Steam Deck gamepad.
 Single Tauri v2 desktop app — Rust talks BLE directly via `btleplug`, gamepad
 via `gilrs`. No separate backend, no `rfcomm`, no Chrome flags.
 
+> **Looking for full per-device run instructions?** See **[docs/RUNNING.md](docs/RUNNING.md)** — Steam Deck (Desktop + Gaming Mode), macOS dev workflow, Linux dev workflow, and a troubleshooting matrix. The sections below are the short version.
+
 ## Install on Steam Deck
 
 In **Desktop Mode**, open Konsole and run:
