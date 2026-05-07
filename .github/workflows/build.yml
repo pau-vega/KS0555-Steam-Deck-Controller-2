@@ -39,11 +39,26 @@ jobs:
         with:
           projectPath: apps/frontend/src-tauri
 
+      - name: rename AppImage with arch suffix
+        run: |
+          cd apps/frontend/src-tauri/target/release/bundle/appimage
+          for f in *.AppImage; do
+            mv "$f" "RobotController-x86_64.AppImage"
+          done
+
       - name: upload x64 artifact
         uses: actions/upload-artifact@v4
         with:
           name: AppImage-x64
           path: apps/frontend/src-tauri/target/release/bundle/appimage/*.AppImage
+
+      - name: attach x64 AppImage to GitHub Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: apps/frontend/src-tauri/target/release/bundle/appimage/*.AppImage
+          fail_on_unmatched_files: true
+          generate_release_notes: true
 
   build-arm64:
     runs-on: ubuntu-22.04-arm
@@ -81,8 +96,23 @@ jobs:
           projectPath: apps/frontend/src-tauri
           args: --target aarch64-unknown-linux-gnu
 
+      - name: rename AppImage with arch suffix
+        run: |
+          cd apps/frontend/src-tauri/target/aarch64-unknown-linux-gnu/release/bundle/appimage
+          for f in *.AppImage; do
+            mv "$f" "RobotController-aarch64.AppImage"
+          done
+
       - name: upload arm64 artifact
         uses: actions/upload-artifact@v4
         with:
           name: AppImage-arm64
           path: apps/frontend/src-tauri/target/aarch64-unknown-linux-gnu/release/bundle/appimage/*.AppImage
+
+      - name: attach arm64 AppImage to GitHub Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: apps/frontend/src-tauri/target/aarch64-unknown-linux-gnu/release/bundle/appimage/*.AppImage
+          fail_on_unmatched_files: true
+          generate_release_notes: true

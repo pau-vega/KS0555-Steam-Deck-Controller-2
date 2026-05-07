@@ -1,111 +1,116 @@
 # KS0555 Steam Deck Robot Controller
 
-Control a Bluetooth Arduino robot (DX-BT24 module) using your Steam Deck gamepad.
+Drive a Bluetooth Arduino robot (DX-BT24 module) with your Steam Deck gamepad.
+Single Tauri v2 desktop app — Rust talks BLE directly via `btleplug`, gamepad
+via `gilrs`. No separate backend, no `rfcomm`, no Chrome flags.
 
-## Quick Start
+## Install on Steam Deck
+
+In **Desktop Mode**, open Konsole and run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pau-vega/KS0555-Steam-Deck-Controller-2/main/install-on-steamdeck.sh | bash
+```
+
+That:
+
+1. Downloads the latest signed AppImage from GitHub Releases.
+2. Drops it in `~/Applications/RobotController.AppImage` and makes it executable.
+3. Registers a `.desktop` entry so it shows up in Steam's *Add a Non-Steam Game* picker.
+
+Final manual step: in Steam → Library → **+** → **Add a Non-Steam Game** →
+pick **Robot Controller** → *Add Selected Programs*. Switch to Gaming Mode
+and it lives under the Non-Steam tab. Re-run the curl line any time to upgrade.
+
+### Manual install (no script)
+
+If you'd rather not pipe to bash:
+
+1. Grab the AppImage matching your CPU from the
+   [latest release](https://github.com/pau-vega/KS0555-Steam-Deck-Controller-2/releases/latest)
+   (Steam Deck = `x86_64`).
+2. `chmod +x ~/Downloads/RobotController-x86_64.AppImage`.
+3. Steam → Library → **+** → **Add a Non-Steam Game** → *Browse* → pick the AppImage.
+
+## Develop on Mac
+
+The same Tauri app runs on macOS — `btleplug` uses CoreBluetooth, `gilrs` uses IOKit.
+You can iterate on the Mac and only boot the Deck when you need on-device verification.
 
 ```bash
 pnpm install
-pnpm dev
+pnpm --filter @ks0555/frontend tauri:dev
 ```
 
-## Prerequisites
+First time you press *Connect Bluetooth*, macOS prompts for Bluetooth access — driven
+by `NSBluetoothAlwaysUsageDescription` in `apps/frontend/src-tauri/Info.plist`. Allow it once.
 
-- Node.js >= 18
-- pnpm >= 10
-- Steam Deck (Desktop Mode) or any Linux machine with Bluetooth
-
-## Bluetooth Setup (Steam Deck)
-
-Before running the app, pair your DX-BT24 module:
+To produce a local `.app` / `.dmg`:
 
 ```bash
-# Open bluetoothctl
-bluetoothctl
-
-# Inside bluetoothctl:
-power on
-agent on
-default-agent
-scan on
-# Wait for "BT24" to appear, note its MAC address
-pair XX:XX:XX:XX:XX:XX
-trust XX:XX:XX:XX:XX:XX
-connect XX:XX:XX:XX:XX:XX
-quit
+pnpm --filter @ks0555/frontend tauri:build
+# Output: apps/frontend/src-tauri/target/release/bundle/{macos,dmg}/
 ```
 
-Then bind it to a serial device:
-
-```bash
-sudo rfcomm bind /dev/rfcomm0 XX:XX:XX:XX:XX:XX:XX 1
-```
-
-Verify:
-```bash
-rfcomm -a
-# Should show: rfcomm0: XX:XX:XX:XX:XX:XX channel 1 clean
-```
-
-### Chrome Gamepad Setup (Steam Deck)
-
-For the Gamepad API to work in Chrome on Steam Deck:
-
-```bash
-flatpak --user override --filesystem=/run/udev:ro com.google.Chrome
-```
-
-In Steam Gaming Mode, set Chrome's Steam Input to **"Gamepad with Mouse Trackpad"**.
+The macOS bundle is unsigned — Gatekeeper will warn on first launch. Right-click → *Open* once to whitelist it.
 
 ## Architecture
 
 ```
-Frontend (React/Vite) ←→ WebSocket (ws://localhost:8080) ←→ Backend (Node.js) ←→ /dev/rfcomm0 ←→ DX-BT24 ←→ Arduino
+React (Vite)  ──Tauri IPC──>  Rust (btleplug + gilrs)  ──BLE──>  BT24  ──UART──>  Arduino
 ```
+
+One process, one binary. The Rust side owns the BLE peripheral handle and
+the gamepad event loop; the React side just `invoke()`s commands and `listen()`s
+for state events.
 
 ## Commands
 
-The robot accepts these serial commands:
+The Arduino sketch accepts these single-character commands over the BT24 serial line:
 
-| Command | Action |
-|---------|--------|
-| F | Move forward |
-| B | Move backward |
-| L | Turn left |
-| R | Turn right |
-| S | Stop |
+| Command | Action          |
+|---------|-----------------|
+| `F`     | Move forward    |
+| `B`     | Move backward   |
+| `L`     | Turn left       |
+| `R`     | Turn right      |
+| `S`     | Stop            |
 
 ## Gamepad Mapping
 
-| Input | Command |
-|-------|---------|
-| Left stick up | F |
-| Left stick down | B |
-| Left stick left | L |
-| Left stick right | R |
-| Neutral | S |
+| Input              | Command |
+|--------------------|---------|
+| Left stick up      | `F`     |
+| Left stick down    | `B`     |
+| Left stick left    | `L`     |
+| Left stick right   | `R`     |
+| Stick at neutral   | `S`     |
 
-## Development
+Left-stick deadzone is 0.15 (defined in
+`apps/frontend/src-tauri/src/gamepad/mod.rs`).
+
+## Build from source
+
+Prereqs: Node ≥ 18 (`.nvmrc` pins exact version), pnpm ≥ 10, Rust stable.
 
 ```bash
-# Run both frontend and backend
-pnpm dev
-
-# Run individually
-pnpm dev:frontend   # http://localhost:3000
-pnpm dev:backend    # ws://localhost:8080
-
-# Type check
-pnpm typecheck
-
-# Build for production
-pnpm build
+pnpm install
+pnpm --filter @ks0555/frontend tauri:build  # macOS / Linux dev box
+./build-steamdeck.sh                        # SteamOS / Arch self-build (optional)
 ```
 
-## Environment Variables (Backend)
+`build-steamdeck.sh` exists for offline / on-device source builds — usually you don't need it; the GitHub Actions workflow at `.github/workflows/build.yml` produces the AppImage attached to each tagged release.
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| WS_PORT | 8080 | WebSocket server port |
-| SERIAL_PORT | /dev/rfcomm0 | Bluetooth serial device |
-| BAUD_RATE | 9600 | Serial baud rate |
+## Project layout
+
+| Path                                  | What lives there                                              |
+|---------------------------------------|---------------------------------------------------------------|
+| `apps/frontend/`                      | Vite + React UI                                               |
+| `apps/frontend/src-tauri/`            | Tauri shell, Rust BLE + gamepad code, bundle config           |
+| `apps/frontend/src-tauri/Info.plist`  | macOS Bluetooth usage description                             |
+| `packages/ui`                         | Shared component library (mostly placeholder for now)         |
+| `packages/eslint-config`, `packages/tsconfig` | Shared lint / TS configs                              |
+| `apps/backend/`                       | **Legacy** pre-Tauri WebSocket server — orphaned, do not use  |
+| `install-on-steamdeck.sh`             | One-shot installer for end users                              |
+| `build-steamdeck.sh`                  | On-device source build (SteamOS / Arch / Debian)              |
+| `docs/STEAM_DECK.md`                  | Steam Deck verification notes                                 |

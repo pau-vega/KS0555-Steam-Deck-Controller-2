@@ -25,12 +25,15 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["appimage"],
+    "targets": "all",
     "icon": ["icons/icon.png"],
     "linux": {
       "appimage": {
         "bundleMediaFramework": false
       }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0"
     }
   }
 }
