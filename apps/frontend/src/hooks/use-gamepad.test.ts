@@ -3,6 +3,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 
 import { useGamepad } from "./use-gamepad"
 
+vi.stubGlobal("__TAURI_INTERNALS__", {})
+
 const { listenerCallbacks, mockUnlistenDirection, mockUnlistenConnected, mockUnlistenDisconnected } = vi.hoisted(() => {
   const callbacks: Record<string, (payload: unknown) => void> = {}
   return {

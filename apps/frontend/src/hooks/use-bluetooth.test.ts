@@ -3,6 +3,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 
 import { useBluetooth } from "./use-bluetooth"
 
+vi.stubGlobal("__TAURI_INTERNALS__", {})
+
 const { mockInvoke, mockUnlisten, getBleStateCallback, setBleStateCallback } = vi.hoisted(() => {
   let bleStateCallback: ((payload: string) => void) | null = null
   return {
