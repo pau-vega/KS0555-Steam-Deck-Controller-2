@@ -9,6 +9,7 @@
     "typecheck": "turbo typecheck",
     "lint": "turbo lint",
     "test": "turbo test",
+    "format": "prettier --write .",
     "format:check": "prettier --check .",
     "build:steamdeck": "./build-steamdeck.sh",
     "install:steamdeck": "./install-on-steamdeck.sh"
@@ -18,13 +19,13 @@
   },
   "packageManager": "pnpm@10.29.3",
   "devDependencies": {
-    "@commitlint/cli": "^20.5.3",
-    "@commitlint/config-conventional": "^20.5.3",
+    "@commitlint/cli": "^21.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
     "@eslint/json": "^1.2.0",
-    "@typescript-eslint/eslint-plugin": "^8.59.1",
-    "@typescript-eslint/parser": "^8.59.1",
+    "@typescript-eslint/eslint-plugin": "^8.59.2",
+    "@typescript-eslint/parser": "^8.59.2",
     "eslint": "^10.3.0",
     "prettier": "^3.8.3",
-    "turbo": "^2.9.8"
+    "turbo": "^2.9.10"
   }
 }
