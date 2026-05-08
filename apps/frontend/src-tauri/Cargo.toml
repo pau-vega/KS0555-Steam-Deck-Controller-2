@@ -5,6 +5,10 @@ description = "Steam Deck Robot Controller - Tauri v2"
 authors = ["KS0555"]
 edition = "2021"
 
+[lib]
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
 [build-dependencies]
 tauri-build = { version = "2.6.0", features = [] }
 
@@ -18,6 +22,9 @@ btleplug = "0.12.0"
 
 # Gamepad input (Phase 8)
 gilrs = { version = "0.11.1", features = ["serde"] }
+
+# Error handling
+thiserror = "2.0"
 
 # Async runtime
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }

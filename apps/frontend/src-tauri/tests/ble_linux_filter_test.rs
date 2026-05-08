@@ -67,8 +67,8 @@ mod tests {
         let content = fs::read_to_string("src/ble/mod.rs")
             .expect("Should be able to read mod.rs");
         
-        assert!(content.contains("BT24 service UUID verified"), 
-            "Should have service UUID verification");
+        assert!(content.contains("service-UUID verification"), 
+            "Should have service UUID verification comment");
         assert!(content.contains("0000ffe0"), 
             "Should reference BT24 service UUID");
     }

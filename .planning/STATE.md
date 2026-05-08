@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-06T18:40:00.000Z"
-last_activity: 2026-05-07 - Completed quick task 260507-004: Document how to run the app on each device
+last_updated: "2026-05-08T00:00:00.000Z"
+last_activity: 2026-05-08 - Completed quick task 260508-001: Apply Tauri v2 best practices (lib.rs extraction, [lib] section, thin main.rs)
 progress:
   total_phases: 5
   completed_phases: 5
@@ -159,6 +159,7 @@ Last activity: 2026-05-06
 | 260507-002 | Mac dev support + low-friction Steam Deck install | 2026-05-07 | 70fa8961 | [260507-002-mac-dev-and-low-friction-deck-install](./quick/260507-002-mac-dev-and-low-friction-deck-install/) |
 | 260507-003 | Remove unused and obsolete code | 2026-05-07 | e3be7b1c | [260507-003-remove-unused-and-obsolete-code](./quick/260507-003-remove-unused-and-obsolete-code/) |
 | 260507-004 | Document how to run the app on each device | 2026-05-07 | 5071a57d | [260507-004-document-run-on-each-device](./quick/260507-004-document-run-on-each-device/) |
+| 260508-001 | Apply Tauri v2 best practices (lib.rs, [lib], thin main.rs) | 2026-05-08 | — | [260508-001-tauri-best-practices](./quick/260508-001-tauri-best-practices/) |
 
 ## Session Continuity
 

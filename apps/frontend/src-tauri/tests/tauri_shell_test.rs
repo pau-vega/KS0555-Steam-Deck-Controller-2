@@ -18,20 +18,21 @@ fn test_taur01_cargo_toml_exists_with_tauri() {
 
 #[test]
 fn test_taur01_main_rs_exists_with_proper_entrypoint() {
-    // TAUR-01: Verify main.rs exists with proper Tauri entrypoint
+    // TAUR-01: Verify main.rs and lib.rs exist with proper Tauri entrypoint
     let main_path = Path::new("src/main.rs");
     assert!(main_path.exists(), "main.rs should exist");
     
-    let content = fs::read_to_string(main_path).expect("Should be able to read main.rs");
+    let main_content = fs::read_to_string(main_path).expect("Should be able to read main.rs");
+    assert!(main_content.contains("fn main()"), "main.rs should have fn main()");
+    assert!(main_content.contains("app_lib::run()"), "main.rs should call app_lib::run()");
     
-    // Verify fn main exists
-    assert!(content.contains("fn main()"), "main.rs should have fn main()");
+    let lib_path = Path::new("src/lib.rs");
+    assert!(lib_path.exists(), "lib.rs should exist");
     
-    // Verify tauri::Builder is used
-    assert!(content.contains("tauri::Builder"), "main.rs should use tauri::Builder");
-    
-    // Verify generate_context! is called
-    assert!(content.contains("tauri::generate_context!"), "main.rs should call generate_context!");
+    let lib_content = fs::read_to_string(lib_path).expect("Should be able to read lib.rs");
+    assert!(lib_content.contains("tauri::Builder"), "lib.rs should use tauri::Builder");
+    assert!(lib_content.contains("tauri::generate_context!"), "lib.rs should call generate_context!");
+    assert!(lib_content.contains("pub fn run()"), "lib.rs should have pub fn run()");
 }
 
 #[test]

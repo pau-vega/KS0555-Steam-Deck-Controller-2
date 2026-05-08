@@ -103,9 +103,9 @@ mod tests {
 
     #[test]
     fn test_ble_send_registered_in_main() {
-        // BLE-03: Command should be registered in main.rs invoke_handler
-        let content = fs::read_to_string("src/main.rs")
-            .expect("Should be able to read main.rs");
+        // BLE-03: Command should be registered in lib.rs invoke_handler
+        let content = fs::read_to_string("src/lib.rs")
+            .expect("Should be able to read lib.rs");
         
         assert!(content.contains("ble_send"), 
             "ble_send should be registered in invoke_handler");

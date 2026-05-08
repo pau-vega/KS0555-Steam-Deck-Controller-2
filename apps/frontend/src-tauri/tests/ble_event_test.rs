@@ -40,12 +40,12 @@ mod tests {
 
     #[test]
     fn test_event_listener_spawned_in_main() {
-        // BLE-05: setup_event_listener should be called from main.rs
-        let content = fs::read_to_string("src/main.rs")
-            .expect("Should be able to read main.rs");
+        // BLE-05: setup_event_listener should be called from lib.rs
+        let content = fs::read_to_string("src/lib.rs")
+            .expect("Should be able to read lib.rs");
         
         assert!(content.contains("setup_event_listener"), 
-            "main.rs should call setup_event_listener");
+            "lib.rs should call setup_event_listener");
     }
 
     #[test]
