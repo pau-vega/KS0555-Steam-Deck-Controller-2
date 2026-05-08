@@ -11,22 +11,22 @@ Build a library for distribution:
 
 ```ts
 // vite.config.ts
-import { resolve } from 'node:path'
-import { defineConfig } from 'vite'
+import { resolve } from "node:path"
+import { defineConfig } from "vite"
 
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'lib/main.ts'),
-      name: 'MyLib',
-      fileName: 'my-lib',
+      entry: resolve(import.meta.dirname, "lib/main.ts"),
+      name: "MyLib",
+      fileName: "my-lib",
     },
     rolldownOptions: {
-      external: ['vue', 'react'],
+      external: ["vue", "react"],
       output: {
         globals: {
-          vue: 'Vue',
-          react: 'React',
+          vue: "Vue",
+          react: "React",
         },
       },
     },
@@ -79,8 +79,8 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       input: {
-        main: resolve(import.meta.dirname, 'index.html'),
-        nested: resolve(import.meta.dirname, 'nested/index.html'),
+        main: resolve(import.meta.dirname, "index.html"),
+        nested: resolve(import.meta.dirname, "nested/index.html"),
       },
     },
   },
@@ -105,7 +105,7 @@ These frameworks build on top of Vite's SSR primitives so you don't have to wire
 ### createServer
 
 ```ts
-import { createServer } from 'vite'
+import { createServer } from "vite"
 
 const server = await createServer({
   configFile: false,
@@ -120,18 +120,18 @@ server.printUrls()
 ### build
 
 ```ts
-import { build } from 'vite'
+import { build } from "vite"
 
 await build({
-  root: './project',
-  build: { outDir: 'dist' },
+  root: "./project",
+  build: { outDir: "dist" },
 })
 ```
 
 ### preview
 
 ```ts
-import { preview } from 'vite'
+import { preview } from "vite"
 
 const previewServer = await preview({
   preview: { port: 8080, open: true },
@@ -142,17 +142,17 @@ previewServer.printUrls()
 ### resolveConfig
 
 ```ts
-import { resolveConfig } from 'vite'
+import { resolveConfig } from "vite"
 
-const config = await resolveConfig({}, 'build')
+const config = await resolveConfig({}, "build")
 ```
 
 ### loadEnv
 
 ```ts
-import { loadEnv } from 'vite'
+import { loadEnv } from "vite"
 
-const env = loadEnv('development', process.cwd(), '')
+const env = loadEnv("development", process.cwd(), "")
 // Loads all env vars (empty prefix = no filtering)
 ```
 

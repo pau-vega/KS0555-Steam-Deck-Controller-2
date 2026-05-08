@@ -12,7 +12,7 @@ Vite plugins extend Rolldown's plugin interface with Vite-specific hooks.
 ```ts
 function myPlugin(): Plugin {
   return {
-    name: 'my-plugin',
+    name: "my-plugin",
     // hooks...
   }
 }
@@ -26,10 +26,10 @@ Modify config before resolution:
 
 ```ts
 const plugin = () => ({
-  name: 'add-alias',
+  name: "add-alias",
   config: () => ({
     resolve: {
-      alias: { foo: 'bar' },
+      alias: { foo: "bar" },
     },
   }),
 })
@@ -43,12 +43,14 @@ Access final resolved config:
 const plugin = () => {
   let config: ResolvedConfig
   return {
-    name: 'read-config',
+    name: "read-config",
     configResolved(resolvedConfig) {
       config = resolvedConfig
     },
     transform(code, id) {
-      if (config.command === 'serve') { /* dev */ }
+      if (config.command === "serve") {
+        /* dev */
+      }
     },
   }
 }
@@ -60,7 +62,7 @@ Add custom middleware to dev server:
 
 ```ts
 const plugin = () => ({
-  name: 'custom-middleware',
+  name: "custom-middleware",
   configureServer(server) {
     server.middlewares.use((req, res, next) => {
       // handle request
@@ -88,9 +90,9 @@ Transform HTML entry files:
 
 ```ts
 const plugin = () => ({
-  name: 'html-transform',
+  name: "html-transform",
   transformIndexHtml(html) {
-    return html.replace(/<title>(.*?)<\/title>/, '<title>New Title</title>')
+    return html.replace(/<title>(.*?)<\/title>/, "<title>New Title</title>")
   },
 })
 ```
@@ -122,11 +124,11 @@ Serve virtual content without files on disk:
 
 ```ts
 const plugin = () => {
-  const virtualModuleId = 'virtual:my-module'
-  const resolvedId = '\0' + virtualModuleId
+  const virtualModuleId = "virtual:my-module"
+  const resolvedId = "\0" + virtualModuleId
 
   return {
-    name: 'virtual-module',
+    name: "virtual-module",
     resolveId(id) {
       if (id === virtualModuleId) return resolvedId
     },
@@ -142,7 +144,7 @@ const plugin = () => {
 Usage:
 
 ```ts
-import { msg } from 'virtual:my-module'
+import { msg } from "virtual:my-module"
 ```
 
 Convention: prefix user-facing path with `virtual:`, prefix resolved id with `\0`.
@@ -211,7 +213,7 @@ Client side:
 
 ```ts
 if (import.meta.hot) {
-  import.meta.hot.on('my:event', (data) => {
+  import.meta.hot.on("my:event", (data) => {
     console.log(data.msg)
   })
 }
@@ -221,11 +223,11 @@ Client to server:
 
 ```ts
 // Client
-import.meta.hot.send('my:from-client', { msg: 'Hey!' })
+import.meta.hot.send("my:from-client", { msg: "Hey!" })
 
 // Server
-server.ws.on('my:from-client', (data, client) => {
-  client.send('my:ack', { msg: 'Got it!' })
+server.ws.on("my:from-client", (data, client) => {
+  client.send("my:ack", { msg: "Got it!" })
 })
 ```
 
