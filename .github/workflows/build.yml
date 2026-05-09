@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build-x64:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -26,7 +26,10 @@ jobs:
       - name: install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libudev-dev patchelf libfuse2
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libudev-dev patchelf
+
+      - name: install custom tauri-cli (truly portable AppImage)
+        run: cargo install tauri-cli --git https://github.com/tauri-apps/tauri --branch feat/truly-portable-appimage
 
       - name: install frontend dependencies
         run: pnpm install --frozen-lockfile
@@ -34,13 +37,11 @@ jobs:
       - name: build frontend
         run: pnpm build
 
-      - uses: tauri-apps/tauri-action@v0
-        id: tauri-build-x64
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APPIMAGE_EXTRACT_AND_RUN: 1
-        with:
-          projectPath: apps/frontend/src-tauri
+      - name: build AppImage (new sharun format)
+        run: |
+          cargo tauri build \
+            --config '{"bundle":{"linux":{"appimage":{"useNewFormat":true}}}}'
+        working-directory: apps/frontend/src-tauri
 
       - name: rename AppImage with arch suffix
         run: |
@@ -64,7 +65,7 @@ jobs:
           generate_release_notes: true
 
   build-arm64:
-    runs-on: ubuntu-22.04-arm
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
 
@@ -82,7 +83,10 @@ jobs:
       - name: install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libudev-dev patchelf libfuse2
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libudev-dev patchelf
+
+      - name: install custom tauri-cli (truly portable AppImage)
+        run: cargo install tauri-cli --git https://github.com/tauri-apps/tauri --branch feat/truly-portable-appimage
 
       - name: install frontend dependencies
         run: pnpm install --frozen-lockfile
@@ -90,14 +94,12 @@ jobs:
       - name: build frontend
         run: pnpm build
 
-      - uses: tauri-apps/tauri-action@v0
-        id: tauri-build-arm64
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APPIMAGE_EXTRACT_AND_RUN: 1
-        with:
-          projectPath: apps/frontend/src-tauri
-          args: --target aarch64-unknown-linux-gnu
+      - name: build AppImage (new sharun format)
+        run: |
+          cargo tauri build \
+            --target aarch64-unknown-linux-gnu \
+            --config '{"bundle":{"linux":{"appimage":{"useNewFormat":true}}}}'
+        working-directory: apps/frontend/src-tauri
 
       - name: rename AppImage with arch suffix
         run: |

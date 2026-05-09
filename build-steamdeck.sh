@@ -18,16 +18,12 @@ IS_STEAMOS=false
 grep -qi "steamos" /etc/os-release 2>/dev/null && IS_STEAMOS=true
 
 # --- Workaround: Homebrew pkg-config conflicts ---
-# If Homebrew is installed on Linux, its pkg-config shadows the system one,
-# causing "Package X was not found in the pkg-config search path" at build time.
-# https://v1.tauri.app/v1/guides/faq/#build-conflict-with-homebrew-on-linux
 if command -v brew &>/dev/null; then
   BREW_PREFIX="$(brew --prefix 2>/dev/null || true)"
   if [ -n "${BREW_PREFIX}" ]; then
     echo -e "${YELLOW}Homebrew detected at ${BREW_PREFIX}${NC}"
     echo -e "${YELLOW}Setting PKG_CONFIG_PATH to prefer system pkg-config${NC}"
     export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}"
-    # Remove Homebrew from PATH to prevent its pkg-config from being picked up
     export PATH="$(echo "$PATH" | tr ':' '\n' | grep -v "${BREW_PREFIX}" | tr '\n' ':' | sed 's/:$//')"
     echo -e "${YELLOW}Filtered Homebrew out of PATH for this build${NC}"
   fi
@@ -69,19 +65,24 @@ else
   exit 1
 fi
 
-# --- Ensure linuxdeploy can run ---
-# linuxdeploy is itself an AppImage; it needs FUSE or APPIMAGE_EXTRACT_AND_RUN=1
-export APPIMAGE_EXTRACT_AND_RUN=1
-# Steam Deck mounts /tmp with noexec — linuxdeploy extracts there then fails to exec.
-# Point TMPDIR to a directory that allows execution.
-TMPDIR="$(mktemp -d "${HOME:-/home/deck}/.tmp-linuxdeploy-XXXXXX")"
-export TMPDIR
-trap 'rm -rf "$TMPDIR"' EXIT
+# --- Install custom tauri-cli (truly portable AppImage) ---
+TAURI_CLI_SRC="https://github.com/tauri-apps/tauri"
+TAURI_CLI_BRANCH="feat/truly-portable-appimage"
+
+if cargo install --list 2>/dev/null | grep -q "^tauri-cli"; then
+  echo -e "${GREEN}tauri-cli already installed.${NC}"
+else
+  echo -e "${YELLOW}Installing tauri-cli from ${TAURI_CLI_BRANCH}...${NC}"
+  echo "  (one-time compile, may take a few minutes)"
+  cargo install tauri-cli --git "${TAURI_CLI_SRC}" --branch "${TAURI_CLI_BRANCH}"
+fi
 
 # --- Build ---
 echo ""
-echo -e "${GREEN}Building AppImage...${NC}"
-pnpm --filter @ks0555/frontend tauri:build
+echo -e "${GREEN}Building AppImage (new sharun format)...${NC}"
+pnpm build
+(cd apps/frontend/src-tauri && cargo tauri build \
+  --config '{"bundle":{"linux":{"appimage":{"useNewFormat":true}}}}')
 
 echo ""
 echo -e "${GREEN}Done. AppImage should be in apps/frontend/src-tauri/target/release/bundle/appimage/${NC}"
