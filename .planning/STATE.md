@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 
 ## Current Position
 
-Phase: 12 — Manifest + AppStream + Local Build (complete)
-Plan: 2/2 plans executed
-Status: Complete
-Last activity: 2026-05-09 — Phase 12 executed (icons, metainfo, README, manifest, build.sh)
+Phase: 13 — Sandbox Permissions for BLE + Gamepad (context gathered)
+Plan: Not yet planned
+Status: Context gathered, ready for planning
+Last activity: 2026-05-09 — Phase 13 context captured (Flatpak detection, D-Bus gate, WBKIT env var, validation)
 
 ## Progress
 
@@ -87,7 +87,7 @@ Plans: 12/12 complete (all v2.0). v2.1 plans not yet decomposed (TBD per phase).
 
 ## Session Continuity
 
-Last session: 2026-05-09 (discuss-phase for Phase 12)
-Stopped at: Phase 12 context gathered, ready for planning
-Resume file: .planning/phases/12-manifest-appstream-local-build/12-CONTEXT.md
-Next action: `/gsd-plan-phase 12` to plan Manifest + AppStream + Local Build
+Last session: 2026-05-09 (discuss-phase for Phase 13)
+Stopped at: Phase 13 context gathered, ready for planning
+Resume file: .planning/phases/13-sandbox-permissions-ble-gamepad/13-CONTEXT.md
+Next action: `/gsd-plan-phase 13` to plan Sandbox Permissions for BLE + Gamepad
