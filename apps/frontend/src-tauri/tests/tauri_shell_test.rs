@@ -82,15 +82,16 @@ fn test_taur02_tauri_conf_json_has_dev_url() {
 }
 
 #[test]
-fn test_taur02_tauri_conf_json_has_appimage_target() {
-    // TAUR-02: Verify tauri.conf.json has AppImage bundle target
+fn test_taur02_tauri_conf_json_has_deb_target() {
+    // PKG-01: Verify tauri.conf.json has deb bundle target
     let conf_path = Path::new("tauri.conf.json");
     let content = fs::read_to_string(conf_path).expect("Should be able to read tauri.conf.json");
     let json: serde_json::Value = serde_json::from_str(&content).expect("Should be able to read tauri.conf.json");
     
     let targets = json["bundle"]["targets"].as_array().expect("targets should be an array");
-    let has_appimage = targets.iter().any(|t| t.as_str() == Some("appimage"));
-    assert!(has_appimage, "bundle targets should include 'appimage'");
+    let has_deb = targets.iter().any(|t| t.as_str() == Some("deb"));
+    assert!(has_deb, "bundle targets should include 'deb'");
+    assert!(!targets.iter().any(|t| t.as_str() == Some("appimage")), "appimage target should NOT remain");
 }
 
 #[test]
