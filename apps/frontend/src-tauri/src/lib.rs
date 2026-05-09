@@ -5,17 +5,32 @@ use ble::{setup_event_listener, ble_connect, ble_disconnect, ble_send, BleState}
 use gamepad::setup_gamepad_monitor;
 use tauri::Manager;
 
+fn in_flatpak() -> bool {
+    // Belt-and-suspenders Flatpak detection (D-01).
+    // FLATPAK_ID is set by the Flatpak runtime at container start.
+    // /.flatpak-info is the canonical file-based signal.
+    std::env::var("FLATPAK_ID").is_ok()
+        || std::path::Path::new("/.flatpak-info").exists()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // On SteamOS the system bus socket lives under /run/host/run/dbus/
     // btleplug uses DBUS_SYSTEM_BUS_ADDRESS to locate it; set it if unset.
-    if std::env::var("DBUS_SYSTEM_BUS_ADDRESS").is_err() {
-        let steamos_socket = "/run/host/run/dbus/system_bus_socket";
-        if std::path::Path::new(steamos_socket).exists() {
-            std::env::set_var(
-                "DBUS_SYSTEM_BUS_ADDRESS",
-                format!("unix:path={}", steamos_socket),
-            );
+    if !in_flatpak() {
+        // Inside Flatpak the runtime proxies the system bus via DBUS_SYSTEM_BUS_ADDRESS.
+        // Overwriting it with /run/host/run/dbus/ (which doesn't exist in the sandbox)
+        // would break btleplug → BlueZ communication (Pitfall 13).
+        // Only rewrite for native AppImage / host-side SteamOS where the socket path differs.
+        eprintln!("[debug] D-Bus rewrite: not in Flatpak, checking DBUS_SYSTEM_BUS_ADDRESS");
+        if std::env::var("DBUS_SYSTEM_BUS_ADDRESS").is_err() {
+            let steamos_socket = "/run/host/run/dbus/system_bus_socket";
+            if std::path::Path::new(steamos_socket).exists() {
+                std::env::set_var(
+                    "DBUS_SYSTEM_BUS_ADDRESS",
+                    format!("unix:path={}", steamos_socket),
+                );
+            }
         }
     }
 
