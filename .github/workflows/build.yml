@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       skip_release:
-        description: 'Skip GitHub Release upload (build only)'
+        description: "Skip GitHub Release upload (build only)"
         type: boolean
         default: false
 
@@ -34,6 +34,20 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
+      - name: cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/registry
+          key: cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: cargo-registry-
+
+      - name: cache cargo target
+        uses: actions/cache@v4
+        with:
+          path: apps/frontend/src-tauri/target/
+          key: cargo-target-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: cargo-target-
+
       - name: install system dependencies
         run: |
           sudo apt-get update
@@ -57,3 +71,9 @@ jobs:
           ls -la target/release/bundle/deb/
           test -n "$(ls target/release/bundle/deb/*.deb 2>/dev/null)" || { echo "No .deb produced!"; exit 1; }
         working-directory: apps/frontend/src-tauri
+
+      - name: upload deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-controller-deb
+          path: apps/frontend/src-tauri/target/release/bundle/deb/*.deb
