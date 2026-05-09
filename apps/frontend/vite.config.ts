@@ -18,4 +18,11 @@ export default defineConfig({
       ignored: ["**/src-tauri/**"], // Don't reload on Rust changes
     },
   },
+  build: {
+    // WebKitGTK on Linux (incl. SteamOS) needs older JS target.
+    // Without this, modern JS features cause a blank white screen.
+    target: process.env.TAURI_ENV_PLATFORM === "windows" ? "chrome105" : "safari15",
+    minify: process.env.TAURI_ENV_DEBUG ? false : "esbuild",
+    sourcemap: !!process.env.TAURI_ENV_DEBUG,
+  },
 })
