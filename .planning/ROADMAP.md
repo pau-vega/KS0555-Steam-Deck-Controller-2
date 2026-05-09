@@ -164,8 +164,11 @@ Plans:
   2. Locally, `flatpak run` reads gamepad input via gilrs; `flatpak run --command=ls com.ks0555.robotcontroller /dev/input` lists `event*` nodes; the Steam-named controller emits `gamepad-direction` events
   3. Manifest `finish-args` includes BLE flags (`--system-talk-name=org.bluez`, `--system-talk-name=org.bluez.*`, `--allow=bluetooth`, `--share=network`), gamepad flags (`--device=input` with `--device=all` documented as fallback comment), display flags (`--socket=wayland`, `--socket=fallback-x11`, `--share=ipc`, `--device=dri`), and `--env=WEBKIT_DISABLE_COMPOSITING_MODE=1`
   4. `apps/frontend/src-tauri/src/lib.rs` `DBUS_SYSTEM_BUS_ADDRESS=/run/host/run/dbus/system_bus_socket` rewrite is gated behind a Flatpak detection check (`/.flatpak-info` exists or `FLATPAK_ID` env var set); inside Flatpak the rewrite is a no-op and a comment explains why
-  5. Manifest contains NO anti-features: no `--filesystem=home`, no `--device=bluetooth` (wrong stack — AF_BLUETOOTH not D-Bus), no `--talk-name=org.bluez` (wrong bus — session not system), no tray-icon args, no `org.freedesktop.Flatpak` portal grant — verified by manual review checklist comment in the manifest
-**Plans**: TBD
+   5. Manifest contains NO anti-features: no `--filesystem=home`, no `--device=bluetooth` (wrong stack — AF_BLUETOOTH not D-Bus), no `--talk-name=org.bluez` (wrong bus — session not system), no tray-icon args, no `org.freedesktop.Flatpak` portal grant — verified by manual review checklist comment in the manifest
+**Plans**: 1 plan
+
+Plans:
+- [ ] 13-01-PLAN.md — Add in_flatpak() D-Bus gate in lib.rs + BLE/gamepad finish-args + anti-feature checklist in manifest
 
 ### Phase 14: Steam Deck On-Device Validation
 **Goal**: The single-file `.flatpak` installs and runs on a real Steam Deck in both Desktop Mode and Gaming Mode, with BLE + gamepad working end-to-end
@@ -217,7 +220,7 @@ Plans:
 | 10. Build and Test on SteamOS | 2/2 | Complete | 2026-05-06 |
 | 11. Bundle Pipeline Restructure | 3/3 | Complete | 2026-05-09 |
 | 12. Manifest + AppStream + Local Build | 2/2 | Complete | 2026-05-09 |
-| 13. Sandbox Permissions for BLE + Gamepad | 0/0 | Not started | - |
+| 13. Sandbox Permissions for BLE + Gamepad | 1/1 | Planned | - |
 | 14. Steam Deck On-Device Validation | 0/0 | Not started | - |
 | 15. CI Migration (Parallel-Run) | 0/0 | Not started | - |
 | 16. AppImage Decommission + Upgrade Workflow Docs | 0/0 | Not started | - |
