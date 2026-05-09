@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Flatpak Packaging
 status: in_progress
-last_updated: "2026-05-09T18:15:00.000Z"
-last_activity: 2026-05-09 - Phase 13 complete (1/1 plan executed, 1 wave)
+last_updated: "2026-05-09T20:00:00.000Z"
+last_activity: 2026-05-09 - Phase 14 context gathered
 progress:
-  total_phases: 13
+  total_phases: 14
   completed_phases: 7
   total_plans: 20
   completed_plans: 15
@@ -26,8 +26,8 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 
 Phase: 14 — Steam Deck On-Device Validation
 Plan: Not yet planned
-Status: Context needed
-Last activity: 2026-05-09 — Phase 13 executed (in_flatpak() gate + BLE/gamepad finish-args + anti-feature checklist)
+Status: Context gathered
+Last activity: 2026-05-09 — Phase 14 context gathered (validation checklist, log scope, Gaming Mode protocol, failure fallbacks)
 
 ## Progress
 
@@ -91,7 +91,7 @@ Plans: 15/15 complete (12 v2.0 + 3 v2.1).
 
 ## Session Continuity
 
-Last session: 2026-05-09 (executed Phase 13)
-Stopped at: Phase 13 complete (1/1 plan, 1 wave)
-Resume file: .planning/phases/13-sandbox-permissions-ble-gamepad/13-01-SUMMARY.md
+Last session: 2026-05-09 (Phase 14 context)
+Stopped at: Phase 14 context gathered
+Resume file: .planning/phases/14-steam-deck-on-device-validation/14-CONTEXT.md
 Next action: `/gsd-plan-phase 14` to plan Steam Deck On-Device Validation
