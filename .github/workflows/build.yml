@@ -1,15 +1,26 @@
-name: Build Tauri deb
+name: Build and Release
 
 on:
   push:
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      skip_release:
+        description: 'Skip GitHub Release upload (build only)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
   build-x64:
+    permissions:
+      contents: read
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -39,4 +50,10 @@ jobs:
 
       - name: build deb
         run: cargo tauri build --bundles deb
+        working-directory: apps/frontend/src-tauri
+
+      - name: verify deb artifact
+        run: |
+          ls -la target/release/bundle/deb/
+          test -n "$(ls target/release/bundle/deb/*.deb 2>/dev/null)" || { echo "No .deb produced!"; exit 1; }
         working-directory: apps/frontend/src-tauri
