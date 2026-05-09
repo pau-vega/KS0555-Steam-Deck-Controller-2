@@ -1,0 +1,529 @@
+# Architecture Research — v2.1 Flatpak Packaging
+
+**Domain:** Linux desktop app distribution — Flatpak bundle wrapping an existing Tauri v2 app for sideload onto Steam Deck
+**Researched:** 2026-05-09
+**Confidence:** HIGH
+
+> Scope reminder: this milestone adds a packaging/distribution layer. The runtime architecture (single Tauri v2 process, Rust-owned BLE + gamepad, React frontend) is **unchanged**. Everything below describes how the existing build artifact is wrapped, permissioned, and shipped — not how the app itself works.
+
+---
+
+## Standard Architecture
+
+### How Tauri-on-Flatpak Actually Works
+
+The **official Tauri v2 Flatpak guide** (`tauri-docs/v2/src/content/docs/distribute/flatpak.mdx`) is unambiguous on the build flow: there is **no `flatpak` value** in `bundle.targets`. Tauri's CLI bundles only `app, dmg, deb, rpm, appimage`. The Flatpak workflow is:
+
+1. Tauri builds a `.deb` (existing toolchain, `bundle.targets = ["deb"]`).
+2. `flatpak-builder` consumes that `.deb` as a `type: file` source, extracts it with `ar` + `tar`, and re-installs the binary, `.desktop`, and icons under `/app/`.
+3. The Flatpak runtime (`org.gnome.Platform//46`) supplies WebKitGTK, GLib, libayatana, librsvg, and other Tauri dependencies — no need to compile them.
+
+This is "wrap the .deb" not "build from source in sandbox." A from-source build (Vincent Jousse blog, Flathub-style) is **only required for Flathub submission**, which is explicitly out of scope per `PROJECT.md` ("Flathub submission — sideload only for v2.1, may revisit later"). For sideload-only, the .deb-wrapping approach is correct, simpler, and faster.
+
+### Packaging Pipeline (after this milestone)
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                        Source (unchanged)                             │
+│    apps/frontend (Vite+React)   apps/frontend/src-tauri (Rust)        │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                │ pnpm build  +  cargo tauri build
+                                ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                  Tauri CLI bundle stage  (modified)                   │
+│                                                                       │
+│   bundle.targets = ["deb"]   (was: ["appimage"])                      │
+│       │                                                               │
+│       ▼                                                               │
+│   target/release/bundle/deb/robot-controller_0.1.5_amd64.deb          │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                │ flatpak-builder consumes .deb
+                                ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                  Flatpak build stage  (NEW)                           │
+│                                                                       │
+│   flatpak/com.ks0555.robotcontroller.yaml      ← manifest             │
+│   flatpak/com.ks0555.robotcontroller.metainfo.xml ← AppStream         │
+│       │                                                               │
+│       ▼ (extracts .deb, copies to /app/, applies finish-args)         │
+│   build/repo/   +   robot-controller.flatpak  (single-file bundle)    │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                │ scp / GitHub Release / flatpak install
+                                ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│              Steam Deck (SteamOS, sideload)                           │
+│                                                                       │
+│   flatpak install --user robot-controller.flatpak                     │
+│   "Add as Non-Steam Game" → launches in Gaming Mode                   │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+### Component Responsibilities
+
+| Component | Responsibility | Implementation |
+|-----------|----------------|----------------|
+| Tauri CLI (`cargo tauri build`) | Compile Rust, bundle frontend, produce `.deb` with binary, `.desktop`, icons | Existing toolchain, switch `bundle.targets` from `appimage` to `deb` |
+| `flatpak-builder` | Consume `.deb`, install into `/app/`, apply finish-args, produce `.flatpak` bundle | New tool, runs in CI on `ubuntu-24.04` |
+| Manifest (`*.yaml`) | Declare runtime, SDK, sources, build commands, sandbox permissions | New file in `flatpak/` directory |
+| AppStream metainfo (`*.metainfo.xml`) | Required by Flatpak — app metadata, ID, summary, screenshots, content rating | New file in `flatpak/` directory |
+| `.desktop` file | Launcher entry — comes from Tauri's `.deb` output, copied into `/app/share/applications/` by manifest's build-commands | Already generated by Tauri; manifest just relocates it |
+| Build script (`flatpak/build.sh`) | Wraps the `flatpak-builder` invocation with consistent flags for local + CI | New helper script (optional but recommended) |
+| GitHub Actions job | Replace AppImage build with Flatpak build, attach `.flatpak` to release | Modified `.github/workflows/build.yml` |
+
+---
+
+## Recommended Project Structure
+
+```
+KS0555-Steam-Deck-Controller-2/
+├── apps/
+│   └── frontend/
+│       ├── src-tauri/
+│       │   ├── tauri.conf.json        # MODIFIED: bundle.targets = ["deb"]
+│       │   ├── Cargo.toml              # unchanged
+│       │   └── src/                    # unchanged
+│       └── package.json                # unchanged (scripts) — NEW: optional flatpak:build script
+├── flatpak/                            # NEW DIRECTORY — all Flatpak assets
+│   ├── com.ks0555.robotcontroller.yaml         # manifest (matches tauri.conf.json identifier)
+│   ├── com.ks0555.robotcontroller.metainfo.xml # AppStream metadata
+│   ├── build.sh                                # local + CI helper
+│   └── README.md                               # local build/sideload instructions
+├── .github/
+│   └── workflows/
+│       └── build.yml                   # MODIFIED: Linux job swaps appimage → deb + flatpak
+├── justfile                            # MODIFIED: add `flatpak-build`, `flatpak-install`, `flatpak-deploy` recipes
+├── package.json                        # unchanged (root)
+└── ... (rest unchanged)
+```
+
+### Structure Rationale
+
+- **`flatpak/` at repo root, not under `apps/frontend/src-tauri/`.** The manifest is a *distribution* concern, not a *Tauri* concern. Keeping it at repo root mirrors how Vincent Jousse's blog and most Tauri-Flatpak projects organize it, and avoids polluting `src-tauri/` (which is owned by the Tauri CLI's templates and `tauri.conf.json` ecosystem). It also makes the manifest discoverable by anyone reviewing distribution.
+- **Manifest filename = reverse-DNS identifier.** Flatpak convention. The repo's `tauri.conf.json` already uses `"identifier": "com.ks0555.robotcontroller"`, so the filename `com.ks0555.robotcontroller.yaml` matches. **Do not invent a new ID** — the Flatpak ID, Tauri identifier, AppStream `<id>`, and `.desktop` file basename must all be the same string.
+- **AppStream metainfo lives next to the manifest.** The manifest references it as `type: file, path: com.ks0555.robotcontroller.metainfo.xml`, so colocation removes path tracking.
+- **`build.sh` not `Makefile` / `justfile` recipe alone.** Justfile recipes are fine for local convenience, but the build script needs to be runnable from CI without `just` installed, and from devs' machines without memorizing flags. Pattern: `justfile` recipe shells out to `flatpak/build.sh`.
+- **No git submodule.** The manifest's source is the locally-built `.deb`, not a remote git repo. Submodule would only be needed for Flathub submission (where the manifest must point to a tagged release on GitHub), which is out of scope. Use `type: file, path: <local-deb-path>` in the manifest.
+
+---
+
+## Architectural Patterns
+
+### Pattern 1: .deb-Wrapping Manifest (PRIMARY — chosen)
+
+**What:** `flatpak-builder` consumes a Tauri-built `.deb` as a `type: file` source. Build commands extract it with `ar -x` + `tar -xf`, then `install` the binary and resources into `/app/`. The `org.gnome.Platform//46` runtime supplies all shared libraries.
+
+**When to use:** Sideload distribution, fast iteration, no Flathub. Confirmed by official Tauri v2 docs as the recommended approach.
+
+**Trade-offs:**
+- Pro: ~10× faster CI than from-source (no rebuild of npm/cargo deps inside sandbox).
+- Pro: Zero extra Rust/Node tooling inside Flatpak — runtime already has WebKitGTK 4.1.
+- Pro: Manifest is ~50 lines vs ~150 for from-source.
+- Con: Cannot be submitted to Flathub (Flathub requires reproducible from-source builds). Acceptable per scope.
+- Con: Local `.deb` path means manifest is not portable to other repos without edits.
+
+**Manifest skeleton (literal, copied from official docs and tailored to this project):**
+
+```yaml
+# flatpak/com.ks0555.robotcontroller.yaml
+id: com.ks0555.robotcontroller
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+command: robot-controller   # = [package].name in src-tauri/Cargo.toml
+
+finish-args:
+  # Display
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  - --share=ipc
+  - --share=network                            # required for AF_BLUETOOTH (see Pattern 2)
+
+  # Bluetooth (BLE) — for btleplug
+  - --allow=bluetooth                          # AF_BLUETOOTH socket access
+  - --system-talk-name=org.bluez               # BlueZ D-Bus on system bus
+
+  # Gamepad — for gilrs
+  - --device=input                             # /dev/input/event* (includes evdev gamepads)
+
+  # Steam Deck / WebKitGTK Wayland fix (matches existing Rust code)
+  - --env=WEBKIT_DISABLE_COMPOSITING_MODE=1
+
+modules:
+  - name: robot-controller
+    buildsystem: simple
+    sources:
+      - type: file
+        path: com.ks0555.robotcontroller.metainfo.xml
+      - type: file
+        path: ../apps/frontend/src-tauri/target/release/bundle/deb/robot-controller_0.1.5_amd64.deb
+        only-arches: [x86_64]
+    build-commands:
+      - mkdir deb-extract
+      - ar -x *.deb --output deb-extract
+      - tar -C deb-extract -xf deb-extract/data.tar.gz
+      - install -Dm755 deb-extract/usr/bin/robot-controller /app/bin/robot-controller
+      - install -Dm644 deb-extract/usr/share/applications/robot-controller.desktop
+          /app/share/applications/com.ks0555.robotcontroller.desktop
+      - sed -i 's/^Icon=.*/Icon=com.ks0555.robotcontroller/'
+          /app/share/applications/com.ks0555.robotcontroller.desktop
+      - install -Dm644 deb-extract/usr/share/icons/hicolor/128x128/apps/robot-controller.png
+          /app/share/icons/hicolor/128x128/apps/com.ks0555.robotcontroller.png
+      - install -Dm644 com.ks0555.robotcontroller.metainfo.xml
+          /app/share/metainfo/com.ks0555.robotcontroller.metainfo.xml
+```
+
+> **Verify before relying on these paths.** The exact filenames produced inside `usr/share/icons/hicolor/.../apps/<name>.png` depend on Tauri's deb-bundler version. After Phase 1 (deb build), run `dpkg -c <deb>` to enumerate the actual paths and adjust the `install -D` lines. The version `0.1.5` in the path is also volatile — see Pattern 5 for parameterization.
+
+### Pattern 2: Sandbox Permissions for BLE + Gamepad (CRITICAL)
+
+**What:** Flatpak's default sandbox blocks AF_BLUETOOTH sockets, BlueZ D-Bus traffic, and `/dev/input/*` access. Each must be opened with explicit `finish-args`.
+
+**When to use:** Always, for this app. Without these flags, `btleplug` and `gilrs` will run but silently fail to enumerate or connect.
+
+**The full required set (verified against Flatpak sandbox-permissions docs):**
+
+| Permission | What it grants | Why this app needs it |
+|-----------|---------------|----------------------|
+| `--allow=bluetooth` | `AF_BLUETOOTH` socket family | btleplug's lower-level BLE socket calls (in some code paths) |
+| `--system-talk-name=org.bluez` | Send to `org.bluez` on system D-Bus | btleplug on Linux talks to BlueZ over D-Bus — primary BLE mechanism |
+| `--share=network` | Network namespace access | Flatpak docs note `AF_BLUETOOTH` requires network for "fully work" |
+| `--device=input` | Read `/dev/input/event*` | gilrs reads evdev directly for gamepad input |
+| `--socket=wayland` + `--socket=fallback-x11` | Display server | WebKitGTK window |
+| `--device=dri` | DRM/GPU access | WebKitGTK rendering acceleration on Steam Deck |
+| `--share=ipc` | Shared X11/Wayland IPC | Required by GTK |
+| `--env=WEBKIT_DISABLE_COMPOSITING_MODE=1` | Env var | Already set by Rust on Gamescope detect, but Flatpak strips host env — set explicitly here |
+
+**Trade-offs:**
+- `--device=input` grants access to ALL input devices, including keyboard. There is no fine-grained "joystick only" option (Flatpak's input-device portal proposal — issue #536 — is unresolved). Acceptable for sideload.
+- `--system-talk-name=org.bluez` (not `--system-own-name`) means we can call BlueZ but not impersonate it. Correct least-privilege.
+
+### Pattern 3: AppStream MetaInfo as Build-Time Requirement
+
+**What:** Every Flatpak requires an AppStream `<id>.metainfo.xml` file. Without it, `flatpak-builder` fails. This is *not* optional even for sideload — the manifest's `build-commands` install it to `/app/share/metainfo/`.
+
+**When to use:** Always. Generate once with the official tool ([metainfocreator](https://www.freedesktop.org/software/appstream/metainfocreator/#/guiapp)) or hand-write a minimal version.
+
+**Minimum viable metainfo:**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.ks0555.robotcontroller</id>
+  <name>Robot Controller</name>
+  <summary>Steam Deck gamepad-to-BLE robot controller</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>     <!-- replace with actual license -->
+  <description>
+    <p>Tauri v2 desktop app to control a Bluetooth Arduino robot from the
+       Steam Deck's built-in gamepad.</p>
+  </description>
+  <launchable type="desktop-id">com.ks0555.robotcontroller.desktop</launchable>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="0.1.5" date="2026-05-09" />
+  </releases>
+</component>
+```
+
+**Trade-offs:**
+- Pro: Required anyway, gives "Add as Non-Steam Game" a proper name and icon.
+- Con: One more file to keep version-synced with `Cargo.toml` / `tauri.conf.json` / `package.json`. Mitigation: version-bump script (out of scope for this milestone).
+
+### Pattern 4: Single-File Bundle Output (`.flatpak`) for Sideload
+
+**What:** `flatpak-builder` natively supports a `--repo` mode (creates an OSTree repo) AND `flatpak build-bundle` produces a single-file `.flatpak` (technically a "single-file bundle"). For sideload, `.flatpak` is the correct artifact — `scp` it to the Steam Deck and run `flatpak install --user file.flatpak`.
+
+**When to use:** Sideload-only (this project). Skip OSTree repo unless hosting your own auto-update server.
+
+**Build commands:**
+```sh
+# In flatpak/build.sh
+flatpak-builder --force-clean --repo=build/repo --user --install-deps-from=flathub \
+  build/build-dir com.ks0555.robotcontroller.yaml
+
+flatpak build-bundle build/repo \
+  robot-controller.flatpak \
+  com.ks0555.robotcontroller
+```
+
+**Trade-offs:**
+- Pro: Single file, easy to attach to GitHub Release, easy to scp.
+- Pro: `flatpak install --user *.flatpak` works on Steam Deck Game Mode without additional repo setup.
+- Con: No auto-update — user must manually download new `.flatpak` and re-install. Acceptable per scope ("Auto-update workflow (`flatpak update`) documented or scripted").
+- Con: Bundle size larger than OSTree delta updates. Not a concern at this app's size (<50 MB).
+
+### Pattern 5: Manifest Path Parameterization
+
+**What:** The .deb path includes the version (`robot-controller_0.1.5_amd64.deb`). Hard-coding it forces a manifest edit at every release. Two ways to handle:
+
+**Option A (chosen — simplest):** `build.sh` symlinks/copies the produced .deb to a stable name before invoking `flatpak-builder`:
+```sh
+DEB=$(ls apps/frontend/src-tauri/target/release/bundle/deb/*.deb | head -1)
+cp "$DEB" flatpak/robot-controller.deb
+# manifest references: path: robot-controller.deb
+```
+
+**Option B:** Use `envsubst` to template the manifest. More flexible, more moving parts. Skip unless multiple variables need substitution.
+
+**When to use:** Always parameterize — manual sync of the manifest version with `Cargo.toml` is a guaranteed source of release-day mistakes.
+
+---
+
+## Data Flow
+
+### Build Flow (After Milestone)
+
+```
+1. Developer/CI runs:           pnpm tauri build  (or cargo tauri build)
+                                       │
+                                       ▼
+2. Tauri CLI:                   compiles Rust + bundles frontend
+                                       │
+                                       ▼
+3. tauri-bundler (deb target):  produces robot-controller_0.1.5_amd64.deb
+                                       │
+                                       ▼
+4. flatpak/build.sh:            cp deb → flatpak/robot-controller.deb
+                                       │
+                                       ▼
+5. flatpak-builder:             consumes manifest + deb + metainfo
+                                  → extracts deb
+                                  → installs to /app/
+                                  → applies finish-args
+                                  → writes to build/repo/ (OSTree)
+                                       │
+                                       ▼
+6. flatpak build-bundle:        build/repo → robot-controller.flatpak
+                                       │
+                                       ▼
+7. CI:                          uploads .flatpak as artifact + release asset
+```
+
+### Install/Run Flow on Steam Deck
+
+```
+1. User downloads             robot-controller.flatpak  (from GitHub Release)
+   OR developer scp's it      ssh deck@steamdeck:~
+
+2. User runs (Desktop Mode):  flatpak install --user robot-controller.flatpak
+
+3. Flatpak resolves runtime:  org.gnome.Platform//46 (auto-installs from flathub
+                              if not present — already shipped on SteamOS 3.5+)
+
+4. User adds to Steam:        Steam → Add a Non-Steam Game →
+                              /var/lib/flatpak/exports/bin/com.ks0555.robotcontroller
+                              (or /home/deck/.local/share/flatpak/exports/bin/...
+                              for --user installs)
+
+5. Gaming Mode launch:        Steam launches the export → wraps `flatpak run` →
+                              container starts with finish-args applied →
+                              app sees BlueZ via D-Bus, evdev via /dev/input,
+                              Steam Deck gamepad available
+```
+
+### Update Flow (manual, sideload)
+
+```
+1. CI tags release v0.1.6, builds new .flatpak
+2. User downloads new file
+3. flatpak install --user --reinstall robot-controller.flatpak  (or just `install`)
+   → Flatpak deduplicates unchanged files via OSTree
+4. No restart of Steam needed; next launch picks up new version
+```
+
+---
+
+## Integration Points
+
+### Existing Components (touched by this milestone)
+
+| Existing Component | Change | Why |
+|--------------------|--------|-----|
+| `apps/frontend/src-tauri/tauri.conf.json` | `bundle.targets`: `["appimage"]` → `["deb"]` | Flatpak manifest consumes .deb, not AppImage |
+| `apps/frontend/src-tauri/tauri.conf.json` | Optionally add `bundle.linux.deb.depends` | Currently empty; runtime supplies all libs, but verify with `ldd` on the .deb binary |
+| `.github/workflows/build.yml` (Linux x64 job) | Remove "install custom tauri-cli (truly portable AppImage)" step | No longer building AppImage; stock `tauri-cli` is fine |
+| `.github/workflows/build.yml` (Linux x64 job) | Remove `--config '{"bundle":{"linux":{"appimage":{"useNewFormat":true}}}}'` flag | Not building AppImage |
+| `.github/workflows/build.yml` (Linux x64 job) | Add `flatpak`/`flatpak-builder` apt install + Flathub remote setup + manifest build | New artifact type |
+| `.github/workflows/build.yml` (Linux arm64 job) | **Decision: drop entirely** | Steam Deck is x86_64. ARM Flatpak adds maintenance with no consumer. PROJECT.md targets only Steam Deck |
+| `.github/workflows/build.yml` (macOS job) | **Untouched** — DMG build still useful for dev | Reasonable to keep |
+| `apps/frontend/src-tauri/Cargo.toml` | Unchanged | Runtime already correct (incl. `WEBKIT_DISABLE_COMPOSITING_MODE` auto-detect) |
+| `apps/frontend/src/**/*` | Unchanged | App.tsx is locked anyway; no frontend changes needed |
+| `justfile` | Add `flatpak-build`, `flatpak-install`, `flatpak-clean`, `flatpak-deploy` recipes | Local-dev ergonomics |
+| `apps/frontend/package.json` | Optionally add `"flatpak:build": "../../flatpak/build.sh"` | Optional convenience; `just` is sufficient |
+
+### New Components
+
+| New Path | Purpose |
+|----------|---------|
+| `flatpak/com.ks0555.robotcontroller.yaml` | Manifest (Pattern 1) |
+| `flatpak/com.ks0555.robotcontroller.metainfo.xml` | AppStream metadata (Pattern 3) |
+| `flatpak/build.sh` | Wraps `flatpak-builder` + `flatpak build-bundle` (Pattern 4) |
+| `flatpak/install-steamdeck.sh` (optional) | `scp` + `ssh deck@... flatpak install` helper |
+| `flatpak/README.md` | Local build, install, sideload instructions |
+| `flatpak/.gitignore` | Ignore `build/`, `.flatpak-builder/`, `*.flatpak`, `robot-controller.deb` |
+
+### Removed Components
+
+| Removed | Reason |
+|---------|--------|
+| Custom `tauri-cli` from `feat/truly-portable-appimage` branch | Was specifically for AppImage portability; Flatpak handles portability via runtime |
+| AppImage rename step (`RobotController-x86_64.AppImage`) | Not produced anymore |
+| AppImage release attachment | Replaced by `.flatpak` attachment |
+| `apps/frontend/src-tauri/target/release/bundle/appimage/` references | Path no longer exists in workflow |
+
+### Internal Boundaries
+
+| Boundary | Contract | Notes |
+|----------|----------|-------|
+| Tauri CLI ↔ flatpak-builder | `.deb` file at `target/release/bundle/deb/*.deb` | Decoupled: Tauri owns deb production, flatpak-builder owns wrap. Either can be replaced independently. |
+| Manifest ↔ AppStream | Both reference identifier `com.ks0555.robotcontroller` | Must match `tauri.conf.json:identifier` exactly |
+| `.desktop` file ↔ icons | Manifest's `sed` rewrites `Icon=` line to use the Flatpak ID | Required because Tauri sets `Icon=robot-controller` (binary name) but Flatpak expects `Icon=<flatpak-id>` |
+| CI ↔ Steam Deck | GitHub Release attachment OR manual scp | Sideload by design — no signed remote install path |
+
+---
+
+## Suggested Build Order
+
+The build order respects dependencies: each phase needs the previous phase's output to be testable. Cannot test sideload without a working `.flatpak`; cannot test sandbox permissions without `flatpak-builder` running successfully end-to-end.
+
+### Phase 1: Switch Tauri bundle target to .deb (foundational)
+- Modify `tauri.conf.json`: `bundle.targets` → `["deb"]`.
+- Verify locally: `cargo tauri build` produces a `.deb` in `target/release/bundle/deb/`.
+- Run `dpkg -c` on it; record exact paths of binary, `.desktop`, icons (these feed Phase 2's manifest).
+- **Exit criterion:** `.deb` installs and runs via `sudo apt install ./*.deb` on Ubuntu (free verification it's a valid deb).
+- **Why first:** Manifest cannot be written without knowing exact internal paths of the .deb.
+
+### Phase 2: Author manifest + metainfo + build script (core packaging)
+- Create `flatpak/` directory with manifest, metainfo, build.sh.
+- Run `flatpak-builder` locally (Linux dev box or Docker).
+- Validate: `flatpak run com.ks0555.robotcontroller` opens the window.
+- **Exit criterion:** App launches inside Flatpak sandbox locally — even if BLE/gamepad don't work yet (sandbox restricts them).
+- **Why second:** Need a working build before debugging permissions.
+
+### Phase 3: Sandbox permissions for BLE + gamepad
+- Add finish-args from Pattern 2 incrementally.
+- Test BLE: in dev mode, `flatpak run` with `--share=network --allow=bluetooth --system-talk-name=org.bluez`. Confirm `bluetoothctl` works and `btleplug` enumerates.
+- Test gamepad: add `--device=input`. Confirm `gilrs` sees the controller.
+- Document any permission still missing (e.g. if BlueZ access fails, may need `--system-talk-name=org.bluez.*` wildcard).
+- **Exit criterion:** Locally, with the Flatpak'd app, BLE connection succeeds and gamepad input is detected.
+- **Why third:** Permissions tuning requires a working build to test against. Doing this before Phase 2 means flying blind.
+
+### Phase 4: Steam Deck sideload validation
+- `scp robot-controller.flatpak deck@steamdeck:~`.
+- `flatpak install --user`.
+- Test in Desktop Mode first (easier to debug from terminal).
+- "Add as Non-Steam Game", launch in Gaming Mode, verify BLE + gamepad still work under Gamescope.
+- Confirm `WEBKIT_DISABLE_COMPOSITING_MODE=1` is taking effect (no black webview).
+- **Exit criterion:** Robot is controllable from Gaming Mode via the Flatpak.
+- **Why fourth:** Needs Phase 3's permissions plus a real Steam Deck (the only environment where SteamOS-specific issues like Gamescope WebKit interaction surface).
+
+### Phase 5: CI integration
+- Modify `.github/workflows/build.yml`: replace AppImage steps with deb + flatpak-builder steps.
+- Drop arm64 job (out of scope for Steam Deck).
+- Attach `.flatpak` to GitHub Releases on tag push.
+- **Exit criterion:** `git tag v0.1.6 && git push --tags` produces a downloadable `.flatpak` on the Releases page.
+- **Why last:** No point automating a build that hasn't been validated locally + on-device. Most CI iteration cycles waste time vs local debugging.
+
+### Phase 6 (optional): Auto-update + just recipes
+- Add `justfile` recipes (`flatpak-build`, `flatpak-deploy`, etc.).
+- Document `flatpak update` workflow OR provide a script that polls GitHub Releases.
+- **Why optional:** Sideload auto-update is documented as low-priority in PROJECT.md ("documented or scripted"). Punting to a follow-up is acceptable.
+
+---
+
+## Anti-Patterns
+
+### Anti-Pattern 1: Inventing a Tauri `flatpak` bundle target
+**What people do:** Set `bundle.targets: ["flatpak"]` in `tauri.conf.json`, expecting Tauri's CLI to produce a `.flatpak`.
+**Why it's wrong:** Tauri v2 has no native flatpak bundler — verified against the official `bundle.targets` enum (`app, dmg, deb, rpm, appimage`) and the official Flatpak distribute page (which prescribes `.deb` + `flatpak-builder`). Issue #3619 has been open since 2022 and is still in "Proposal" status.
+**Do this instead:** Use `bundle.targets: ["deb"]` and run `flatpak-builder` separately.
+
+### Anti-Pattern 2: From-source build inside Flatpak sandbox (for sideload)
+**What people do:** Copy a Flathub-style manifest with `flatpak-cargo-generator` + `flatpak-node-generator`, fetch all sources, compile inside the sandbox.
+**Why it's wrong:** Adds 10-20 min to CI, requires `cargo-sources.json` regeneration on every dependency change, requires the SDK extension `org.freedesktop.Sdk.Extension.rust-stable`. Provides zero benefit for sideload (no Flathub review).
+**Do this instead:** Wrap the .deb. Keep from-source as a future migration if Flathub submission ever happens.
+
+### Anti-Pattern 3: Hard-coded version in manifest
+**What people do:** `path: ../apps/frontend/src-tauri/target/release/bundle/deb/robot-controller_0.1.5_amd64.deb`
+**Why it's wrong:** Every release-bump requires editing the manifest. Easy to forget. CI breaks silently if version increments without manifest update.
+**Do this instead:** Build script copies/symlinks the deb to a stable filename (`flatpak/robot-controller.deb`) and the manifest references that.
+
+### Anti-Pattern 4: Forgetting `--share=network` for Bluetooth
+**What people do:** Only add `--allow=bluetooth` and `--system-talk-name=org.bluez`.
+**Why it's wrong:** The Flatpak docs explicitly state Bluetooth requires network sharing because of how Linux network namespaces work. BLE will appear to scan but never produce results.
+**Do this instead:** Always include `--share=network` alongside Bluetooth permissions.
+
+### Anti-Pattern 5: `--device=all` instead of `--device=input` + `--device=dri`
+**What people do:** Open all devices for "ease of testing."
+**Why it's wrong:** Bypasses the entire point of sandboxing. Even for sideload, narrow permissions are forensically useful — you know exactly what the app can touch.
+**Do this instead:** `--device=input` (gamepad) + `--device=dri` (GPU) is sufficient. Add more only after demonstrating a need.
+
+### Anti-Pattern 6: Mismatched IDs across manifest, `.desktop`, and metainfo
+**What people do:** Manifest says `com.ks0555.robotcontroller`, but the .desktop file's basename ends up `robot-controller.desktop` (from Tauri).
+**Why it's wrong:** Flatpak install succeeds but the app doesn't appear in launchers; `flatpak run` works but `Add as Non-Steam Game` shows no metadata.
+**Do this instead:** Manifest's `build-commands` MUST rename the `.desktop` to `<flatpak-id>.desktop` and rewrite its `Icon=` line — exactly as the official Tauri sample does with `sed`.
+
+### Anti-Pattern 7: Building Flatpak inside Tauri's `beforeBuildCommand`
+**What people do:** Try to chain `pnpm tauri build && flatpak-builder ...` inside Vite/Tauri's build hooks.
+**Why it's wrong:** Conflates two layers. `flatpak-builder` cannot run *during* `cargo tauri build` because it needs the .deb to already exist. Also pollutes the Tauri toolchain on dev machines that don't need Flatpak.
+**Do this instead:** Keep `flatpak-builder` invocation in `flatpak/build.sh`, called explicitly from CI or `just flatpak-build`. Tauri's build hooks remain untouched.
+
+---
+
+## Distribution / Steam Deck Install Side
+
+### Recommended: GitHub Release artifact
+- CI builds `.flatpak`, attaches to release on `v*` tag (existing pattern, just swap artifact type).
+- User on Steam Deck (Desktop Mode) downloads via browser.
+- `flatpak install --user ~/Downloads/robot-controller.flatpak`.
+- Fits existing release flow; no infra change.
+
+### Developer iteration: SCP + SSH install
+```bash
+# justfile recipe
+flatpak-deploy:
+    scp robot-controller.flatpak deck@steamdeck.local:/tmp/
+    ssh deck@steamdeck.local "flatpak install --user --reinstall -y /tmp/robot-controller.flatpak"
+```
+Steam Deck has SSH off by default — user must enable in Desktop Mode (`sudo systemctl enable --now sshd` + set password). Document this in `flatpak/README.md`.
+
+### Not recommended for v2.1
+- **Self-hosted OSTree repo + `flatpak remote-add`:** Best UX (auto-update via `flatpak update`) but requires hosting and HTTPS. Out of scope per PROJECT.md.
+- **Flathub:** Out of scope; requires from-source manifest, OARS rating, Flathub PR review (~weeks).
+- **Steam Workshop / "Discover" store:** Steam Deck's Discover store ships Flathub apps only. N/A for sideload.
+
+### "Add as Non-Steam Game" workflow
+Documented for users in `flatpak/README.md`:
+1. Desktop Mode → Steam → "Games" menu → "Add a Non-Steam Game to My Library".
+2. Browse to `/var/lib/flatpak/exports/bin/com.ks0555.robotcontroller` (system) or `~/.local/share/flatpak/exports/bin/com.ks0555.robotcontroller` (--user install).
+3. Add. Optionally set artwork.
+4. Switch to Gaming Mode → game appears in Library.
+
+The export file is a stub script auto-generated by Flatpak that calls `flatpak run com.ks0555.robotcontroller`. Steam treats it like any other executable.
+
+---
+
+## Sources
+
+| Source | Confidence | Notes |
+|--------|-----------|-------|
+| [Tauri v2 Flatpak distribution guide (raw mdx)](https://github.com/tauri-apps/tauri-docs/blob/v2/src/content/docs/distribute/flatpak.mdx) | HIGH | Authoritative — Tauri's own `.deb`-wrapping pattern, full manifest YAML quoted in research |
+| [Tauri v2 Distribute index](https://v2.tauri.app/distribute/) (verified raw mdx) | HIGH | Confirms `bundle.targets` enum: `app, dmg, deb, rpm, appimage` — no `flatpak` option |
+| [Flatpak sandbox permissions docs](https://docs.flatpak.org/en/latest/sandbox-permissions.html) | HIGH | Verified `--allow=bluetooth`, `--device=input`, `--share=network` semantics |
+| [Vincent Jousse: Packaging Tauri v2 for Flatpak/Snap](https://vincent.jousse.org/blog/en/packaging-tauri-v2-flatpak-snapcraft-elm/) | MEDIUM | From-source alternative pattern — useful contrast, NOT used for this milestone |
+| [Tauri issue #3619 — Bundle as Flatpak](https://github.com/tauri-apps/tauri/issues/3619) | HIGH | Confirms native flatpak bundle target is still in "Proposal" status as of 2026 |
+| [Vinfall: Flatpak, Bluetooth Controller, udev, SDL](https://blog.vinfall.com/posts/2024/06/flatpak/) | MEDIUM | Confirms udev rules sometimes needed alongside `--device=input`; SteamOS already ships Steam Input rules so unlikely to be needed |
+| Existing `apps/frontend/src-tauri/tauri.conf.json` | HIGH | Read directly — confirms identifier `com.ks0555.robotcontroller`, current `bundle.targets: ["appimage"]` |
+| Existing `.github/workflows/build.yml` | HIGH | Read directly — identifies the exact removal points (custom tauri-cli, AppImage rename, attachment) |
+| Existing `apps/frontend/src-tauri/Cargo.toml` | HIGH | Confirms binary name = `robot-controller` (used in manifest `command:` field) |
+
+### Confidence Caveats
+
+- **MEDIUM on `--system-talk-name=org.bluez` exact wildcard form.** Some sources show `org.bluez` (this manifest), others `org.bluez.*`. The plain form is what Flatpak docs specify; the wildcard form may be needed if BlueZ exposes derived names. Validate in Phase 3 with `dbus-monitor` if BLE fails.
+- **MEDIUM on whether SteamOS 3.5+'s built-in Flatpak install supports `--user` Flathub remote out of the box for org.gnome.Platform//46.** It does on current SteamOS, but a fresh deck may need `flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo` before first install. Document in `flatpak/README.md`.
+- **HIGH that App.tsx remains untouched.** The CI lock check (`git diff --exit-code -- apps/frontend/src/app.tsx`) is unaffected — no frontend code changes for this milestone.
+
+---
+*Architecture research for: v2.1 Flatpak Packaging milestone*
+*Researched: 2026-05-09*
