@@ -13,7 +13,7 @@ Control a real robot from Steam Deck gamepad input with low latency — commands
 **Goal:** Replace AppImage distribution with a Flatpak bundle sideloaded onto Steam Deck, with sandbox permissions for BLE + gamepad and Gaming Mode integration.
 
 **Target features:**
-- Tauri v2 Flatpak bundle target (replaces AppImage in CI)
+- Tauri v2 produces a `.deb` bundle (replaces AppImage in CI); deb is the intermediate artifact consumed by flatpak-builder (Phase 12) to produce the final Flatpak bundle
 - Flatpak manifest with finish-args for BLE (`--system-talk-name=org.bluez`) and evdev/gamepad access
 - CI builds signed `.flatpak` artifact; AppImage build removed from `.github/workflows/build.yml`
 - Sideload install workflow documented for Steam Deck (`flatpak install --user app.flatpak`)
