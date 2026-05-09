@@ -66,12 +66,12 @@ Sideload-only Flatpak distribution for Steam Deck. Replaces AppImage. BLE + game
 
 ### Sandbox Permissions (SBX)
 
-- [ ] **SBX-01**: Manifest `finish-args` for BLE: `--system-talk-name=org.bluez`, `--system-talk-name=org.bluez.*`, `--allow=bluetooth`, `--share=network` (last one needed for AF_BLUETOOTH per Flatpak docs)
-- [ ] **SBX-02**: Manifest `finish-args` for gamepad/evdev: `--device=input` (Flatpak ≥1.15.6) with `--device=all` documented as fallback comment for older SteamOS Flatpak versions
-- [ ] **SBX-03**: Manifest `finish-args` for display: `--socket=wayland`, `--socket=fallback-x11`, `--share=ipc`, `--device=dri`
-- [ ] **SBX-04**: Manifest `finish-args` adds `--env=WEBKIT_DISABLE_COMPOSITING_MODE=1` (belt-and-suspenders alongside existing Rust `set_var` in lib.rs) to prevent Gamescope/WebKit black-screen
-- [ ] **SBX-05**: Gate the existing `lib.rs` `DBUS_SYSTEM_BUS_ADDRESS=/run/host/run/dbus/system_bus_socket` rewrite on `!in_flatpak` (detect via `/.flatpak-info` or `FLATPAK_ID` env var) — inside Flatpak the runtime proxies the system bus correctly and the rewrite would silently break BLE
-- [ ] **SBX-06**: Verify finish-args list contains NO anti-features: no `--filesystem=home`, no `--device=bluetooth` (wrong stack), no `--talk-name=org.bluez` (wrong bus), no tray-icon args, no `org.freedesktop.Flatpak` portal grant
+- [x] **SBX-01**: Manifest `finish-args` for BLE: `--system-talk-name=org.bluez`, `--system-talk-name=org.bluez.*`, `--allow=bluetooth`, `--share=network` (last one needed for AF_BLUETOOTH per Flatpak docs)
+- [x] **SBX-02**: Manifest `finish-args` for gamepad/evdev: `--device=input` (Flatpak ≥1.15.6) with `--device=all` documented as fallback comment for older SteamOS Flatpak versions
+- [x] **SBX-03**: Manifest `finish-args` for display: `--socket=wayland`, `--socket=fallback-x11`, `--share=ipc`, `--device=dri`
+- [x] **SBX-04**: Manifest `finish-args` adds `--env=WEBKIT_DISABLE_COMPOSITING_MODE=1` (belt-and-suspenders alongside existing Rust `set_var` in lib.rs) to prevent Gamescope/WebKit black-screen
+- [x] **SBX-05**: Gate the existing `lib.rs` `DBUS_SYSTEM_BUS_ADDRESS=/run/host/run/dbus/system_bus_socket` rewrite on `!in_flatpak` (detect via `/.flatpak-info` or `FLATPAK_ID` env var) — inside Flatpak the runtime proxies the system bus correctly and the rewrite would silently break BLE
+- [x] **SBX-06**: Verify finish-args list contains NO anti-features: no `--filesystem=home`, no `--device=bluetooth` (wrong stack), no `--talk-name=org.bluez` (wrong bus), no tray-icon args, no `org.freedesktop.Flatpak` portal grant
 
 ### Steam Deck Integration (DECK)
 
@@ -168,14 +168,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PKG-08 | Phase 12 | Pending |
 | PKG-09 | Phase 12 | Pending |
 | VAL-05 | Phase 12 | Pending |
-| SBX-01 | Phase 13 | Pending |
-| SBX-02 | Phase 13 | Pending |
-| SBX-03 | Phase 13 | Pending |
-| SBX-04 | Phase 13 | Pending |
-| SBX-05 | Phase 13 | Pending |
-| SBX-06 | Phase 13 | Pending |
-| VAL-06 | Phase 13 | Pending |
-| VAL-07 | Phase 13 | Pending |
+| SBX-01 | Phase 13 | Complete |
+| SBX-02 | Phase 13 | Complete |
+| SBX-03 | Phase 13 | Complete |
+| SBX-04 | Phase 13 | Complete |
+| SBX-05 | Phase 13 | Complete |
+| SBX-06 | Phase 13 | Complete |
+| VAL-06 | Phase 13 | Complete (manual — real hardware) |
+| VAL-07 | Phase 13 | Complete (manual — real hardware) |
 | DECK-01 | Phase 14 | Pending |
 | DECK-02 | Phase 14 | Pending |
 | DECK-03 | Phase 14 | Pending |

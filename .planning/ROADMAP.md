@@ -168,7 +168,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 13-01-PLAN.md — Add in_flatpak() D-Bus gate in lib.rs + BLE/gamepad finish-args + anti-feature checklist in manifest
+- [x] 13-01-PLAN.md — Add in_flatpak() D-Bus gate in lib.rs + BLE/gamepad finish-args + anti-feature checklist in manifest
 
 ### Phase 14: Steam Deck On-Device Validation
 **Goal**: The single-file `.flatpak` installs and runs on a real Steam Deck in both Desktop Mode and Gaming Mode, with BLE + gamepad working end-to-end
@@ -220,7 +220,7 @@ Plans:
 | 10. Build and Test on SteamOS | 2/2 | Complete | 2026-05-06 |
 | 11. Bundle Pipeline Restructure | 3/3 | Complete | 2026-05-09 |
 | 12. Manifest + AppStream + Local Build | 2/2 | Complete | 2026-05-09 |
-| 13. Sandbox Permissions for BLE + Gamepad | 1/1 | Planned | - |
+| 13. Sandbox Permissions for BLE + Gamepad | 1/1 | Complete | 2026-05-09 |
 | 14. Steam Deck On-Device Validation | 0/0 | Not started | - |
 | 15. CI Migration (Parallel-Run) | 0/0 | Not started | - |
 | 16. AppImage Decommission + Upgrade Workflow Docs | 0/0 | Not started | - |
