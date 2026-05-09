@@ -18,7 +18,7 @@ This roadmap is append-only across milestones. v2.0 phases (6–10) are complete
 - [x] **Phase 8: Gamepad Monitoring with gilrs** - Background thread polling gilrs and emitting gamepad events
 - [x] **Phase 9: Hook Rewrites** - Rewrite use-bluetooth.ts and use-gamepad.ts to use Tauri IPC with stable interfaces (completed 2026-05-06)
 - [x] **Phase 10: Build and Test on SteamOS** - Validate full stack on target platform with production AppImage (completed 2026-05-06)
-- [ ] **Phase 11: Bundle Pipeline Restructure** - Switch tauri.conf.json bundle.targets from appimage to deb; drop custom tauri-cli fork; pick Flatpak runtime
+- [x] **Phase 11: Bundle Pipeline Restructure** - Switch tauri.conf.json bundle.targets from appimage to deb; drop custom tauri-cli fork; pick Flatpak runtime
 - [ ] **Phase 12: Manifest + AppStream + Local Build** - Author Flatpak manifest, AppStream metainfo, build.sh; first local `flatpak run` opens the window
 - [ ] **Phase 13: Sandbox Permissions for BLE + Gamepad** - finish-args for org.bluez D-Bus, evdev /dev/input, WebKit env vars; gate lib.rs D-Bus rewrite on !in_flatpak
 - [ ] **Phase 14: Steam Deck On-Device Validation** - Sideload .flatpak on real Deck; verify BLE+gamepad in Desktop and Gaming Mode; "Add as Non-Steam Game" workflow tested
@@ -134,9 +134,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 11-01-PLAN.md — Switch tauri.conf.json bundle.targets to ["deb"] with deb metadata (PKG-01)
-- [ ] 11-02-PLAN.md — Rewrite build.yml to single deb job with stock tauri-cli (PKG-02, PKG-03)
-- [ ] 11-03-PLAN.md — Delete build-steamdeck.sh, lock Flatpak runtime in PROJECT.md (PKG-04)
+- [x] 11-01-PLAN.md — Switch tauri.conf.json bundle.targets to ["deb"] with deb metadata (PKG-01)
+- [x] 11-02-PLAN.md — Rewrite build.yml to single deb job with stock tauri-cli (PKG-02, PKG-03)
+- [x] 11-03-PLAN.md — Delete build-steamdeck.sh, lock Flatpak runtime in PROJECT.md (PKG-04)
 
 ### Phase 12: Manifest + AppStream + Local Build
 **Goal**: A `flatpak/` directory exists at repo root with a working manifest, AppStream metainfo, and build script; `flatpak run com.ks0555.robotcontroller` opens the app window on a Linux dev box
@@ -211,7 +211,7 @@ Plans:
 | 8. Gamepad Monitoring with gilrs | 3/3 | Complete | 2026-05-06 |
 | 9. Hook Rewrites | 2/2 | Complete | 2026-05-06 |
 | 10. Build and Test on SteamOS | 2/2 | Complete | 2026-05-06 |
-| 11. Bundle Pipeline Restructure | 0/3 | Planned | - |
+| 11. Bundle Pipeline Restructure | 3/3 | Complete | 2026-05-09 |
 | 12. Manifest + AppStream + Local Build | 0/0 | Not started | - |
 | 13. Sandbox Permissions for BLE + Gamepad | 0/0 | Not started | - |
 | 14. Steam Deck On-Device Validation | 0/0 | Not started | - |

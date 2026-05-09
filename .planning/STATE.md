@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Flatpak Packaging
 status: in_progress
-last_updated: "2026-05-09T15:32:00.000Z"
-last_activity: 2026-05-09 - Phase 11 executing (3 plans, Wave 1)
+last_updated: "2026-05-09T16:10:00.000Z"
+last_activity: 2026-05-09 - Phase 11 complete (3/3 plans, all passed)
 progress:
   total_phases: 11
   completed_phases: 5
@@ -20,20 +20,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 11 executing — deb config, CI rewrite, cleanup + runtime lock
+**Current focus:** Phase 11 complete — ready for Phase 12
 
 ## Current Position
 
-Phase: 11 — Bundle Pipeline Restructure (executing)
-Plan: Wave 1 — 11-01 (deb config), 11-02 (CI rewrite), 11-03 (cleanup + runtime lock)
-Status: Phase executing — 3 plans in Wave 1, all autonomous
-Last activity: 2026-05-09 — Phase 11 execution started
+Phase: 11 — Bundle Pipeline Restructure (complete)
+Plan: N/A (all 3 plans complete)
+Status: Phase complete — 3/3 plans, VERIFICATION.md status: passed
+Last activity: 2026-05-09 — Phase 11 execution complete
 
 ## Progress
 
 **Total roadmap (v2.0 + v2.1):** 11 phases
 **v2.0 complete:** Phases 6-10 (5/5)
-**v2.1 active:** Phases 11-16 (0/6)
+**v2.1 active:** Phases 11-16 (1/6)
 
 | Phase | Status |
 |-------|--------|
@@ -42,7 +42,7 @@ Last activity: 2026-05-09 — Phase 11 execution started
 | 8. Gamepad Monitoring with gilrs | Complete |
 | 9. Hook Rewrites | Complete |
 | 10. Build and Test on SteamOS | Complete |
-| 11. Bundle Pipeline Restructure | Executing |
+| 11. Bundle Pipeline Restructure | Complete |
 | 12. Manifest + AppStream + Local Build | Not started |
 | 13. Sandbox Permissions for BLE + Gamepad | Not started |
 | 14. Steam Deck On-Device Validation | Not started |
@@ -56,7 +56,7 @@ Plans: 12/12 complete (all v2.0). v2.1 plans not yet decomposed (TBD per phase).
 (carried from v2.0 — see PROJECT.md Key Decisions table)
 
 **v2.1 decisions pending (must land during phase work):**
-- **Flatpak runtime choice (PKG-04):** `org.freedesktop.Platform//24.08` recommended (smaller, no GNOME deps); `org.gnome.Platform//46` fallback if missing-library issue surfaces. Decide and commit to PROJECT.md in Phase 11.
+- **Flatpak runtime choice (PKG-04):** Resolved in Phase 11 — `org.freedesktop.Platform//24.08` with SDK `org.freedesktop.Sdk//24.08` and extension `org.freedesktop.Platform.GL.default`. Committed to PROJECT.md Key Decisions.
 - **Auto-update reframed (DECK-05 / DOCS-01):** PROJECT.md "Active" requirement amended to "Manual upgrade workflow (`flatpak install --user --reinstall`) documented; optional GitHub Releases polling launcher script". True `flatpak update` deferred to v2.2+ (`FLAT-PUB-01`).
 
 ## Accumulated Context
@@ -70,7 +70,7 @@ Plans: 12/12 complete (all v2.0). v2.1 plans not yet decomposed (TBD per phase).
 
 ### v2.1 Goals & Phase Map
 
-- Phase 11: switch `bundle.targets` to `["deb"]`; drop custom tauri-cli fork; pick runtime
+- Phase 11: ✓ switch `bundle.targets` to `["deb"]`; drop custom tauri-cli fork; pick runtime (complete)
 - Phase 12: write `flatpak/` directory (manifest + metainfo + build.sh); first local `flatpak run` opens window
 - Phase 13: sandbox finish-args for BLE D-Bus + evdev gamepad; `lib.rs` `!in_flatpak` gate
 - Phase 14: real-Deck validation in Desktop + Gaming Mode
@@ -90,4 +90,4 @@ Plans: 12/12 complete (all v2.0). v2.1 plans not yet decomposed (TBD per phase).
 Last session: 2026-05-09 (roadmapper run)
 Stopped at: Roadmap v2.1 created, plans not yet decomposed
 Resume file: None
-Next action: `/gsd-plan-phase 11` to decompose Phase 11 (Bundle Pipeline Restructure) into executable plans
+Next action: `/gsd-plan-phase 12` to plan Manifest + AppStream + Local Build
