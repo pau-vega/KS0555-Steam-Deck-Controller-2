@@ -208,8 +208,12 @@ Plans:
   2. Tagged release CI uploads `RobotController-x86_64.flatpak` as a release asset alongside the existing AppImage; at least one tagged release ships both artifacts (parallel-run window) before AppImage is removed in Phase 16
    3. The `build-arm64` job is removed from `.github/workflows/build.yml` (Steam Deck is x86_64 only); the `build-macos` job was already removed in Phase 11 — Phase 15 does not re-add it
   4. OSTree cache is enabled (`cache: true`) on the flatpak-builder action — runtime download (~1 GB) is reused across runs; warm-cache CI run completes within an acceptable budget (documented in commit message)
-  5. `app.tsx`, `control-pad.tsx`, `status-bar.tsx` remain unchanged after the CI migration — the existing `git diff --exit-code` lock check in CI passes (covers VAL-08 spanning v2.1)
-**Plans**: TBD
+   5. `app.tsx`, `control-pad.tsx`, `status-bar.tsx` remain unchanged after the CI migration — the existing `git diff --exit-code` lock check in CI passes (covers VAL-08 spanning v2.1)
+**Plans**: 2 plans
+
+Plans:
+- [ ] 15-01-PLAN.md — build-x64 artifact upload, caching, concurrency, VAL-08 lock check, CI-03 confirmation
+- [ ] 15-02-PLAN.md — build-flatpak-x64 job (flatpak-builder, OSTree cache, SHA256, release upload)
 
 ### Phase 16: AppImage Decommission + Upgrade Workflow Docs
 **Goal**: AppImage CI artifact is removed; the manual upgrade workflow is documented honestly; root README walks Steam Deck users through install + Gaming Mode launch
@@ -238,7 +242,7 @@ Plans:
 | 12. Manifest + AppStream + Local Build | 2/2 | Complete | 2026-05-09 |
 | 13. Sandbox Permissions for BLE + Gamepad | 1/1 | Complete | 2026-05-09 |
 | 14. Steam Deck On-Device Validation | 1/1 | Complete ✓ | 2026-05-09 |  |
-| 15. CI Migration (Parallel-Run) | 0/0 | Not started | - |
+| 15. CI Migration (Parallel-Run) | 0/2 | Planned | - |
 | 16. AppImage Decommission + Upgrade Workflow Docs | 0/0 | Not started | - |
 
 ---
