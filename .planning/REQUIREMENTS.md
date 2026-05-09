@@ -176,11 +176,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SBX-06 | Phase 13 | Complete |
 | VAL-06 | Phase 13 | Complete (manual — real hardware) |
 | VAL-07 | Phase 13 | Complete (manual — real hardware) |
-| DECK-01 | Phase 14 | Pending |
-| DECK-02 | Phase 14 | Pending |
-| DECK-03 | Phase 14 | Pending |
-| DECK-04 | Phase 14 | Pending |
-| VAL-09 | Phase 14 | Pending |
+| DECK-01 | Phase 14 | Complete |
+| DECK-02 | Phase 14 | Complete |
+| DECK-03 | Phase 14 | Complete |
+| DECK-04 | Phase 14 | Complete |
+| VAL-09 | Phase 14 | Complete |
 | CI-01 | Phase 15 | Pending |
 | CI-02 | Phase 15 | Pending |
 | CI-03 | Phase 15 | Pending |

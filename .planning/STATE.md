@@ -4,8 +4,8 @@ milestone: v2.1
 milestone_name: — Flatpak Packaging
 status: executing
 stopped_at: Phase 14 context gathered
-last_updated: "2026-05-09T20:18:50.836Z"
-last_activity: 2026-05-09 -- Phase 14 planning complete
+last_updated: "2026-05-09T22:30:00.000Z"
+last_activity: 2026-05-09 -- Phase 14 execution complete
 progress:
   total_phases: 11
   completed_phases: 8
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 13 complete — ready for Phase 14
+**Current focus:** Phase 14 complete — validation checklist and report template created
 
 ## Current Position
 
 Phase: 14 — Steam Deck On-Device Validation
-Plan: Not yet planned
-Status: Ready to execute
-Last activity: 2026-05-09 -- Phase 14 planning complete
+Plan: 14-01 — Complete ✓
+Status: Complete
+Last activity: 2026-05-09 -- Phase 14 execution complete
 
 ## Progress
 
@@ -46,11 +46,11 @@ Last activity: 2026-05-09 -- Phase 14 planning complete
 | 11. Bundle Pipeline Restructure | Complete |
 | 12. Manifest + AppStream + Local Build | Complete |
 | 13. Sandbox Permissions for BLE + Gamepad | Complete |
-| 14. Steam Deck On-Device Validation | Not started |
+| 14. Steam Deck On-Device Validation | Complete ✓ |
 | 15. CI Migration (Parallel-Run) | Not started |
 | 16. AppImage Decommission + Upgrade Workflow Docs | Not started |
 
-Plans: 15/15 complete (12 v2.0 + 3 v2.1).
+Plans: 16/19 complete (12 v2.0 + 3 v2.1 + 1/1 Phase 14 + 0/0 Phase 15 + 0/0 Phase 16).
 
 ## Decisions Made
 

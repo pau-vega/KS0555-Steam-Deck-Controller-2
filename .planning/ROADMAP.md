@@ -21,7 +21,7 @@ This roadmap is append-only across milestones. v2.0 phases (6–10) are complete
 - [x] **Phase 11: Bundle Pipeline Restructure** - Switch tauri.conf.json bundle.targets from appimage to deb; drop custom tauri-cli fork; pick Flatpak runtime
 - [ ] **Phase 12: Manifest + AppStream + Local Build** - Author Flatpak manifest, AppStream metainfo, build.sh; first local `flatpak run` opens the window
 - [ ] **Phase 13: Sandbox Permissions for BLE + Gamepad** - finish-args for org.bluez D-Bus, evdev /dev/input, WebKit env vars; gate lib.rs D-Bus rewrite on !in_flatpak
-- [ ] **Phase 14: Steam Deck On-Device Validation** - Sideload .flatpak on real Deck; verify BLE+gamepad in Desktop and Gaming Mode; "Add as Non-Steam Game" workflow tested
+- [x] **Phase 14: Steam Deck On-Device Validation** - Sideload .flatpak on real Deck; verify BLE+gamepad in Desktop and Gaming Mode; "Add as Non-Steam Game" workflow tested
 - [ ] **Phase 15: CI Migration (Parallel-Run)** - Add build-flatpak-x64 GitHub Actions job using flathub-infra container with OSTree cache; drop arm64; keep AppImage for one transition release
 - [ ] **Phase 16: AppImage Decommission + Upgrade Workflow Docs** - Remove AppImage CI job; document manual upgrade workflow (`flatpak install --user --reinstall`); optional GitHub Releases polling launcher
 
@@ -175,6 +175,19 @@ Plans:
 **Depends on**: Phase 13
 **Requirements**: DECK-01, DECK-02, DECK-03, DECK-04, VAL-09
 **Success Criteria** (what must be TRUE):
+   1. On a real Steam Deck, `flatpak install --user RobotController-x86_64.flatpak` succeeds; the Flathub remote auto-fetches the missing runtime decided in PKG-04
+   2. Launching `flatpak run com.ks0555.robotcontroller` from Steam Desktop Mode opens the app window, scans and connects to the BT24 robot, and the Steam Deck built-in gamepad drives the robot (F/B/L/R/S commands reach the Arduino)
+   3. "Add a Non-Steam Game" picker in Steam Desktop Mode finds `com.ks0555.robotcontroller.desktop` exported by Flatpak under `~/.local/share/flatpak/exports/share/applications/`; the resulting Steam shortcut launches via `/usr/bin/flatpak run com.ks0555.robotcontroller`
+   4. Switching to Steam Gaming Mode and launching the shortcut renders the app without black/white screen (Gamescope + WebKitGTK), the gamepad still drives the BT24 robot, and a Steam Input controller template (if needed) is documented
+   5. End-to-end test artifacts captured (journalctl + RUST_LOG=debug log snippets) showing successful BLE connect, gamepad-direction events, and ble_send writes during a Gaming Mode session
+**Plans**: 1 plan
+
+Plans:
+- [x] 14-01-PLAN.md — Validation checklist, report template, and README update (DECK-01, DECK-02, DECK-03, DECK-04, VAL-09)
+**Goal**: The single-file `.flatpak` installs and runs on a real Steam Deck in both Desktop Mode and Gaming Mode, with BLE + gamepad working end-to-end
+**Depends on**: Phase 13
+**Requirements**: DECK-01, DECK-02, DECK-03, DECK-04, VAL-09
+**Success Criteria** (what must be TRUE):
   1. On a real Steam Deck, `flatpak install --user RobotController-x86_64.flatpak` succeeds; the Flathub remote auto-fetches the missing runtime decided in PKG-04
   2. Launching `flatpak run com.ks0555.robotcontroller` from Steam Desktop Mode opens the app window, scans and connects to the BT24 robot, and the Steam Deck built-in gamepad drives the robot (F/B/L/R/S commands reach the Arduino)
   3. "Add a Non-Steam Game" picker in Steam Desktop Mode finds `com.ks0555.robotcontroller.desktop` exported by Flatpak under `~/.local/share/flatpak/exports/share/applications/`; the resulting Steam shortcut launches via `/usr/bin/flatpak run com.ks0555.robotcontroller`
@@ -224,7 +237,7 @@ Plans:
 | 11. Bundle Pipeline Restructure | 3/3 | Complete | 2026-05-09 |
 | 12. Manifest + AppStream + Local Build | 2/2 | Complete | 2026-05-09 |
 | 13. Sandbox Permissions for BLE + Gamepad | 1/1 | Complete | 2026-05-09 |
-| 14. Steam Deck On-Device Validation | 0/1 | Planned    |  |
+| 14. Steam Deck On-Device Validation | 1/1 | Complete ✓ | 2026-05-09 |  |
 | 15. CI Migration (Parallel-Run) | 0/0 | Not started | - |
 | 16. AppImage Decommission + Upgrade Workflow Docs | 0/0 | Not started | - |
 
