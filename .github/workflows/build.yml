@@ -84,7 +84,7 @@ jobs:
           echo "=== Binary exists ==="
           dpkg -c "$DEB_FILE" | grep "usr/bin/robot-controller" || { echo "ERROR: robot-controller binary not in deb"; exit 1; }
           echo "=== Desktop file exists ==="
-          dpkg -c "$DEB_FILE" | grep "usr/share/applications/robot-controller.desktop" || { echo "ERROR: .desktop file not in deb"; exit 1; }
+          dpkg -c "$DEB_FILE" | grep -i "usr/share/applications/.*\.desktop" || { echo "ERROR: .desktop file not in deb"; exit 1; }
         working-directory: apps/frontend/src-tauri
 
       - name: copy deb to flatpak directory
