@@ -24,6 +24,9 @@ This roadmap is append-only across milestones. v2.0 phases (6–10) are complete
 - [x] **Phase 14: Steam Deck On-Device Validation** - Sideload .flatpak on real Deck; verify BLE+gamepad in Desktop and Gaming Mode; "Add as Non-Steam Game" workflow tested
 - [x] **Phase 15: CI Migration (Parallel-Run)** - Add build-flatpak-x64 GitHub Actions job using flathub-infra container with OSTree cache; drop arm64; keep AppImage for one transition release
 - [x] **Phase 16: AppImage Decommission + Upgrade Workflow Docs** - Remove AppImage CI job; document manual upgrade workflow (`flatpak install --user --reinstall`); optional GitHub Releases polling launcher
+- [ ] **Phase 17: Close Verification Gaps** - VERIFICATION.md for Phases 13, 15, 16 to ensure all success criteria are independently verifiable
+- [ ] **Phase 18: Fix Stale Docs** - Fix stale documentation: STEAM_DECK.md and ARCHITECTURE.md are out of date
+- [ ] **Phase 19: Execute Deb Build + Flatpak Runner** - Execute PKG-03 deb build and VAL-05 flatpak-builder on CI runner
 
 ---
 
@@ -114,7 +117,7 @@ Plans:
 ## Milestone v2.1 — Flatpak Packaging
 
 **Goal:** Replace AppImage distribution with a sideloaded Flatpak bundle for Steam Deck. BLE + gamepad must work inside the Flatpak sandbox; "Add as Non-Steam Game" must launch in Gaming Mode without regression.
-**Granularity:** Coarse (6 phases)
+**Granularity:** Coarse (8 phases)
 **Dependencies:** v2.0 phases 6–10 complete (Tauri shell + BLE + gamepad shipped)
 **Notable contradictions resolved:**
 - "Auto-update workflow" (PROJECT.md Active) is reframed as **manual upgrade workflow** (`flatpak install --user --reinstall`) plus **optional** GitHub Releases polling launcher script. True `flatpak update` requires a self-hosted OSTree repo, which is explicitly Out of Scope. DECK-05 + DOCS-01 carry this resolution.
@@ -232,6 +235,46 @@ Plans:
 - [x] 16-02-PLAN.md — Documentation: README rewrite (Flatpak install), ARCHITECTURE.md (full system), flatpak/README.md update (sandbox rationale)
 - [x] 16-03-PLAN.md — Launcher + justfile: upgrade-robot-controller.sh polling script, `[group('flatpak')]` recipes
 
+### Phase 17: Close Verification Gaps
+**Goal**: Create VERIFICATION.md documents for Phases 13, 15, 16 to ensure all success criteria are independently verifiable with concrete evidence
+**Depends on**: Phase 13, Phase 15, Phase 16
+**Success Criteria** (what must be TRUE):
+  1. Each specified phase (13, 15, 16) has a VERIFICATION.md in its phase directory listing every success criterion and how to verify it
+  2. Verification methods are concrete (specific commands, log patterns, file checks) not hand-wavy
+  3. For Phase 13: D-Bus proxy connectivity, gamepad /dev/input listing, anti-feature checklist all captured
+  4. For Phase 15: CI job output, OSTree cache behavior, release artifact presence documented
+  5. For Phase 16: AppImage cleanup, README accuracy, justfile recipes, upgrade script all independently verifiable
+**Plans**: 1 plan
+
+Plans:
+- [ ] 17-01-PLAN.md — Create VERIFICATION.md documents for Phases 13, 15, 16
+
+### Phase 18: Fix Stale Docs
+**Goal**: Update STEAM_DECK.md and ARCHITECTURE.md to reflect the current state of the project after v2.1 completion
+**Depends on**: Phase 16
+**Success Criteria** (what must be TRUE):
+  1. STEAM_DECK.md references Flatpak install procedure (not AppImage) and reflects current build workflow
+  2. ARCHITECTURE.md accurately describes the final CI pipeline (single Flatpak job), D-Bus gate, and sandbox model
+  3. No stale references to AppImage, custom tauri-cli fork, or removed build-steamdeck.sh
+  4. Both documents reviewed for accuracy against the live codebase
+**Plans**: 0 plans
+
+Plans:
+- [ ] Phase planning needed
+
+### Phase 19: Execute Deb Build + Flatpak Runner
+**Goal**: Execute PKG-03 deb build and VAL-05 flatpak-builder on a CI runner to validate the build pipeline produces working artifacts end-to-end
+**Depends on**: Phase 16
+**Success Criteria** (what must be TRUE):
+   1. CI runner produces a `.deb` artifact from `cargo tauri build --bundles deb` successfully
+   2. CI runner produces a `.flatpak` artifact from `flatpak-builder` using the existing manifest
+   3. Both artifacts are uploaded as CI job artifacts for download
+   4. Build completes within a bounded time budget on the CI runner
+**Plans**: 0 plans
+
+Plans:
+- [ ] Phase planning needed
+
 ---
 
 ## Progress
@@ -249,6 +292,9 @@ Plans:
 | 14. Steam Deck On-Device Validation | 1/1 | Complete ✓ | 2026-05-09 |  |
 | 15. CI Migration (Parallel-Run) | 2/2 | Complete | 2026-05-10 |
 | 16. AppImage Decommission + Upgrade Workflow Docs | 3/3 | Complete | 2026-05-10 |
+| 17. Close Verification Gaps | 0/1 | Planning | |
+| 18. Fix Stale Docs | 0/0 | Not started | |
+| 19. Execute Deb Build + Flatpak Runner | 0/0 | Not started | |
 
 ---
 
