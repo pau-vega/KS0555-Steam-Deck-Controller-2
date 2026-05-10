@@ -25,7 +25,7 @@ This roadmap is append-only across milestones. v2.0 phases (6–10) are complete
 - [x] **Phase 15: CI Migration (Parallel-Run)** - Add build-flatpak-x64 GitHub Actions job using flathub-infra container with OSTree cache; drop arm64; keep AppImage for one transition release
 - [x] **Phase 16: AppImage Decommission + Upgrade Workflow Docs** - Remove AppImage CI job; document manual upgrade workflow (`flatpak install --user --reinstall`); optional GitHub Releases polling launcher
 - [x] **Phase 17: Close Verification Gaps** - VERIFICATION.md for Phases 13, 15, 16 to ensure all success criteria are independently verifiable
-- [ ] **Phase 18: Fix Stale Docs** - Fix stale documentation: STEAM_DECK.md and ARCHITECTURE.md are out of date
+- [x] **Phase 18: Fix Stale Docs** - Fix stale documentation: STEAM_DECK.md and ARCHITECTURE.md are out of date
 - [ ] **Phase 19: Execute Deb Build + Flatpak Runner** - Execute PKG-03 deb build and VAL-05 flatpak-builder on CI runner
 
 ---
@@ -275,6 +275,20 @@ Plans:
 Plans:
 - [ ] Phase planning needed
 
+### Phase 18: Fix Stale Docs
+**Goal**: Fix stale documentation: STEAM_DECK.md and ARCHITECTURE.md are out of date
+**Depends on**: Phase 16
+**Success Criteria** (what must be TRUE):
+   1. STEAM_DECK.md has zero AppImage/stale-script references
+   2. STEAM_DECK.md describes Flatpak install + build workflow
+   3. docs/ARCHITECTURE.md has zero AppImage/stale-script references
+   4. docs/ARCHITECTURE.md describes Flatpak sandbox model, D-Bus gate, CI pipeline
+   5. Both documents reviewed for accuracy against live codebase
+**Plans**: 1 plan
+
+Plans:
+- [x] 18-01-PLAN.md — Rewrite STEAM_DECK.md and ARCHITECTURE.md for Flatpak era
+
 ---
 
 ## Progress
@@ -293,7 +307,7 @@ Plans:
 | 15. CI Migration (Parallel-Run) | 2/2 | Complete | 2026-05-10 |
 | 16. AppImage Decommission + Upgrade Workflow Docs | 3/3 | Complete | 2026-05-10 |
 | 17. Close Verification Gaps | 1/1 | Complete | 2026-05-10 | |
-| 18. Fix Stale Docs | 0/0 | Not started | |
+| 18. Fix Stale Docs | 1/1 | Complete | 2026-05-10 | |
 | 19. Execute Deb Build + Flatpak Runner | 0/0 | Not started | |
 
 ---

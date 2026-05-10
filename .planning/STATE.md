@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: — Flatpak Packaging
 status: active
-stopped_at: Phase 17 complete; ready for Phase 18
-last_updated: "2026-05-10T12:10:00.000Z"
-last_activity: 2026-05-10 -- Phase 17 complete: VERIFICATION.md created for Phases 13, 15, 16
+stopped_at: Phase 18 complete; ready for Phase 19
+last_updated: "2026-05-10T14:15:00.000Z"
+last_activity: 2026-05-10 -- Phase 18 complete: STEAM_DECK.md + ARCHITECTURE.md rewritten for Flatpak
 progress:
   total_phases: 14
-  completed_phases: 11
-  total_plans: 25
-  completed_plans: 25
-  percent: 86
+  completed_phases: 12
+  total_plans: 26
+  completed_plans: 26
+  percent: 92
 ---
 
 # STATE.md
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 18 — Fix Stale Docs (STEAM_DECK.md + ARCHITECTURE.md)
+**Current focus:** Phase 19 — Execute Deb Build + Flatpak Runner
 
 ## Current Position
 
-Phase: 18 — Fix Stale Docs
-Plan: 01 — Rewrite STEAM_DECK.md + docs/ARCHITECTURE.md for Flatpak era
-Status: Planned
-Last activity: 2026-05-10 -- Phase 18 planned (1 plan, 2 tasks)
+Phase: 19 — Execute Deb Build + Flatpak Runner
+Plan: None — Not yet planned
+Status: Not started
+Last activity: 2026-05-10 -- Phase 18 complete: STEAM_DECK.md + ARCHITECTURE.md rewritten for Flatpak era
 
 ## Progress
 
@@ -50,10 +50,10 @@ Last activity: 2026-05-10 -- Phase 18 planned (1 plan, 2 tasks)
 | 15. CI Migration (Parallel-Run) | Complete ✓ |
 | 16. AppImage Decommission + Upgrade Workflow Docs | Complete ✓ |
 | 17. Close Verification Gaps | Complete |
-| 18. Fix Stale Docs | Not started |
+| 18. Fix Stale Docs | Complete ✓ |
 | 19. Execute Deb Build + Flatpak Runner | Not started |
 
-Plans: 24/24 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16). Phases 17, 18, 19: not planned yet.
+Plans: 26/26 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16 + 1/1 Phase 18). Phase 19: not planned yet.
 
 ## Decisions Made
 
