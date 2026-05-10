@@ -91,9 +91,9 @@ Sideload-only Flatpak distribution for Steam Deck. Replaces AppImage. BLE + game
 
 ### Documentation (DOCS)
 
-- [ ] **DOCS-01**: Update root README install section: `flatpak install --user` walkthrough for Steam Deck, "Add as Non-Steam Game" steps, screenshots-or-text walkthrough for Gaming Mode launch
-- [ ] **DOCS-02**: Update `apps/frontend/src-tauri/README.md` (or root) to document the deb-extract Flatpak architecture and the `lib.rs` `!in_flatpak` D-Bus gate
-- [ ] **DOCS-03**: `flatpak/README.md` contributor guide covers local build, install, and run loop; reproduces sandbox finish-args rationale
+- [x] **DOCS-01**: Update root README install section: `flatpak install --user` walkthrough for Steam Deck, "Add as Non-Steam Game" steps, screenshots-or-text walkthrough for Gaming Mode launch
+- [x] **DOCS-02**: Update `apps/frontend/src-tauri/README.md` (or root) to document the deb-extract Flatpak architecture and the `lib.rs` `!in_flatpak` D-Bus gate
+- [x] **DOCS-03**: `flatpak/README.md` contributor guide covers local build, install, and run loop; reproduces sandbox finish-args rationale
 - [ ] **DOCS-04**: `justfile` adds recipes: `flatpak-build`, `flatpak-install`, `flatpak-run`, `flatpak-deploy` (scp + ssh install on Deck) — optional but useful
 
 ### Validation (VAL)
@@ -186,10 +186,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CI-03 | Phase 15 | Pending |
 | CI-04 | Phase 15 | Pending |
 | CI-05 | Phase 16 | Complete |
-| DECK-05 | Phase 16 | Pending |
-| DOCS-01 | Phase 16 | Pending |
-| DOCS-02 | Phase 16 | Pending |
-| DOCS-03 | Phase 16 | Pending |
+| DECK-05 | Phase 16 | Complete |
+| DOCS-01 | Phase 16 | Complete |
+| DOCS-02 | Phase 16 | Complete |
+| DOCS-03 | Phase 16 | Complete |
 | DOCS-04 | Phase 16 | Pending |
 | VAL-08 | Phase 16 | Complete |
 
