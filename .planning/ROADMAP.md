@@ -225,7 +225,12 @@ Plans:
   3. Documentation accurately describes the upgrade path: `flatpak install --user --reinstall RobotController-x86_64.flatpak` (sideload bundles cannot use `flatpak update`); an optional GitHub Releases polling launcher script is provided or explicitly marked deferred
   4. `apps/frontend/src-tauri/README.md` (or root) documents the deb-extract Flatpak architecture and the `lib.rs` `!in_flatpak` D-Bus gate; `flatpak/README.md` contributor guide reproduces the sandbox finish-args rationale; `justfile` adds `flatpak-build`, `flatpak-install`, `flatpak-run`, `flatpak-deploy` recipes (DOCS-04 optional but useful)
   5. Final CI run on `main` confirms `app.tsx`, `control-pad.tsx`, `status-bar.tsx` unchanged across the entire v2.1 milestone (`git diff --exit-code` lock check holds end-to-end — VAL-08 satisfied)
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 16-01-PLAN.md — CI Consolidation: merge build-x64 into build-flatpak-x64, single `build` job, delete install-on-steamdeck.sh
+- [ ] 16-02-PLAN.md — Documentation: README rewrite (Flatpak install), ARCHITECTURE.md (full system), flatpak/README.md update (sandbox rationale)
+- [ ] 16-03-PLAN.md — Launcher + justfile: upgrade-robot-controller.sh polling script, `[group('flatpak')]` recipes
 
 ---
 
@@ -243,7 +248,7 @@ Plans:
 | 13. Sandbox Permissions for BLE + Gamepad | 1/1 | Complete | 2026-05-09 |
 | 14. Steam Deck On-Device Validation | 1/1 | Complete ✓ | 2026-05-09 |  |
 | 15. CI Migration (Parallel-Run) | 2/2 | Complete | 2026-05-10 |
-| 16. AppImage Decommission + Upgrade Workflow Docs | 0/0 | Not started | - |
+| 16. AppImage Decommission + Upgrade Workflow Docs | 0/3 | Planned | - |
 
 ---
 
