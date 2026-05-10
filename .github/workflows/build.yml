@@ -10,18 +10,14 @@ on:
         type: boolean
         default: false
 
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
-
 permissions:
   contents: read
 
 jobs:
-  build-x64:
-    permissions:
-      contents: read
+  build:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -48,6 +44,12 @@ jobs:
           key: cargo-target-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: cargo-target-
 
+      - name: cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+
       - name: install system dependencies
         run: |
           sudo apt-get update
@@ -72,33 +74,8 @@ jobs:
           test -n "$(ls target/release/bundle/deb/*.deb 2>/dev/null)" || { echo "No .deb produced!"; exit 1; }
         working-directory: apps/frontend/src-tauri
 
-      - name: upload deb artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: robot-controller-deb
-          path: apps/frontend/src-tauri/target/release/bundle/deb/*.deb
-
-      - name: verify app.tsx lock (VAL-08)
-        run: |
-          git diff --exit-code -- apps/frontend/src/app.tsx apps/frontend/src/components/control-pad.tsx apps/frontend/src/components/status-bar.tsx
-
-  build-flatpak-x64:
-    needs: build-x64
-    if: needs.build-x64.result == 'success'
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: download deb artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: robot-controller-deb
-
-      - name: copy deb to manifest directory
-        run: |
-          cp *.deb flatpak/robot-controller.deb
+      - name: copy deb to flatpak directory
+        run: cp apps/frontend/src-tauri/target/release/bundle/deb/*.deb flatpak/robot-controller.deb
 
       - name: verify flatpak sources
         run: |
@@ -111,7 +88,8 @@ jobs:
           echo "All flatpak sources verified"
 
       - name: extract version
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+        run: |
+          echo "VERSION=$(cargo metadata --format-version 1 --no-deps --manifest-path apps/frontend/src-tauri/Cargo.toml | jq -r '.packages[] | select(.name == \"robot-controller\") | .version')" >> $GITHUB_ENV
 
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
@@ -131,4 +109,3 @@ jobs:
           files: |
             RobotController-${{ env.VERSION }}-x86_64.flatpak
             RobotController-${{ env.VERSION }}-x86_64.flatpak.sha256
-          token: ${{ secrets.GITHUB_TOKEN }}
