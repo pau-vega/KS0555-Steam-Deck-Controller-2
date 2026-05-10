@@ -102,7 +102,8 @@ jobs:
 
       - name: extract version
         run: |
-          echo "VERSION=$(cargo metadata --format-version 1 --no-deps --manifest-path apps/frontend/src-tauri/Cargo.toml | jq -r '.packages[] | select(.name == \"robot-controller\") | .version')" >> $GITHUB_ENV
+          VERSION=$(grep '^version' apps/frontend/src-tauri/Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/')
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: upload deb artifact
         uses: actions/upload-artifact@v4
@@ -113,6 +114,12 @@ jobs:
 
       - name: configure flathub remote
         run: sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: install flatpak runtime
+        run: |
+          sudo flatpak install --system -y --noninteractive flathub \
+            org.freedesktop.Platform//24.08 \
+            org.freedesktop.Sdk//24.08
 
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
