@@ -76,7 +76,7 @@ jobs:
 
       - name: validate deb contents
         run: |
-          DEB_FILE=$(ls target/release/bundle/deb/robot-controller_*.deb 2>/dev/null | head -1)
+          DEB_FILE=$(ls target/release/bundle/deb/*.deb 2>/dev/null | head -1)
           echo "=== dpkg -c on $DEB_FILE ==="
           dpkg -c "$DEB_FILE"
           echo "=== Package info ==="
