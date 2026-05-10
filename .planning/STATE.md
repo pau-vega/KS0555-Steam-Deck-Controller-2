@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: — Flatpak Packaging
-status: in_progress
-stopped_at: Phase 16 plan 3 complete
-last_updated: "2026-05-10T08:43:51.000Z"
-last_activity: 2026-05-10 -- Phase 16 plan 1 complete
+status: completed
+stopped_at: Phase 16 complete — v2.1 milestone done
+last_updated: "2026-05-10T10:50:00.000Z"
+last_activity: 2026-05-10 -- Phase 16 complete, v2.1 milestone finished
 progress:
   total_phases: 11
   completed_phases: 10

@@ -19,8 +19,8 @@ This roadmap is append-only across milestones. v2.0 phases (6–10) are complete
 - [x] **Phase 9: Hook Rewrites** - Rewrite use-bluetooth.ts and use-gamepad.ts to use Tauri IPC with stable interfaces (completed 2026-05-06)
 - [x] **Phase 10: Build and Test on SteamOS** - Validate full stack on target platform with production AppImage (completed 2026-05-06)
 - [x] **Phase 11: Bundle Pipeline Restructure** - Switch tauri.conf.json bundle.targets from appimage to deb; drop custom tauri-cli fork; pick Flatpak runtime
-- [ ] **Phase 12: Manifest + AppStream + Local Build** - Author Flatpak manifest, AppStream metainfo, build.sh; first local `flatpak run` opens the window
-- [ ] **Phase 13: Sandbox Permissions for BLE + Gamepad** - finish-args for org.bluez D-Bus, evdev /dev/input, WebKit env vars; gate lib.rs D-Bus rewrite on !in_flatpak
+- [x] **Phase 12: Manifest + AppStream + Local Build** - Author Flatpak manifest, AppStream metainfo, build.sh; first local `flatpak run` opens the window
+- [x] **Phase 13: Sandbox Permissions for BLE + Gamepad** - finish-args for org.bluez D-Bus, evdev /dev/input, WebKit env vars; gate lib.rs D-Bus rewrite on !in_flatpak
 - [x] **Phase 14: Steam Deck On-Device Validation** - Sideload .flatpak on real Deck; verify BLE+gamepad in Desktop and Gaming Mode; "Add as Non-Steam Game" workflow tested
 - [x] **Phase 15: CI Migration (Parallel-Run)** - Add build-flatpak-x64 GitHub Actions job using flathub-infra container with OSTree cache; drop arm64; keep AppImage for one transition release
 - [x] **Phase 16: AppImage Decommission + Upgrade Workflow Docs** - Remove AppImage CI job; document manual upgrade workflow (`flatpak install --user --reinstall`); optional GitHub Releases polling launcher
