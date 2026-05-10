@@ -119,3 +119,16 @@ jobs:
           manifest-path: flatpak/com.ks0555.robotcontroller.yaml
           cache-key: flatpak-${{ runner.os }}-${{ hashFiles('flatpak/com.ks0555.robotcontroller.yaml') }}-freedesktop-2408
           cache: true
+
+      - name: generate sha256 checksum
+        run: |
+          sha256sum RobotController-${VERSION}-x86_64.flatpak > RobotController-${VERSION}-x86_64.flatpak.sha256
+
+      - name: upload to release
+        if: startsWith(github.ref, 'refs/tags/') && inputs.skip_release != true
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            RobotController-${{ env.VERSION }}-x86_64.flatpak
+            RobotController-${{ env.VERSION }}-x86_64.flatpak.sha256
+          token: ${{ secrets.GITHUB_TOKEN }}
