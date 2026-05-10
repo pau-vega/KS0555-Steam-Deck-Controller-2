@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: — Flatpak Packaging
-status: completed
-stopped_at: Phase 16 context gathered
-last_updated: "2026-05-10T08:05:45.657Z"
-last_activity: 2026-05-10 -- Phase 15 complete
+status: in_progress
+stopped_at: Phase 16 plan 3 complete
+last_updated: "2026-05-10T08:40:43.000Z"
+last_activity: 2026-05-10 -- Phase 16 plan 3 complete
 progress:
   total_phases: 11
   completed_phases: 10
-  total_plans: 21
-  completed_plans: 21
+  total_plans: 24
+  completed_plans: 24
   percent: 100
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 15 complete — CI parallel-run (build-x64 + build-flatpak-x64)
+**Current focus:** Phase 16 complete — all 3 plans executed (CI consolidation, README/docs, upgrade launcher + justfile recipes)
 
 ## Current Position
 
-Phase: 15 — CI Migration (Parallel-Run)
-Plan: 2/2 complete
+Phase: 16 — AppImage Decommission + Upgrade Workflow Docs
+Plan: 3/3 complete
 Status: Complete ✓
-Last activity: 2026-05-10 -- Phase 15 complete
+Last activity: 2026-05-10 -- Phase 16 plan 3 complete
 
 ## Progress
 
@@ -48,9 +48,9 @@ Last activity: 2026-05-10 -- Phase 15 complete
 | 13. Sandbox Permissions for BLE + Gamepad | Complete |
 | 14. Steam Deck On-Device Validation | Complete ✓ |
 | 15. CI Migration (Parallel-Run) | Complete ✓ |
-| 16. AppImage Decommission + Upgrade Workflow Docs | Not started |
+| 16. AppImage Decommission + Upgrade Workflow Docs | Complete ✓ |
 
-Plans: 21/21 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 0/0 Phase 16).
+Plans: 24/24 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16).
 
 ## Decisions Made
 
@@ -64,6 +64,10 @@ Plans: 21/21 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 0/0 Phase 16).
 - **D-02 (Phase 13):** Entire D-Bus rewrite block gated behind !in_flatpak()
 - **D-03 (Phase 13):** WEBKIT_DISABLE_COMPOSITING_MODE set_var remains unconditional
 - **D-05 (Phase 13):** Anti-feature checklist placed as comment block at top of manifest
+- **D-16 (Phase 16 / Plan 03):** `upgrade-robot-controller.sh` at repo root, zero dependencies beyond `curl` + `jq`
+- **D-17 (Phase 16 / Plan 03):** Dual-purpose script: fresh install if Flatpak not installed, upgrade check if installed
+- **D-24 (Phase 16 / Plan 03):** `flatpak-build` justfile recipe runs `flatpak-builder` directly, does NOT wrap `flatpak/build.sh`
+- **D-27 (Phase 16 / Plan 03):** `flatpak-deploy` uses `scp` for transfer only, no remote install
 
 ## Accumulated Context
 
@@ -93,7 +97,7 @@ Plans: 21/21 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 0/0 Phase 16).
 
 ## Session Continuity
 
-Last session: 2026-05-10T08:05:45.653Z
-Stopped at: Phase 16 context gathered
-Resume file: .planning/phases/16-appimage-decommission-upgrade-workflow-docs/16-CONTEXT.md
-Next action: `/gsd-plan-phase 15` to plan CI Migration (Parallel-Run)
+Last session: 2026-05-10T08:40:43.000Z
+Stopped at: Phase 16 plan 3 complete — all phase plans executed
+Resume file: None
+Next action: Phase 16 complete — ready for milestone completion review

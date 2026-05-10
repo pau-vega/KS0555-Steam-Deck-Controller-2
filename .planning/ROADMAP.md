@@ -22,8 +22,8 @@ This roadmap is append-only across milestones. v2.0 phases (6–10) are complete
 - [ ] **Phase 12: Manifest + AppStream + Local Build** - Author Flatpak manifest, AppStream metainfo, build.sh; first local `flatpak run` opens the window
 - [ ] **Phase 13: Sandbox Permissions for BLE + Gamepad** - finish-args for org.bluez D-Bus, evdev /dev/input, WebKit env vars; gate lib.rs D-Bus rewrite on !in_flatpak
 - [x] **Phase 14: Steam Deck On-Device Validation** - Sideload .flatpak on real Deck; verify BLE+gamepad in Desktop and Gaming Mode; "Add as Non-Steam Game" workflow tested
-- [ ] **Phase 15: CI Migration (Parallel-Run)** - Add build-flatpak-x64 GitHub Actions job using flathub-infra container with OSTree cache; drop arm64; keep AppImage for one transition release
-- [ ] **Phase 16: AppImage Decommission + Upgrade Workflow Docs** - Remove AppImage CI job; document manual upgrade workflow (`flatpak install --user --reinstall`); optional GitHub Releases polling launcher
+- [x] **Phase 15: CI Migration (Parallel-Run)** - Add build-flatpak-x64 GitHub Actions job using flathub-infra container with OSTree cache; drop arm64; keep AppImage for one transition release
+- [x] **Phase 16: AppImage Decommission + Upgrade Workflow Docs** - Remove AppImage CI job; document manual upgrade workflow (`flatpak install --user --reinstall`); optional GitHub Releases polling launcher
 
 ---
 
@@ -215,7 +215,7 @@ Plans:
 - [x] 15-01-PLAN.md — build-x64 artifact upload, caching, concurrency, VAL-08 lock check, CI-03 confirmation
 - [x] 15-02-PLAN.md — build-flatpak-x64 job (flatpak-builder, OSTree cache, SHA256, release upload)
 
-### Phase 16: AppImage Decommission + Upgrade Workflow Docs
+### Phase 16: AppImage Decommission + Upgrade Workflow Docs (Complete ✓)
 **Goal**: AppImage CI artifact is removed; the manual upgrade workflow is documented honestly; root README walks Steam Deck users through install + Gaming Mode launch
 **Depends on**: Phase 15 (one transition release shipped with both artifacts)
 **Requirements**: CI-05, DECK-05, DOCS-01, DOCS-02, DOCS-03, DOCS-04, VAL-08
@@ -228,9 +228,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 16-01-PLAN.md — CI Consolidation: merge build-x64 into build-flatpak-x64, single `build` job, delete install-on-steamdeck.sh
-- [ ] 16-02-PLAN.md — Documentation: README rewrite (Flatpak install), ARCHITECTURE.md (full system), flatpak/README.md update (sandbox rationale)
-- [ ] 16-03-PLAN.md — Launcher + justfile: upgrade-robot-controller.sh polling script, `[group('flatpak')]` recipes
+- [x] 16-01-PLAN.md — CI Consolidation: merge build-x64 into build-flatpak-x64, single `build` job, delete install-on-steamdeck.sh
+- [x] 16-02-PLAN.md — Documentation: README rewrite (Flatpak install), ARCHITECTURE.md (full system), flatpak/README.md update (sandbox rationale)
+- [x] 16-03-PLAN.md — Launcher + justfile: upgrade-robot-controller.sh polling script, `[group('flatpak')]` recipes
 
 ---
 
@@ -248,7 +248,7 @@ Plans:
 | 13. Sandbox Permissions for BLE + Gamepad | 1/1 | Complete | 2026-05-09 |
 | 14. Steam Deck On-Device Validation | 1/1 | Complete ✓ | 2026-05-09 |  |
 | 15. CI Migration (Parallel-Run) | 2/2 | Complete | 2026-05-10 |
-| 16. AppImage Decommission + Upgrade Workflow Docs | 0/3 | Planned | - |
+| 16. AppImage Decommission + Upgrade Workflow Docs | 3/3 | Complete | 2026-05-10 |
 
 ---
 
