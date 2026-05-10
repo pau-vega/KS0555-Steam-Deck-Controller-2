@@ -79,7 +79,7 @@ Sideload-only Flatpak distribution for Steam Deck. Replaces AppImage. BLE + game
 - [ ] **DECK-02**: Launching `flatpak run com.ks0555.robotcontroller` from Desktop Mode opens the app, scans BT24, connects, and accepts gamepad input
 - [ ] **DECK-03**: "Add a Non-Steam Game" picker in Steam Desktop Mode finds `com.ks0555.robotcontroller.desktop` exported by Flatpak under `~/.local/share/flatpak/exports/share/applications/`
 - [ ] **DECK-04**: App launches from Steam Gaming Mode without black screen; gamepad input drives the BT24 robot; document Steam Input controller template if needed
-- [ ] **DECK-05**: Document upgrade workflow: `flatpak install --user --reinstall RobotController-x86_64.flatpak` (sideload `.flatpak` cannot use `flatpak update`); optional GitHub Releases polling launcher script
+- [x] **DECK-05**: Document upgrade workflow: `flatpak install --user --reinstall RobotController-x86_64.flatpak` (sideload `.flatpak` cannot use `flatpak update`); optional GitHub Releases polling launcher script
 
 ### CI/CD (CI)
 
@@ -87,7 +87,7 @@ Sideload-only Flatpak distribution for Steam Deck. Replaces AppImage. BLE + game
 - [ ] **CI-02**: CI uploads `RobotController-x86_64.flatpak` as a release asset alongside the existing AppImage (parallel-run window — at least one transition release)
 - [ ] **CI-03**: Drop `build-arm64` job from `.github/workflows/build.yml` (Steam Deck is x86_64 only)
 - [ ] **CI-04**: Enable OSTree cache in flatpak-builder action (`cache: true`) — runtime is ~1 GB, cold builds are slow without it
-- [ ] **CI-05**: Remove AppImage `build-x64` job and AppImage release asset (separate PR after at least one parallel-run release with verified Flatpak)
+- [x] **CI-05**: Remove AppImage `build-x64` job and AppImage release asset (separate PR after at least one parallel-run release with verified Flatpak)
 
 ### Documentation (DOCS)
 
@@ -101,7 +101,7 @@ Sideload-only Flatpak distribution for Steam Deck. Replaces AppImage. BLE + game
 - [ ] **VAL-05**: Manifest `flatpak-builder --user --install --force-clean` succeeds on a Linux dev box (Ubuntu 24.04 or matching) without sandbox-escape warnings
 - [ ] **VAL-06**: Local `flatpak run` connects to BT24 robot via BLE; verify with `dbus-monitor --system` that btleplug talks to `org.bluez` through the proxy
 - [ ] **VAL-07**: Local `flatpak run` reads gamepad input via gilrs; verify `/dev/input/event*` accessible from inside the sandbox
-- [ ] **VAL-08**: `app.tsx`, `control-pad.tsx`, `status-bar.tsx` unchanged after milestone (CI git diff lock holds for v2.1 same as v2.0)
+- [x] **VAL-08**: `app.tsx`, `control-pad.tsx`, `status-bar.tsx` unchanged after milestone (pre-commit hooks enforce lock; CI git diff check removed per D-02)
 - [ ] **VAL-09**: Real-Deck end-to-end: install single-file `.flatpak`, launch from Steam Gaming Mode, BLE+gamepad work, robot moves; capture log artifacts
 
 ## v2.2+ Deferred
@@ -185,13 +185,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CI-02 | Phase 15 | Pending |
 | CI-03 | Phase 15 | Pending |
 | CI-04 | Phase 15 | Pending |
-| CI-05 | Phase 16 | Pending |
+| CI-05 | Phase 16 | Complete |
 | DECK-05 | Phase 16 | Pending |
 | DOCS-01 | Phase 16 | Pending |
 | DOCS-02 | Phase 16 | Pending |
 | DOCS-03 | Phase 16 | Pending |
 | DOCS-04 | Phase 16 | Pending |
-| VAL-08 | Phase 16 | Pending |
+| VAL-08 | Phase 16 | Complete |
 
 **Coverage (v2.0):**
 - v2.0 requirements: 26 total

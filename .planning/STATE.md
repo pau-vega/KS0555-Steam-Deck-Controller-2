@@ -4,8 +4,8 @@ milestone: v2.1
 milestone_name: — Flatpak Packaging
 status: in_progress
 stopped_at: Phase 16 plan 3 complete
-last_updated: "2026-05-10T08:40:43.000Z"
-last_activity: 2026-05-10 -- Phase 16 plan 3 complete
+last_updated: "2026-05-10T08:43:51.000Z"
+last_activity: 2026-05-10 -- Phase 16 plan 1 complete
 progress:
   total_phases: 11
   completed_phases: 10
@@ -68,13 +68,25 @@ Plans: 24/24 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16).
 - **D-17 (Phase 16 / Plan 03):** Dual-purpose script: fresh install if Flatpak not installed, upgrade check if installed
 - **D-24 (Phase 16 / Plan 03):** `flatpak-build` justfile recipe runs `flatpak-builder` directly, does NOT wrap `flatpak/build.sh`
 - **D-27 (Phase 16 / Plan 03):** `flatpak-deploy` uses `scp` for transfer only, no remote install
+- **D-01 (Phase 16 / Plan 01):** Remove `build-x64` job, rename `build-flatpak-x64` to `build` (single self-contained job)
+- **D-02 (Phase 16 / Plan 01):** VAL-08 `git diff --exit-code` dropped from CI (pre-commit hooks enforce it)
+- **D-04 (Phase 16 / Plan 01):** Version from Cargo.toml via `cargo metadata` + `jq`, not `github.ref_name`
+- **D-05 (Phase 16 / Plan 01):** Remove `cancel-in-progress` from concurrency
+- **D-06 (Phase 16 / Plan 01):** Deb built and consumed inline, no upload/download artifact
+- **D-08 (Phase 16 / Plan 01):** Delete `install-on-steamdeck.sh`, remove all references from docs
+- **D-09 (Phase 16 / Plan 01):** Full cleanup of all AppImage references in codebase
+- **D-10 (Phase 16 / Plan 01):** Add `~/.pnpm-store` cache with `actions/cache@v4`
+- **D-11 (Phase 16 / Plan 01):** Job-level `contents: write` for release upload step only
+- **D-20 (Phase 16 / Plan 02):** ARCHITECTURE.md covers build chain, sandbox model, D-Bus gate, event pipeline, monorepo layout
+- **D-21 (Phase 16 / Plan 02):** flatpak/README.md updated with finish-args rationale, anti-feature checklist, D-Bus gate explanation
+- **D-22 (Phase 16 / Plan 02):** Root README install section rewritten for Flatpak, zero AppImage references
 
 ## Accumulated Context
 
 ### v2.0 Recap (Validated)
 
 - Phases 1-10 shipped: monorepo, backend (deprecated), React UI, TS hardening, ESLint TS conversion, Tauri shell, BLE via btleplug, gamepad via gilrs, hook rewrites, SteamOS build/test
-- AppImage CI build operational (`.github/workflows/build.yml`) — to be replaced by Flatpak in v2.1
+- CI now single Flatpak-only job — AppImage removed, install-on-steamdeck.sh deleted
 - 43+ tests passing, app.tsx untouched
 - Recent quick tasks: Tauri v2 best practices (lib.rs extraction), Steam Deck WEBKIT_DISABLE_COMPOSITING_MODE, Mac dev support, doc updates
 
@@ -84,8 +96,8 @@ Plans: 24/24 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16).
 - Phase 12: write `flatpak/` directory (manifest + metainfo + build.sh); first local `flatpak run` opens window
 - Phase 13: ✓ sandbox finish-args for BLE D-Bus + evdev gamepad; `lib.rs` `!in_flatpak` gate (complete)
 - Phase 14: real-Deck validation in Desktop + Gaming Mode
-- Phase 15: CI parallel-run (Flatpak + AppImage shipped together for one transition release)
-- Phase 16: AppImage decommission + upgrade workflow docs
+- Phase 15: ✓ CI parallel-run (Flatpak + AppImage shipped together for one transition release)
+- Phase 16: ✓ AppImage decommission + upgrade workflow docs (all plans complete)
 
 ### Critical Risks (from research/PITFALLS.md)
 
@@ -97,7 +109,7 @@ Plans: 24/24 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16).
 
 ## Session Continuity
 
-Last session: 2026-05-10T08:40:43.000Z
-Stopped at: Phase 16 plan 3 complete — all phase plans executed
+Last session: 2026-05-10T08:43:51.000Z
+Stopped at: Phase 16 plan 1 complete — CI decommission + docs cleanup done
 Resume file: None
 Next action: Phase 16 complete — ready for milestone completion review
