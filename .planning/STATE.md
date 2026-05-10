@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: — Flatpak Packaging
-status: completed
-stopped_at: Phase 16 complete — v2.1 milestone done
-last_updated: "2026-05-10T10:50:00.000Z"
-last_activity: 2026-05-10 -- Phase 16 complete, v2.1 milestone finished
+status: active
+stopped_at: Phase 17 complete; ready for Phase 18
+last_updated: "2026-05-10T12:10:00.000Z"
+last_activity: 2026-05-10 -- Phase 17 complete: VERIFICATION.md created for Phases 13, 15, 16
 progress:
-  total_phases: 11
-  completed_phases: 10
-  total_plans: 24
-  completed_plans: 24
-  percent: 100
+  total_phases: 14
+  completed_phases: 11
+  total_plans: 25
+  completed_plans: 25
+  percent: 86
 ---
 
 # STATE.md
@@ -21,20 +21,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 16 complete — all 3 plans executed (CI consolidation, README/docs, upgrade launcher + justfile recipes)
+**Current focus:** Phase 18 — Fix Stale Docs (STEAM_DECK.md + ARCHITECTURE.md)
 
 ## Current Position
 
-Phase: 16 — AppImage Decommission + Upgrade Workflow Docs
-Plan: 3/3 complete
-Status: Complete ✓
-Last activity: 2026-05-10 -- Phase 16 plan 3 complete
+Phase: 18 — Fix Stale Docs
+Plan: 01 — Rewrite STEAM_DECK.md + docs/ARCHITECTURE.md for Flatpak era
+Status: Planned
+Last activity: 2026-05-10 -- Phase 18 planned (1 plan, 2 tasks)
 
 ## Progress
 
-**Total roadmap (v2.0 + v2.1):** 11 phases
+**Total roadmap (v2.0 + v2.1):** 13 phases
 **v2.0 complete:** Phases 6-10 (5/5)
-**v2.1 active:** Phases 11-16 (5/6)
+**v2.1 active:** Phases 11-19 (8/9)
 
 | Phase | Status |
 |-------|--------|
@@ -49,8 +49,11 @@ Last activity: 2026-05-10 -- Phase 16 plan 3 complete
 | 14. Steam Deck On-Device Validation | Complete ✓ |
 | 15. CI Migration (Parallel-Run) | Complete ✓ |
 | 16. AppImage Decommission + Upgrade Workflow Docs | Complete ✓ |
+| 17. Close Verification Gaps | Complete |
+| 18. Fix Stale Docs | Not started |
+| 19. Execute Deb Build + Flatpak Runner | Not started |
 
-Plans: 24/24 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16).
+Plans: 24/24 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16). Phases 17, 18, 19: not planned yet.
 
 ## Decisions Made
 
@@ -98,6 +101,9 @@ Plans: 24/24 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16).
 - Phase 14: real-Deck validation in Desktop + Gaming Mode
 - Phase 15: ✓ CI parallel-run (Flatpak + AppImage shipped together for one transition release)
 - Phase 16: ✓ AppImage decommission + upgrade workflow docs (all plans complete)
+- Phase 17: Close verification gaps — VERIFICATION.md for Phases 13, 15, 16
+- Phase 18: Fix stale docs — STEAM_DECK.md and ARCHITECTURE.md are out of date
+- Phase 19: Execute PKG-03 deb build and VAL-05 flatpak-builder on CI runner
 
 ### Critical Risks (from research/PITFALLS.md)
 
@@ -107,9 +113,15 @@ Plans: 24/24 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16).
 - Sideload bundles do NOT auto-update (Pitfall #7) — resolve in Phase 16 docs
 - Removing AppImage in same PR as Flatpak adoption — keep parallel-run for ≥1 release (Pitfall #11) — Phase 15 → 16 split
 
+### Roadmap Evolution
+
+- Phase 17 added: Close verification gaps — VERIFICATION.md for Phases 13, 15, 16
+- Phase 18 added: Fix stale docs — STEAM_DECK.md and ARCHITECTURE.md
+- Phase 19 added: Execute PKG-03 deb build and VAL-05 flatpak-builder on CI runner
+
 ## Session Continuity
 
 Last session: 2026-05-10T08:43:51.000Z
 Stopped at: Phase 16 plan 1 complete — CI decommission + docs cleanup done
 Resume file: None
-Next action: Phase 16 complete — ready for milestone completion review
+Next action: Plan Phase 18 — /gsd-plan-phase 18
