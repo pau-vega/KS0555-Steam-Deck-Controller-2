@@ -212,8 +212,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 15-01-PLAN.md — build-x64 artifact upload, caching, concurrency, VAL-08 lock check, CI-03 confirmation
-- [ ] 15-02-PLAN.md — build-flatpak-x64 job (flatpak-builder, OSTree cache, SHA256, release upload)
+- [x] 15-01-PLAN.md — build-x64 artifact upload, caching, concurrency, VAL-08 lock check, CI-03 confirmation
+- [x] 15-02-PLAN.md — build-flatpak-x64 job (flatpak-builder, OSTree cache, SHA256, release upload)
 
 ### Phase 16: AppImage Decommission + Upgrade Workflow Docs
 **Goal**: AppImage CI artifact is removed; the manual upgrade workflow is documented honestly; root README walks Steam Deck users through install + Gaming Mode launch
@@ -242,7 +242,7 @@ Plans:
 | 12. Manifest + AppStream + Local Build | 2/2 | Complete | 2026-05-09 |
 | 13. Sandbox Permissions for BLE + Gamepad | 1/1 | Complete | 2026-05-09 |
 | 14. Steam Deck On-Device Validation | 1/1 | Complete ✓ | 2026-05-09 |  |
-| 15. CI Migration (Parallel-Run) | 0/2 | Planned | - |
+| 15. CI Migration (Parallel-Run) | 2/2 | Complete | 2026-05-10 |
 | 16. AppImage Decommission + Upgrade Workflow Docs | 0/0 | Not started | - |
 
 ---

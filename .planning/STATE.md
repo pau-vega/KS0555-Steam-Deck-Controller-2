@@ -4,14 +4,14 @@ milestone: v2.1
 milestone_name: — Flatpak Packaging
 status: executing
 stopped_at: Phase 15 context gathered
-last_updated: "2026-05-09T23:59:00.000Z"
-last_activity: 2026-05-09 -- Phase 15 context gathered
+last_updated: "2026-05-10T10:00:00.000Z"
+last_activity: 2026-05-10 -- Phase 15 complete
 progress:
   total_phases: 11
-  completed_phases: 8
-  total_plans: 19
-  completed_plans: 18
-  percent: 95
+  completed_phases: 10
+  total_plans: 21
+  completed_plans: 21
+  percent: 100
 ---
 
 # STATE.md
@@ -21,20 +21,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Phase 14 complete — validation checklist and report template created
+**Current focus:** Phase 15 complete — CI parallel-run (build-x64 + build-flatpak-x64)
 
 ## Current Position
 
 Phase: 15 — CI Migration (Parallel-Run)
-Plan: None yet
-Status: Context gathered — ready for planning
-Last activity: 2026-05-09 -- Phase 15 context gathered
+Plan: 2/2 complete
+Status: Complete ✓
+Last activity: 2026-05-10 -- Phase 15 complete
 
 ## Progress
 
 **Total roadmap (v2.0 + v2.1):** 11 phases
 **v2.0 complete:** Phases 6-10 (5/5)
-**v2.1 active:** Phases 11-16 (2/6)
+**v2.1 active:** Phases 11-16 (5/6)
 
 | Phase | Status |
 |-------|--------|
@@ -47,10 +47,10 @@ Last activity: 2026-05-09 -- Phase 15 context gathered
 | 12. Manifest + AppStream + Local Build | Complete |
 | 13. Sandbox Permissions for BLE + Gamepad | Complete |
 | 14. Steam Deck On-Device Validation | Complete ✓ |
-| 15. CI Migration (Parallel-Run) | Context gathered |
+| 15. CI Migration (Parallel-Run) | Complete ✓ |
 | 16. AppImage Decommission + Upgrade Workflow Docs | Not started |
 
-Plans: 16/19 complete (12 v2.0 + 3 v2.1 + 1/1 Phase 14 + 0/0 Phase 15 + 0/0 Phase 16).
+Plans: 21/21 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 0/0 Phase 16).
 
 ## Decisions Made
 
