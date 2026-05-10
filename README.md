@@ -8,27 +8,38 @@ Drive a Bluetooth Arduino robot (DX-BT24 module) with your Steam Deck gamepad. S
 
 ## Install on Steam Deck
 
+### Quick install
+
 In **Desktop Mode**, open Konsole and run:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/pau-vega/KS0555-Steam-Deck-Controller-2/main/install-on-steamdeck.sh | bash
+curl -fsSL https://raw.githubusercontent.com/pau-vega/KS0555-Steam-Deck-Controller-2/main/upgrade-robot-controller.sh | bash
 ```
 
-That:
+That script:
 
-1. Downloads the latest signed AppImage from GitHub Releases.
-2. Drops it in `~/Applications/RobotController.AppImage` and makes it executable.
-3. Registers a `.desktop` entry so it shows up in Steam's _Add a Non-Steam Game_ picker.
+1. Checks if Robot Controller is already installed via Flatpak. If not, downloads and installs the latest `.flatpak` from GitHub Releases.
+2. If already installed, checks for a newer version and offers to upgrade.
+3. Displays the release changelog so you can see what changed.
 
-Final manual step: in Steam → Library → **+** → **Add a Non-Steam Game** → pick **Robot Controller** → _Add Selected Programs_. Switch to Gaming Mode and it lives under the Non-Steam tab. Re-run the curl line any time to upgrade.
+Final manual step: in Steam → Library → **+** → **Add a Non-Steam Game** → pick **com.ks0555.robotcontroller** → _Add Selected Programs_. Switch to Gaming Mode and it lives under the Non-Steam tab.
 
 ### Manual install (no script)
 
 If you'd rather not pipe to bash:
 
-1. Grab the AppImage matching your CPU from the [latest release](https://github.com/pau-vega/KS0555-Steam-Deck-Controller-2/releases/latest) (Steam Deck = `x86_64`).
-2. `chmod +x ~/Downloads/RobotController-x86_64.AppImage`.
-3. Steam → Library → **+** → **Add a Non-Steam Game** → _Browse_ → pick the AppImage.
+1. Download `RobotController-x86_64.flatpak` from the [latest release](https://github.com/pau-vega/KS0555-Steam-Deck-Controller-2/releases/latest).
+2. `flatpak install --user ~/Downloads/RobotController-x86_64.flatpak`
+3. Steam → Library → **+** → **Add a Non-Steam Game** → pick **com.ks0555.robotcontroller** → _Add Selected Programs_.
+
+### Upgrading
+
+Re-run the curl line above, or:
+
+```bash
+./upgrade-robot-controller.sh --check   # just check for updates
+./upgrade-robot-controller.sh           # check and install
+```
 
 ## Run on Mac (no build)
 
@@ -99,7 +110,9 @@ Prereqs: Node ≥ 18 (`.nvmrc` pins exact version), pnpm ≥ 10, Rust stable.
 pnpm install
 pnpm --filter @ks0555/frontend tauri:build  # macOS / Linux dev box
 
-The GitHub Actions workflow at `.github/workflows/build.yml` produces the deb attached to each tagged release.
+The **Build and Release** workflow at `.github/workflows/build.yml` produces the `.flatpak` attached to each tagged release.
+
+> The `.flatpak` is a single-file bundle — no runtime download needed on first install (Flathub remote auto-fetches `org.freedesktop.Platform//24.08`). Install with `flatpak install --user RobotController-x86_64.flatpak`.
 
 ## Project Layout
 
@@ -109,7 +122,7 @@ The GitHub Actions workflow at `.github/workflows/build.yml` produces the deb at
 | `apps/frontend/src-tauri/`                    | Tauri shell, Rust BLE + gamepad code, bundle config      |
 | `apps/frontend/src-tauri/Info.plist`          | macOS Bluetooth usage description                        |
 | `packages/eslint-config`, `packages/tsconfig` | Shared lint / TS configs                                 |
-| `install-on-steamdeck.sh`                     | One-shot installer for end users                         |
+| `upgrade-robot-controller.sh`                     | Upgrade/install launcher for Steam Deck users                         |
 | `docs/RUNNING.md`                             | Per-device detailed run instructions and troubleshooting |
 | `docs/STEAM_DECK.md`                          | Steam Deck verification notes                            |
 
@@ -139,3 +152,4 @@ The GitHub Actions workflow at `.github/workflows/build.yml` produces the deb at
 ## License
 
 This project is private and not open-source.
+```
