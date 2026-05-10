@@ -173,9 +173,9 @@ docker-flatpak-build deb_path="":
 # Works on macOS and Linux — single command, full CI pipeline
 [group('flatpak')]
 docker-build-all:
-    @echo "→ Building .deb + .flatpak in Docker..."
+    @echo "→ Building .deb in Docker..."
     docker build -t robot-controller-builder -f flatpak/Dockerfile .
-    @echo "→ Extracting .flatpak from image..."
-    docker run --rm -v $(pwd):/repo robot-controller-builder sh -c "cp /workspace/RobotController-x86_64.flatpak /repo/"
+    @echo "→ Running flatpak-builder (needs --privileged for bubblewrap)..."
+    docker run --rm --privileged -v $(pwd):/repo robot-controller-builder
     @echo ""
     @echo "✓ Flatpak bundle: RobotController-x86_64.flatpak"

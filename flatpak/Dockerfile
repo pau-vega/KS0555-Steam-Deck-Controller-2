@@ -54,11 +54,7 @@ WORKDIR /workspace
 
 RUN dbus-run-session -- bash -c ' \
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo && \
-    flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 && \
-    flatpak-builder --system --install --force-clean --disable-rofiles-fuse build-dir flatpak/com.ks0555.robotcontroller.yaml && \
-    mkdir -p repo && \
-    flatpak build-export repo build-dir && \
-    flatpak build-bundle repo RobotController-x86_64.flatpak com.ks0555.robotcontroller && \
-    cp RobotController-x86_64.flatpak /repo/ && \
-    echo "✓ Flatpak bundle copied to /repo/RobotController-x86_64.flatpak" \
+    flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 \
     '
+
+CMD ["/bin/bash", "-c", "dbus-run-session -- bash -c 'flatpak-builder --system --install --force-clean --disable-rofiles-fuse build-dir flatpak/com.ks0555.robotcontroller.yaml && mkdir -p repo && flatpak build-export repo build-dir && flatpak build-bundle repo RobotController-x86_64.flatpak com.ks0555.robotcontroller && cp RobotController-x86_64.flatpak /repo/ && echo \"✓ Flatpak bundle created: /repo/RobotController-x86_64.flatpak\"'"]
