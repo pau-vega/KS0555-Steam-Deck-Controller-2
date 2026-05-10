@@ -5,13 +5,13 @@ milestone_name: — Flatpak Packaging
 status: active
 stopped_at: Phase 18 complete; ready for Phase 19
 last_updated: "2026-05-10T14:15:00.000Z"
-last_activity: 2026-05-10 -- Phase 18 complete: STEAM_DECK.md + ARCHITECTURE.md rewritten for Flatpak
+last_activity: 2026-05-10 -- Phase 19 planned: CI validation with artifact upload
 progress:
   total_phases: 14
   completed_phases: 12
-  total_plans: 26
+  total_plans: 27
   completed_plans: 26
-  percent: 92
+  percent: 96
 ---
 
 # STATE.md
@@ -26,8 +26,8 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 ## Current Position
 
 Phase: 19 — Execute Deb Build + Flatpak Runner
-Plan: None — Not yet planned
-Status: Not started
+Plan: 19-01-PLAN.md — CI validation with artifact upload
+Status: Planned (ready to execute)
 Last activity: 2026-05-10 -- Phase 18 complete: STEAM_DECK.md + ARCHITECTURE.md rewritten for Flatpak era
 
 ## Progress
@@ -51,7 +51,7 @@ Last activity: 2026-05-10 -- Phase 18 complete: STEAM_DECK.md + ARCHITECTURE.md 
 | 16. AppImage Decommission + Upgrade Workflow Docs | Complete ✓ |
 | 17. Close Verification Gaps | Complete |
 | 18. Fix Stale Docs | Complete ✓ |
-| 19. Execute Deb Build + Flatpak Runner | Not started |
+| 19. Execute Deb Build + Flatpak Runner | Planned |
 
 Plans: 26/26 complete (12 v2.0 + 7 v2.1 + 2/2 Phase 15 + 3/3 Phase 16 + 1/1 Phase 18). Phase 19: not planned yet.
 

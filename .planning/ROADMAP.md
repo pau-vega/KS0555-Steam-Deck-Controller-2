@@ -266,14 +266,14 @@ Plans:
 **Goal**: Execute PKG-03 deb build and VAL-05 flatpak-builder on a CI runner to validate the build pipeline produces working artifacts end-to-end
 **Depends on**: Phase 16
 **Success Criteria** (what must be TRUE):
-   1. CI runner produces a `.deb` artifact from `cargo tauri build --bundles deb` successfully
-   2. CI runner produces a `.flatpak` artifact from `flatpak-builder` using the existing manifest
-   3. Both artifacts are uploaded as CI job artifacts for download
-   4. Build completes within a bounded time budget on the CI runner
-**Plans**: 0 plans
+    1. CI runner produces a `.deb` artifact from `cargo tauri build --bundles deb` successfully
+    2. CI runner produces a `.flatpak` artifact from `flatpak-builder` using the existing manifest
+    3. Both artifacts are uploaded as CI job artifacts for download
+    4. Build completes within a bounded time budget on the CI runner
+**Plans**: 1 plan
 
 Plans:
-- [ ] Phase planning needed
+- [ ] 19-01-PLAN.md — Add artifact upload, trigger CI run, validate builds end-to-end
 
 ### Phase 18: Fix Stale Docs
 **Goal**: Fix stale documentation: STEAM_DECK.md and ARCHITECTURE.md are out of date
@@ -308,7 +308,7 @@ Plans:
 | 16. AppImage Decommission + Upgrade Workflow Docs | 3/3 | Complete | 2026-05-10 |
 | 17. Close Verification Gaps | 1/1 | Complete | 2026-05-10 | |
 | 18. Fix Stale Docs | 1/1 | Complete | 2026-05-10 | |
-| 19. Execute Deb Build + Flatpak Runner | 0/0 | Not started | |
+| 19. Execute Deb Build + Flatpak Runner | 0/1 | Planning | |
 
 ---
 
