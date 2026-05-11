@@ -23,6 +23,11 @@
   </categories>
   <launchable type="desktop-id">com.ks0555.robotcontroller.desktop</launchable>
   <releases>
+    <release version="0.1.11" date="2026-05-11">
+      <description>
+        <p>Upgrade Flatpak runtime to org.gnome.Platform//48 (Freedesktop 24.08) — fixes EOL warnings.</p>
+      </description>
+    </release>
     <release version="0.1.10" date="2026-05-11">
       <description>
         <p>Fix GLIBC_2.39 error: downgrade build host to ubuntu-22.04 for Steam Deck compatibility.</p>

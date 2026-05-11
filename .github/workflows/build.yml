@@ -118,8 +118,8 @@ jobs:
       - name: install flatpak runtime
         run: |
           sudo flatpak install --system -y --noninteractive flathub \
-            org.gnome.Platform//46 \
-            org.gnome.Sdk//46
+            org.gnome.Platform//48 \
+            org.gnome.Sdk//48
 
       - name: build flatpak
         run: |
