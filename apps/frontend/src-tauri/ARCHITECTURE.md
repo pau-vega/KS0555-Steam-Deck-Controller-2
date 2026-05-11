@@ -18,8 +18,8 @@ Single Tauri v2 desktop application. Rust backend owns BLE (`btleplug`) and game
 ### Manifest
 
 - **Location:** `flatpak/com.ks0555.robotcontroller.yaml`
-- **Runtime:** `org.freedesktop.Platform//24.08`
-- **SDK:** `org.freedesktop.Sdk//24.08`
+- **Runtime:** `org.gnome.Platform//48`
+- **SDK:** `org.gnome.Sdk//48`
 - **Extension:** `org.freedesktop.Platform.GL.default`
 - **Command:** `robot-controller` (the binary name inside the sandbox)
 
@@ -244,7 +244,7 @@ packages/
 
 ## Key Decisions
 
-- **Flatpak runtime locked:** `org.freedesktop.Platform//24.08` (chosen in Phase 11, validated in Phase 14)
+- **Flatpak runtime locked:** `org.gnome.Platform//48` (chosen in Phase 11, validated in Phase 14)
 - **Sideload-only distribution:** `.flatpak` bundles from GitHub Releases — no Flathub publication, no OSTree remote. `flatpak install --user --reinstall` for upgrades.
 - **Belt-and-suspenders Flatpak detection:** Both `FLATPAK_ID` env var AND `/.flatpak-info` file checked before D-Bus rewrite.
 - **Single-binary:** One Tauri process, no separate backend. BLE and gamepad run in the same Rust binary.

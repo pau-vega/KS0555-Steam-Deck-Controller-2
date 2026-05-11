@@ -66,8 +66,8 @@ The Steam Deck Robot Controller is a single-process Tauri v2 desktop application
 ### Manifest
 
 - **Location:** `flatpak/com.ks0555.robotcontroller.yaml`
-- **Runtime:** `org.freedesktop.Platform//24.08`
-- **SDK:** `org.freedesktop.Sdk//24.08`
+- **Runtime:** `org.gnome.Platform//48`
+- **SDK:** `org.gnome.Sdk//48`
 - **Extension:** `org.freedesktop.Platform.GL.default`
 - **Command:** `robot-controller` (the binary name inside the sandbox)
 
@@ -498,7 +498,7 @@ Flatpak provides:
 - Fine-grained sandbox permissions (finish-args for BLE, gamepad, display)
 - D-Bus proxy for secure BlueZ access
 - Better Steam Deck integration (Non-Steam Game, Gaming Mode)
-- Runtime isolation (pinned `org.freedesktop.Platform//24.08`)
+- Runtime isolation (pinned `org.gnome.Platform//48`)
 
 ## Platform Support
 
@@ -511,7 +511,7 @@ Flatpak provides:
 
 ## Key Decisions
 
-- **Flatpak runtime locked:** `org.freedesktop.Platform//24.08` (chosen in Phase 11, validated in Phase 14)
+- **Flatpak runtime locked:** `org.gnome.Platform//48` (chosen in Phase 11, validated in Phase 14)
 - **Sideload-only distribution:** `.flatpak` bundles from GitHub Releases — no Flathub publication, no OSTree remote. `flatpak install --user --reinstall` for upgrades.
 - **Belt-and-suspenders Flatpak detection:** Both `FLATPAK_ID` env var AND `/.flatpak-info` file checked before D-Bus rewrite.
 - **Single-binary:** One Tauri process, no separate backend. BLE and gamepad run in the same Rust binary.

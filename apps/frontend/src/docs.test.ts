@@ -242,11 +242,11 @@ describe("Phase 18: docs/ARCHITECTURE.md (Task 2)", () => {
     expect(lines).toBeGreaterThanOrEqual(250)
   })
 
-  it("R10: contains key keywords: Flatpak, in_flatpak, finish-args, deb-extract, org.freedesktop.Platform", () => {
+  it("R10: contains key keywords: Flatpak, in_flatpak, finish-args, deb-extract, org.gnome.Platform", () => {
     expect(archMd).toMatch(/\bFlatpak\b/)
     expect(archMd).toContain("in_flatpak")
     expect(archMd).toContain("finish-args")
     expect(archMd).toMatch(/deb.extract|deb extract|deb-extract/)
-    expect(archMd).toContain("org.freedesktop.Platform")
+    expect(archMd).toContain("org.gnome.Platform")
   })
 })

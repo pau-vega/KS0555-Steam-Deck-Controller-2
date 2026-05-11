@@ -7,9 +7,9 @@ const buildYmlPath = join(repoRoot, ".github/workflows/build.yml")
 const buildYml = readFileSync(buildYmlPath, "utf-8")
 
 describe("CI workflow: .github/workflows/build.yml", () => {
-  it("CI-01: uses flatpak-builder CLI with Freedesktop 24.08 runtime", () => {
+  it("CI-01: uses flatpak-builder CLI with GNOME 48 runtime", () => {
     expect(buildYml).toContain("flatpak-builder")
-    expect(buildYml).toMatch(/freedesktop/i)
+    expect(buildYml).toMatch(/org\.gnome\.Platform/)
   })
 
   it("CI-01: flatpak-builder references manifest yaml", () => {
@@ -32,9 +32,9 @@ describe("CI workflow: .github/workflows/build.yml", () => {
     expect(buildYml).not.toMatch(/arm64|aarch64/i)
   })
 
-  it("CI-04: Freedesktop runtime installed via flatpak install", () => {
+  it("CI-04: GNOME 48 runtime installed via flatpak install", () => {
     expect(buildYml).toContain("flatpak install")
-    expect(buildYml).toMatch(/freedesktop.*24\.08/)
+    expect(buildYml).toMatch(/org\.gnome\.Platform.*48/)
   })
 
   it("has per-job permissions for release upload", () => {
