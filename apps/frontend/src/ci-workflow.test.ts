@@ -7,13 +7,13 @@ const buildYmlPath = join(repoRoot, ".github/workflows/build.yml")
 const buildYml = readFileSync(buildYmlPath, "utf-8")
 
 describe("CI workflow: .github/workflows/build.yml", () => {
-  it("CI-01: uses flatpak-builder@v6 with Freedesktop 24.08 container", () => {
-    expect(buildYml).toContain("flatpak/flatpak-github-actions/flatpak-builder@v6")
+  it("CI-01: uses flatpak-builder CLI with Freedesktop 24.08 runtime", () => {
+    expect(buildYml).toContain("flatpak-builder")
     expect(buildYml).toMatch(/freedesktop/i)
   })
 
-  it("CI-01: flatpak job has manifest-path set", () => {
-    expect(buildYml).toContain("manifest-path: flatpak/com.ks0555.robotcontroller.yaml")
+  it("CI-01: flatpak-builder references manifest yaml", () => {
+    expect(buildYml).toContain("flatpak/com.ks0555.robotcontroller.yaml")
   })
 
   it("CI-02: uses action-gh-release@v2 for release upload", () => {
@@ -32,10 +32,9 @@ describe("CI workflow: .github/workflows/build.yml", () => {
     expect(buildYml).not.toMatch(/arm64|aarch64/i)
   })
 
-  it("CI-04: OSTree cache enabled on flatpak-builder action", () => {
-    expect(buildYml).toContain("cache: true")
-    expect(buildYml).toContain("cache-key")
-    expect(buildYml).toMatch(/cache-key.*freedesktop-2408/)
+  it("CI-04: Freedesktop runtime installed via flatpak install", () => {
+    expect(buildYml).toContain("flatpak install")
+    expect(buildYml).toMatch(/freedesktop.*24\.08/)
   })
 
   it("has per-job permissions for release upload", () => {
@@ -97,8 +96,8 @@ describe("CI workflow: .github/workflows/build.yml", () => {
     expect(buildYml).not.toContain("git diff --exit-code")
   })
 
-  it("D-04: version extracted from Cargo.toml (cargo metadata)", () => {
-    expect(buildYml).toContain("cargo metadata")
+  it("D-04: version extracted from Cargo.toml (grep)", () => {
+    expect(buildYml).toContain("grep '^version'")
     expect(buildYml).not.toMatch(/GITHUB_REF_NAME#v/)
   })
 
