@@ -3,7 +3,7 @@
 # Usage: docker-build.sh <path-to-deb>
 #   <path-to-deb> — path to the .deb produced by 'cargo tauri build --bundles deb'
 #
-# Uses the same container image as CI: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-2408
+# Uses the same container image as CI: ghcr.io/flathub-infra/flatpak-github-actions:gnome-48
 # Works on macOS (Docker Desktop) and Linux (Docker Engine) without flatpak-builder installed.
 set -euo pipefail
 
@@ -66,8 +66,8 @@ echo "→ Copied deb to $DEB_COPY"
 
 echo ""
 echo "→ Pulling container image (first run may take a few minutes)..."
-echo "   Image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-2408"
-docker pull ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-2408
+echo "   Image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-48"
+docker pull ghcr.io/flathub-infra/flatpak-github-actions:gnome-48
 
 echo ""
 echo "→ Running flatpak-builder inside Docker..."
@@ -76,7 +76,7 @@ docker run --rm \
     --privileged \
     -v "${REPO_ROOT}:/workspace" \
     -w /workspace \
-    ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-2408 \
+    ghcr.io/flathub-infra/flatpak-github-actions:gnome-48 \
     /bin/bash -c '
 set -euo pipefail
 
@@ -84,7 +84,7 @@ echo "→ Configuring Flathub remote..."
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 echo "→ Installing runtime + SDK (one-time download ~300 MB)..."
-flatpak install --user -y --noninteractive flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08
+flatpak install --user -y --noninteractive flathub org.gnome.Platform//48 org.gnome.Sdk//48
 
 echo "→ Running flatpak-builder..."
 flatpak-builder --user --install --force-clean --disable-rofiles-fuse build-dir flatpak/com.ks0555.robotcontroller.yaml

@@ -13,7 +13,7 @@
 ## 1. Installation (DECK-01)
 
 - [ ] PASS / [ ] FAIL — 1.1. `flatpak install --user RobotController-x86_64.flatpak` completes without error
-- [ ] PASS / [ ] FAIL — 1.2. Flathub remote auto-fetches missing runtime `org.freedesktop.Platform//24.08` (if not already cached)
+- [ ] PASS / [ ] FAIL — 1.2. Flathub remote auto-fetches missing runtime `org.gnome.Platform//48` (if not already cached)
 - [ ] PASS / [ ] FAIL — 1.3. `flatpak list | grep com.ks0555.robotcontroller` shows the app installed
 - [ ] PASS / [ ] FAIL — 1.4. `flatpak run --command=ls com.ks0555.robotcontroller /app/bin/robot-controller` returns the binary path
 

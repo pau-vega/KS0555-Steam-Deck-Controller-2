@@ -8,12 +8,13 @@
 #   org.freedesktop.Flatpak    — Portal grant, not needed (no portal interaction)
 
 id: com.ks0555.robotcontroller
-runtime: org.freedesktop.Platform
-runtime-version: "24.08"
-sdk: org.freedesktop.Sdk
+runtime: org.gnome.Platform
+runtime-version: "48"
+sdk: org.gnome.Sdk
 sdk-extensions:
   - org.freedesktop.Platform.GL.default
 command: robot-controller
+appstream-compose: false
 finish-args:
   - --socket=wayland
   - --socket=fallback-x11
@@ -23,7 +24,6 @@ finish-args:
   # BLE — btleplug talks to BlueZ over the system D-Bus (Pitfall 2)
   - --system-talk-name=org.bluez
   - --system-talk-name=org.bluez.*
-  - --allow=bluetooth
   - --share=network
   # Gamepad — gilrs reads from /dev/input/event* (Pitfall 4)
   # --device requires Flatpak ≥ 1.15.6; fall back to --device=all on older runtimes

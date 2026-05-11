@@ -10,7 +10,7 @@
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
 
-- `org.freedesktop.Platform//24.08` runtime and `org.freedesktop.Sdk//24.08` SDK
+- `org.gnome.Platform//48` runtime and `org.gnome.Sdk//48` SDK
   (auto-fetched by flatpak-builder on first build)
 
 ## Building
@@ -79,8 +79,8 @@ See the root [README](../README.md) for full usage documentation.
 ## Flatpak Manifest
 
 - **Location:** `flatpak/com.ks0555.robotcontroller.yaml`
-- **Runtime:** `org.freedesktop.Platform//24.08`
-- **SDK:** `org.freedesktop.Sdk//24.08`
+- **Runtime:** `org.gnome.Platform//48`
+- **SDK:** `org.gnome.Sdk//48`
 - **Extension:** `org.freedesktop.Platform.GL.default`
 
 ### Finish-args (Sandbox Permissions)
@@ -99,16 +99,16 @@ Every `finish-arg` (a single permission) in the `finish-args` list grants the Fl
 
 #### BLE — Bluetooth Low Energy
 
-| finish-arg                       | Purpose                                                                  |
-| -------------------------------- | ------------------------------------------------------------------------ |
-| `--system-talk-name=org.bluez`   | D-Bus system bus access to BlueZ (btleplug uses D-Bus, not AF_BLUETOOTH) |
-| `--system-talk-name=org.bluez.*` | Wildcard for BlueZ sub-interfaces (adapter, device, GATT)                |
-| `--allow=bluetooth`              | AF_BLUETOOTH socket permission (supplementary)                           |
-| `--share=network`                | Network access (BlueZ D-Bus sometimes requires it)                       |
+| finish-arg                                                           | Purpose                                                                  |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `--system-talk-name=org.bluez`                                       | D-Bus system bus access to BlueZ (btleplug uses D-Bus, not AF_BLUETOOTH) |
+| `--system-talk-name=org.bluez.*`                                     | Wildcard for BlueZ sub-interfaces (adapter, device, GATT)                |
+| (removed — `--allow=bluetooth` not needed; btleplug uses D-Bus only) |                                                                          |
+| `--share=network`                                                    | Network access (BlueZ D-Bus sometimes requires it)                       |
 
 > **Why `--system-talk-name`, not `--socket=system-bus`?** Principle of least privilege — `--socket=system-bus` grants access to _all_ system D-Bus services. `--system-talk-name=org.bluez` grants access to BlueZ only.
 
-> **Why `--allow=bluetooth` in addition to D-Bus?** Belt-and-suspenders. `btleplug` may use AF_BLUETOOTH sockets on some platforms alongside D-Bus. This arg is harmless if unused.
+> **Why no `--allow=bluetooth`?** `btleplug` communicates with BlueZ exclusively over D-Bus system bus (not AF_BLUETOOTH sockets). The `--system-talk-name=org.bluez` grants are sufficient.
 
 #### Gamepad
 
