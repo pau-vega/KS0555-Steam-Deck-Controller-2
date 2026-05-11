@@ -121,12 +121,12 @@ jobs:
             org.freedesktop.Platform//24.08 \
             org.freedesktop.Sdk//24.08
 
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-        with:
-          bundle: RobotController-${{ env.VERSION }}-x86_64.flatpak
-          manifest-path: flatpak/com.ks0555.robotcontroller.yaml
-          cache-key: flatpak-${{ runner.os }}-${{ hashFiles('flatpak/com.ks0555.robotcontroller.yaml') }}-freedesktop-2408
-          cache: true
+      - name: build flatpak
+        run: |
+          sudo flatpak-builder --system --install --force-clean --disable-rofiles-fuse build-dir flatpak/com.ks0555.robotcontroller.yaml
+          mkdir -p repo
+          flatpak build-export repo build-dir
+          flatpak build-bundle repo RobotController-${VERSION}-x86_64.flatpak com.ks0555.robotcontroller
 
       - name: generate sha256 checksum
         run: |
