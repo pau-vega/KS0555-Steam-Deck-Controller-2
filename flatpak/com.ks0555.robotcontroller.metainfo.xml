@@ -23,6 +23,16 @@
   </categories>
   <launchable type="desktop-id">com.ks0555.robotcontroller.desktop</launchable>
   <releases>
+    <release version="0.1.20" date="2026-05-11">
+      <description>
+        <p>Fix BLE connect on Steam Deck: detect Tauri v2 via __TAURI_INTERNALS__ so the Connect button invokes the Rust ble_connect command instead of falling through to the unsupported Web Bluetooth path.</p>
+      </description>
+    </release>
+    <release version="0.1.19" date="2026-05-11">
+      <description>
+        <p>Switch Flatpak runtime back to org.gnome.Platform//48 and refresh documentation references.</p>
+      </description>
+    </release>
     <release version="0.1.18" date="2026-05-11">
       <description>
         <p>Merge milestone v2.1: Flatpak build pipeline, lib.rs architecture, Docker support, docs, CI improvements, error display in UI.</p>
