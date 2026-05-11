@@ -12,18 +12,15 @@ const mockRequestDevice = vi.fn()
 const mockAddEventListener = vi.fn()
 
 // --- Tauri IPC mocks (must use vi.hoisted — vi.mock factory is hoisted above all const/let) ---
-const capturedBleHandler = vi.hoisted(
-  () => ({ current: null as ((event: { payload: string }) => void) | null }),
-)
+const capturedBleHandler = vi.hoisted(() => ({ current: null as ((event: { payload: string }) => void) | null }))
 
 const mockUnlisten = vi.hoisted(() => vi.fn())
 
-const mockTauriListen = vi.hoisted(
-  () =>
-    vi.fn((_event: string, handler: (event: { payload: string }) => void) => {
-      capturedBleHandler.current = handler
-      return Promise.resolve(mockUnlisten)
-    }),
+const mockTauriListen = vi.hoisted(() =>
+  vi.fn((_event: string, handler: (event: { payload: string }) => void) => {
+    capturedBleHandler.current = handler
+    return Promise.resolve(mockUnlisten)
+  }),
 )
 
 const mockTauriInvoke = vi.hoisted(() => vi.fn())
@@ -147,7 +144,7 @@ describe("useBluetooth (Web Bluetooth)", () => {
 
 describe("useBluetooth (Tauri IPC)", () => {
   beforeEach(() => {
-    (window as unknown as Record<string, unknown>).__TAURI__ = true
+    ;(window as unknown as Record<string, unknown>).__TAURI__ = true
     delete (navigator as unknown as Record<string, unknown>).bluetooth
     mockTauriInvoke.mockResolvedValue(undefined)
   })
@@ -186,7 +183,12 @@ describe("useBluetooth (Tauri IPC)", () => {
 
   it("connect() sets connecting state before invoke resolves", async () => {
     let resolveInvoke: () => void = () => {}
-    mockTauriInvoke.mockImplementation(() => new Promise<void>((r) => { resolveInvoke = r }))
+    mockTauriInvoke.mockImplementation(
+      () =>
+        new Promise<void>((r) => {
+          resolveInvoke = r
+        }),
+    )
     const { result } = renderHook(() => useBluetooth())
 
     let promise: Promise<void>
