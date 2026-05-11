@@ -1,4 +1,4 @@
-use gilrs::{Axis, Gilrs, EventType};
+use gilrs::{Axis, Button, EventType, Gilrs};
 use std::thread;
 use tauri::Emitter;
 
@@ -48,6 +48,69 @@ fn get_direction_from_axes(x: f32, y: f32) -> Direction {
     }
 }
 
+fn compute_direction(gamepad: &gilrs::Gamepad) -> Direction {
+    let dpad_x = gamepad
+        .axis_data(Axis::DPadX)
+        .map(|d| d.value())
+        .unwrap_or(0.0);
+    let dpad_y = gamepad
+        .axis_data(Axis::DPadY)
+        .map(|d| d.value())
+        .unwrap_or(0.0);
+
+    let dpad_up = gamepad.is_pressed(Button::DPadUp);
+    let dpad_down = gamepad.is_pressed(Button::DPadDown);
+    let dpad_left = gamepad.is_pressed(Button::DPadLeft);
+    let dpad_right = gamepad.is_pressed(Button::DPadRight);
+
+    let dpad_button_x = if dpad_right {
+        1.0
+    } else if dpad_left {
+        -1.0
+    } else {
+        0.0
+    };
+    let dpad_button_y = if dpad_down {
+        1.0
+    } else if dpad_up {
+        -1.0
+    } else {
+        0.0
+    };
+
+    let eff_x = if dpad_x.abs() > DEADZONE {
+        dpad_x
+    } else {
+        dpad_button_x
+    };
+    let eff_y = if dpad_y.abs() > DEADZONE {
+        dpad_y
+    } else {
+        dpad_button_y
+    };
+
+    let dpad_active = eff_x.abs() > DEADZONE
+        || eff_y.abs() > DEADZONE
+        || dpad_up
+        || dpad_down
+        || dpad_left
+        || dpad_right;
+
+    if dpad_active {
+        get_direction_from_axes(eff_x, eff_y)
+    } else {
+        let stick_x = gamepad
+            .axis_data(Axis::LeftStickX)
+            .map(|d| d.value())
+            .unwrap_or(0.0);
+        let stick_y = gamepad
+            .axis_data(Axis::LeftStickY)
+            .map(|d| d.value())
+            .unwrap_or(0.0);
+        get_direction_from_axes(stick_x, stick_y)
+    }
+}
+
 pub fn setup_gamepad_monitor(app: &tauri::App) -> Result<(), String> {
     let app_handle = app.handle().clone();
 
@@ -68,10 +131,7 @@ pub fn setup_gamepad_monitor(app: &tauri::App) -> Result<(), String> {
             eprintln!("[gamepad] found on startup: {:?} name={:?}", id, name);
             if connected_gamepad_id.is_none() {
                 connected_gamepad_id = Some(id);
-                let _ = app_handle.emit(
-                    "gamepad-connected",
-                    serde_json::json!({ "name": name }),
-                );
+                let _ = app_handle.emit("gamepad-connected", serde_json::json!({ "name": name }));
             }
         }
         if connected_gamepad_id.is_none() {
@@ -92,10 +152,8 @@ pub fn setup_gamepad_monitor(app: &tauri::App) -> Result<(), String> {
                             connected_gamepad_id = Some(event.id);
 
                             // D-36: gamepad-connected with { name: '...' }
-                            let _ = app_handle.emit(
-                                "gamepad-connected",
-                                serde_json::json!({ "name": name }),
-                            );
+                            let _ = app_handle
+                                .emit("gamepad-connected", serde_json::json!({ "name": name }));
                         }
                     }
                     EventType::Disconnected => {
@@ -114,29 +172,34 @@ pub fn setup_gamepad_monitor(app: &tauri::App) -> Result<(), String> {
                         }
                     }
                     EventType::AxisChanged(axis, _, _) => {
-                        // D-14: Only process LeftStick axes
-                        if (axis == Axis::LeftStickX || axis == Axis::LeftStickY)
-                            && connected_gamepad_id.is_some()
-                        {
+                        let is_stick = axis == Axis::LeftStickX || axis == Axis::LeftStickY;
+                        let is_dpad_axis = axis == Axis::DPadX || axis == Axis::DPadY;
+
+                        if (is_stick || is_dpad_axis) && connected_gamepad_id.is_some() {
                             let id = connected_gamepad_id.unwrap();
-                            let gamepad = gilrs.gamepad(id);
-
-                            let x = gamepad
-                                .axis_data(Axis::LeftStickX)
-                                .map(|d| d.value())
-                                .unwrap_or(0.0);
-                            let y = gamepad
-                                .axis_data(Axis::LeftStickY)
-                                .map(|d| d.value())
-                                .unwrap_or(0.0);
-
-                            let new_direction = get_direction_from_axes(x, y);
+                            let new_direction = compute_direction(&gilrs.gamepad(id));
 
                             // D-13, D-41: Direction change guard
                             if last_direction != Some(new_direction) {
                                 last_direction = Some(new_direction);
 
                                 // D-35: gamepad-direction with { direction: 'F' } (char only)
+                                let payload =
+                                    serde_json::json!({ "direction": new_direction.as_char() });
+                                let _ = app_handle.emit("gamepad-direction", payload);
+                            }
+                        }
+                    }
+                    EventType::ButtonChanged(button, _, _)
+                    | EventType::ButtonPressed(button, _)
+                    | EventType::ButtonReleased(button, _) => {
+                        if button.is_dpad() && connected_gamepad_id.is_some() {
+                            let id = connected_gamepad_id.unwrap();
+                            let new_direction = compute_direction(&gilrs.gamepad(id));
+
+                            if last_direction != Some(new_direction) {
+                                last_direction = Some(new_direction);
+
                                 let payload =
                                     serde_json::json!({ "direction": new_direction.as_char() });
                                 let _ = app_handle.emit("gamepad-direction", payload);
