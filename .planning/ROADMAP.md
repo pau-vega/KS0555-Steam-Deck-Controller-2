@@ -26,7 +26,7 @@ This roadmap is append-only across milestones. v2.0 phases (6–10) are complete
 - [x] **Phase 16: AppImage Decommission + Upgrade Workflow Docs** - Remove AppImage CI job; document manual upgrade workflow (`flatpak install --user --reinstall`); optional GitHub Releases polling launcher
 - [x] **Phase 17: Close Verification Gaps** - VERIFICATION.md for Phases 13, 15, 16 to ensure all success criteria are independently verifiable
 - [x] **Phase 18: Fix Stale Docs** - Fix stale documentation: STEAM_DECK.md and ARCHITECTURE.md are out of date
-- [ ] **Phase 19: Execute Deb Build + Flatpak Runner** - Execute PKG-03 deb build and VAL-05 flatpak-builder on CI runner
+- [x] **Phase 19: Execute Deb Build + Flatpak Runner** - Execute PKG-03 deb build and VAL-05 flatpak-builder on CI runner (completed 2026-05-12)
 
 ---
 
@@ -273,7 +273,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 19-01-PLAN.md — Add artifact upload, trigger CI run, validate builds end-to-end
+- [x] 19-01-PLAN.md — Add artifact upload, trigger CI run, validate builds end-to-end
 
 ### Phase 18: Fix Stale Docs
 **Goal**: Fix stale documentation: STEAM_DECK.md and ARCHITECTURE.md are out of date
@@ -308,7 +308,7 @@ Plans:
 | 16. AppImage Decommission + Upgrade Workflow Docs | 3/3 | Complete | 2026-05-10 |
 | 17. Close Verification Gaps | 1/1 | Complete | 2026-05-10 | |
 | 18. Fix Stale Docs | 1/1 | Complete | 2026-05-10 | |
-| 19. Execute Deb Build + Flatpak Runner | 0/1 | Planning | |
+| 19. Execute Deb Build + Flatpak Runner | 1/1 | Complete    | 2026-05-12 |
 
 ---
 
