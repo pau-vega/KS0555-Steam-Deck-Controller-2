@@ -24,12 +24,15 @@ Control a real robot from Steam Deck gamepad input with low latency — commands
 **Known gaps:**
 - VAL-06, VAL-07, VAL-09 require real BT24 hardware + Steam Deck validation (manual)
 
-## Next Milestone Goals
+## Current Milestone: v2.2 Progressive Analog Control
 
-The next milestone should focus on one of:
-- **v2.2 Pipeline Fixes & Optimization** — Release-please integration, CI optimization (concurrency groups, action version standardization), versioned artifact naming
-- **Feature work** — Motor speed control (u/v commands), auto-reconnect with exponential backoff, multiple robot profiles
-- **Flathub preparation** — Signed bundles, OSTree repo, AppStream polish
+**Goal:** Replace ON-OFF digital commands with progressive analog control mapped to triggers and joystick.
+
+**Target features:**
+- R2 trigger → forward movement (analog — press depth = speed)
+- L2 trigger → backward movement (analog)
+- Left joystick X-axis → turn left/right (analog)
+- UI shows live percentage for each analog input
 
 ## Requirements
 

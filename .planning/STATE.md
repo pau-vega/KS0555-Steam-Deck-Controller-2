@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.0 + v2.1
-milestone_name: Tauri Migration + Flatpak Packaging
-status: archived
-stopped_at: All 14 phases complete. Milestones archived.
-last_updated: "2026-05-12"
-last_activity: 2026-05-12 -- v2.0 + v2.1 milestones archived
+milestone: v2.2
+milestone_name: Progressive Analog Control
+status: planning
+last_updated: "2026-05-13T06:21:48.105Z"
+last_activity: 2026-05-13
 progress:
-  total_phases: 14
-  completed_phases: 14
-  total_plans: 27
-  completed_plans: 27
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # STATE.md
@@ -25,9 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-12)
 
 ## Current Position
 
-Phase: All archived (v2.0: 6-10, v2.1: 11-19)
-Status: Milestones shipped
-Last activity: 2026-05-12
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-05-13 — Milestone v2.2 started
 
 ## Progress
 
@@ -55,6 +55,7 @@ Last activity: 2026-05-12
 (Full log in PROJECT.md Key Decisions table)
 
 **Key v2.0 decisions:**
+
 - Tauri v2 over v1 — better SteamOS support
 - btleplug for BLE — cross-platform Rust BLE
 - gilrs for gamepad — sees Steam Deck controller
@@ -62,6 +63,7 @@ Last activity: 2026-05-12
 - Deprecate apps/backend — Fastify no longer needed
 
 **Key v2.1 decisions:**
+
 - Flatpak runtime: org.freedesktop.Platform//24.08
 - Sideload-only distribution (no Flathub)
 - in_flatpak() D-Bus gate — belt-and-suspenders detection
@@ -85,12 +87,15 @@ Items acknowledged and deferred at milestone close on 2026-05-12:
 ## Accumulated Context
 
 ### v2.0 Delivered
+
 Tauri v2 desktop shell, BLE via btleplug, gamepad via gilrs, hook rewrites, SteamOS build/test. Replaced broken Web APIs with native Rust.
 
 ### v2.1 Delivered
+
 Flatpak packaging pipeline, sandbox permissions, CI migration (AppImage → Flatpak), documentation rewrite, validated end-to-end CI run. All 9 phases complete.
 
 ### Quick Tasks (v2.1)
+
 | # | Description | Date |
 |---|-------------|------|
 | 260512-002 | Setup release-please and reset to 0.0.1 | 2026-05-12 |
