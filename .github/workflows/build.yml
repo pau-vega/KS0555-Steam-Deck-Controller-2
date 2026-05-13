@@ -31,6 +31,7 @@ jobs:
   build:
     if: github.event_name != 'pull_request' || startsWith(github.head_ref, 'release-please--')
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
     permissions:
       contents: write
     steps:
@@ -75,9 +76,13 @@ jobs:
           restore-keys: ${{ runner.os }}-turbo-
 
       - name: install system dependencies
+        timeout-minutes: 10
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libudev-dev patchelf flatpak flatpak-builder
+          sudo sed -i 's|azure.archive.ubuntu.com|archive.ubuntu.com|g' /etc/apt/sources.list /etc/apt/apt-mirrors.txt 2>/dev/null || true
+          sudo apt-get update -o Acquire::Retries=3 -o Acquire::http::Timeout=30
+          sudo apt-get install -y -o Acquire::Retries=3 \
+            libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev \
+            libudev-dev patchelf flatpak flatpak-builder
 
       - name: install stock tauri-cli
         run: cargo install tauri-cli --version "^2"
