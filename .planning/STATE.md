@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: Progressive Analog Control
 status: planning
-last_updated: "2026-05-13T06:21:48.105Z"
+last_updated: "2026-05-13T14:00:00.000Z"
 last_activity: 2026-05-13
 progress:
-  total_phases: 0
+  total_phases: 6
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,18 +20,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-12)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** Planning next milestone
+**Current focus:** v2.2 Progressive Analog Control — replacing ON-OFF digital commands with progressive analog speed via R2/L2 triggers and joystick steering
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-05-13 — Milestone v2.2 started
+Phase: 20 — Protocol Verification (Gate)
+Plan: Not started
+Status: Roadmap defined, awaiting Phase 20 planning
+Last activity: 2026-05-13 — v2.2 roadmap created (Phases 20-25)
 
 ## Progress
 
 **Total shipped:** 14 phases (6-19), 27 plans, 415+ commits, ~4,424 LOC
+**Planned:** 6 phases (20-25), 21 requirements
 
 | Phase | Milestone | Status |
 |-------|-----------|--------|
@@ -49,6 +50,12 @@ Last activity: 2026-05-13 — Milestone v2.2 started
 | 17. Close Verification Gaps | v2.1 | Complete |
 | 18. Fix Stale Docs | v2.1 | Complete |
 | 19. Execute Deb Build + Flatpak Runner | v2.1 | Complete |
+| 20. Protocol Verification (Gate) | v2.2 | Planned |
+| 21. Rust Backend | v2.2 | Planned |
+| 22. Frontend Hooks | v2.2 | Planned |
+| 23. UI Overlay | v2.2 | Planned |
+| 24. Integration Testing | v2.2 | Planned |
+| 25. Steam Deck Validation | v2.2 | Planned |
 
 ## Decisions Made
 
@@ -94,6 +101,17 @@ Tauri v2 desktop shell, BLE via btleplug, gamepad via gilrs, hook rewrites, Stea
 
 Flatpak packaging pipeline, sandbox permissions, CI migration (AppImage → Flatpak), documentation rewrite, validated end-to-end CI run. All 9 phases complete.
 
+### v2.2 Planned
+
+6 phases for Progressive Analog Control. Core changes: Rust analog engine (`gamepad/analog.rs`), dual-event strategy (`gamepad-state` + `gamepad-direction`), new React hooks + display component, BLE rate limiting, hardware validation. Zero new dependencies. Phase 20 (protocol verification) is a mandatory gating phase requiring physical robot access.
+
+**Key architectural decisions:**
+- Speed computation in Rust (not frontend) — avoids IPC latency
+- Dual-event strategy — `gamepad-state` (new) + `gamepad-direction` (old, unchanged)
+- New `AnalogDisplay` mounts as sibling in `main.tsx` — locked files untouched
+- `ble_send_analog` batches three BLE writes without re-discovering services
+- Change guard >5% delta prevents event storms; ~30 Hz throttle prevents BT24 overflow
+
 ### Quick Tasks (v2.1)
 
 | # | Description | Date |
@@ -107,6 +125,6 @@ Flatpak packaging pipeline, sandbox permissions, CI migration (AppImage → Flat
 
 ## Session Continuity
 
-Last session: 2026-05-12
-Resume: Milestones archived. Ready for next milestone planning.
-Next action: `/gsd-new-milestone` to start next cycle
+Last session: 2026-05-13
+Resume: v2.2 roadmap created (Phases 20-25). Phase 20 (Protocol Verification) must execute first — it's the gating phase that requires physical robot + Steam Deck access.
+Next action: `/gsd-plan-phase 20` to plan the protocol verification phase

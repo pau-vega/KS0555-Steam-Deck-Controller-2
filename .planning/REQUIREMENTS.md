@@ -52,32 +52,32 @@ Requirements for v2.2 Progressive Analog Control.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ANA-01 | — | Pending |
-| ANA-02 | — | Pending |
-| ANA-03 | — | Pending |
-| ANA-04 | — | Pending |
-| ANA-05 | — | Pending |
-| ANA-06 | — | Pending |
-| ANA-07 | — | Pending |
-| ANA-08 | — | Pending |
-| ANA-09 | — | Pending |
-| UI-01 | — | Pending |
-| UI-02 | — | Pending |
-| UI-03 | — | Pending |
-| UI-04 | — | Pending |
-| UI-05 | — | Pending |
-| VAL-01 | — | Pending |
-| VAL-02 | — | Pending |
-| VAL-03 | — | Pending |
-| VAL-04 | — | Pending |
-| VAL-05 | — | Pending |
-| VAL-06 | — | Pending |
-| VAL-07 | — | Pending |
+| ANA-01 | Phase 21 | Pending |
+| ANA-02 | Phase 21 | Pending |
+| ANA-03 | Phase 21 | Pending |
+| ANA-04 | Phase 21 | Pending |
+| ANA-05 | Phase 21 | Pending |
+| ANA-06 | Phase 21 | Pending |
+| ANA-07 | Phase 21 | Pending |
+| ANA-08 | Phase 21 | Pending |
+| ANA-09 | Phase 24 | Pending |
+| UI-01 | Phase 22 | Pending |
+| UI-02 | Phase 22 | Pending |
+| UI-03 | Phase 23 | Pending |
+| UI-04 | Phase 23 | Pending |
+| UI-05 | Phase 22 | Pending |
+| VAL-01 | Phase 20 | Pending |
+| VAL-02 | Phase 24 | Pending |
+| VAL-03 | Phase 24 | Pending |
+| VAL-04 | Phase 24 | Pending |
+| VAL-05 | Phase 25 | Pending |
+| VAL-06 | Phase 25 | Pending |
+| VAL-07 | Phase 25 | Pending |
 
 **Coverage:**
 - v2.2 requirements: 21 total
-- Mapped to phases: 0
-- Unmapped: 21 ⚠️
+- Mapped to phases: 21 ✓
+- Unmapped: 0 ✓
 
 ---
 

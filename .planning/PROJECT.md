@@ -73,9 +73,13 @@ Control a real robot from Steam Deck gamepad input with low latency — commands
 - ✓ STEAM_DECK.md + ARCHITECTURE.md rewritten — Phase 18
 - ✓ CI pipeline produces .deb + .flatpak end-to-end — Phase 19 (PKG-03, VAL-05)
 
-### Active
+### Active (v2.2 — Progressive Analog Control)
 
-*(No active requirements — milestone archived, ready for next planning)*
+- [ ] **ANA-01..ANA-09**: Analog backend — trigger/joystick reading, motor computation, BLE speed commands, rate limiting
+- [ ] **UI-01..UI-05**: Frontend UI — analogState from hooks, useAnalogControl hook, AnalogDisplay overlay component
+- [ ] **VAL-01..VAL-07**: Integration & validation — protocol verification, unit/integration/regression tests, hardware tuning, Flatpak compat, CI
+
+*See REQUIREMENTS.md for full details. 21 requirements across 6 phases (20-25).*
 
 ### Out of Scope
 
@@ -129,6 +133,11 @@ Control a real robot from Steam Deck gamepad input with low latency — commands
 | Single-job CI (Flatpak only) | AppImage decommissioned after parallel-run window | ✓ Phase 16 |
 | Version from Cargo.toml (cargo metadata + jq) | Single source of truth, not github.ref_name | ✓ Phase 16 |
 | Stale Tauri cache cleanup | Prevents path-drift build failures from cached target dirs | ✓ Phase 19 |
+| Speed computation in Rust, not frontend | Avoids IPC roundtrip latency during rapid trigger changes | ✓ Phase 21 |
+| Dual-event strategy: keep gamepad-direction, add gamepad-state | Old direction event drives locked app.tsx unchanged, new analog event carries full state | ✓ Phases 21-22 |
+| AnalogDisplay mounts as sibling in main.tsx | Respects locked app.tsx by adding new component at React root level, not as child | ✓ Phase 23 |
+| ble_send_analog batches three writes without re-discover | Avoids wasteful service discovery on every call; WriteType::WithoutResponse for speed | ✓ Phase 21 |
+| Throttle BLE writes ~30 Hz with >5% delta change guard | Prevents BT24 buffer overflow (~50 writes/sec cap) and event storms from 8ms gilrs loop | ✓ Phase 24 |
 
 ## Evolution
 
