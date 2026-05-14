@@ -5,7 +5,7 @@ milestone_name: Tauri Migration + Flatpak Packaging
 status: archived
 stopped_at: All 14 phases complete. Milestones archived.
 last_updated: "2026-05-14"
-last_activity: 2026-05-14 -- quick 260514-no4: connect to any gamepad controller
+last_activity: 2026-05-14 -- quick 260514-ugl: switch the controls to go forward and go backwards
 progress:
   total_phases: 14
   completed_phases: 14
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-05-12)
 
 Phase: All archived (v2.0: 6-10, v2.1: 11-19)
 Status: Milestones shipped
-Last activity: 2026-05-12
+Last activity: 2026-05-14 -- Quick task 260514-ugl: Switch the controls to go forward and go backwards.
 
 ## Progress
 
@@ -101,6 +101,7 @@ Flatpak packaging pipeline, sandbox permissions, CI migration (AppImage → Flat
 | 260513-030 | Switch release-please to PAT for CI triggers on PRs | 2026-05-12 |
 | 260514-001 | Harden flatpak release upload (fail-on-missing + verify bundle) | 2026-05-14 |
 | 260514-no4 | connect to any gamepad controller, not just steam deck—support 8bitdo ultimate 2 and others | 2026-05-14 | 8ea758c5 | [260514-no4-connect-to-any-gamepad-controller-not-ju](./quick/260514-no4-connect-to-any-gamepad-controller-not-ju/) |
+| 260514-ugl | Switch the controls to go forward and go backwards | 2026-05-14 | 5345b742 | [260514-ugl-switch-the-controls-to-go-forward-and-go](./quick/260514-ugl-switch-the-controls-to-go-forward-and-go/) |
 
 ## Session Continuity
 
