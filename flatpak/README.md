@@ -66,17 +66,26 @@ needed when the source icon changes.
 ## Host Requirements for Local Builds
 
 The Flatpak bundle **must be produced on a native x86_64 host** (Steam Deck = x86_64).
-The local Docker build path (`just docker-build-all`) refuses to run on Apple Silicon
-because `flatpak-builder` invokes `bubblewrap`, which calls `prctl(PR_SET_SECCOMP)`.
-That syscall is not translated by Rosetta, so the bwrap sandbox fails to initialize:
+The local Docker build path (`just docker-build-all`) refuses to run on aarch64 hosts
+(Apple Silicon Macs, ARM Linux boxes) because `flatpak-builder` invokes `bubblewrap`,
+which requires user namespaces (`CLONE_NEWUSER`). Neither Rosetta nor QEMU translates
+the relevant syscalls when emulating amd64 on aarch64:
+
+| Emulator | Failure                                                           |
+| -------- | ----------------------------------------------------------------- |
+| Rosetta  | `prctl(PR_SET_SECCOMP) reported EINVAL` (seccomp filter setup)    |
+| QEMU     | `unshare failed: Invalid argument` (CLONE_NEWUSER user namespace) |
+
+Both errors surface as:
 
 ```
-bwrap: Unable to set up system call filtering as requested: prctl(PR_SET_SECCOMP) reported EINVAL.
+bwrap: Creating new namespace failed: Invalid argument
 ```
 
 This is a fundamental limitation of amd64 emulation on aarch64 hosts, not a Docker
-configuration issue (`--privileged`, `--security-opt seccomp=unconfined`, and
-`--security-opt apparmor=unconfined` all fail to recover).
+configuration issue. `--privileged`, `--security-opt seccomp=unconfined`,
+`--security-opt apparmor=unconfined`, and switching between Rosetta/QEMU all fail to
+recover. The host kernel must natively execute the amd64 ABI.
 
 ### Supported build paths
 

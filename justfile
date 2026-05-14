@@ -178,16 +178,19 @@ docker-flatpak-build deb_path="":
 
 # Build .deb + .flatpak entirely in Docker (no local Rust/Tauri required)
 # Works on Linux x86_64 — single command, full CI pipeline.
-# NOTE: On Apple Silicon Macs, the flatpak-builder stage fails because bubblewrap's
-# prctl(PR_SET_SECCOMP) syscall is not translated by Rosetta. Use CI or a native amd64 host.
+# NOTE: On aarch64 hosts (e.g. Apple Silicon Macs), flatpak-builder cannot run because
+# bubblewrap requires user namespaces (CLONE_NEWUSER) which neither Rosetta nor QEMU
+# translates for amd64-on-aarch64 emulation. Use CI or a native amd64 host.
 [group('flatpak')]
 docker-build-all:
     @HOST_ARCH="$(uname -m)"; \
     if [ "$HOST_ARCH" = "arm64" ] || [ "$HOST_ARCH" = "aarch64" ]; then \
         echo "✗ Refusing to run on $HOST_ARCH host."; \
-        echo "  Docker amd64 emulation on Apple Silicon cannot run flatpak-builder"; \
-        echo "  (bwrap seccomp setup fails under Rosetta translation)."; \
-        echo "  Use one of:"; \
+        echo "  Docker amd64 emulation on aarch64 hosts cannot run flatpak-builder."; \
+        echo "  Root cause: bubblewrap needs user namespaces (CLONE_NEWUSER); neither Rosetta"; \
+        echo "  nor QEMU translates that syscall correctly when emulating amd64 on aarch64."; \
+        echo "  Tested: Rosetta fails on prctl(PR_SET_SECCOMP); QEMU fails on unshare(CLONE_NEWUSER)."; \
+        echo "  Workarounds:"; \
         echo "    - Push a tag and let GitHub Actions build the flatpak (.github/workflows/build.yml)"; \
         echo "    - Run on a native x86_64 Linux host (or via 'just flatpak-build')"; \
         echo "    - SSH to a Steam Deck and run 'just flatpak-build' there"; \
