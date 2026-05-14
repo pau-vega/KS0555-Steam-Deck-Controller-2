@@ -33,6 +33,22 @@ if [ ! -s "$DEB_PATH" ]; then
     exit 1
 fi
 
+# === Host arch check (Apple Silicon cannot run flatpak-builder under amd64 emulation) ===
+# Bubblewrap's prctl(PR_SET_SECCOMP) is not translated by Rosetta, so flatpak-builder
+# fails before it can build the bundle. Refuse early with actionable guidance.
+
+HOST_ARCH="$(uname -m)"
+if [ "$HOST_ARCH" = "arm64" ] || [ "$HOST_ARCH" = "aarch64" ]; then
+    echo "✗ Refusing to run on $HOST_ARCH host."
+    echo "  Docker amd64 emulation on Apple Silicon cannot run flatpak-builder"
+    echo "  (bwrap seccomp setup fails under Rosetta translation)."
+    echo "  Use one of:"
+    echo "    - Push a tag and let GitHub Actions build the flatpak (.github/workflows/build.yml)"
+    echo "    - Run on a native x86_64 Linux host (or via 'just flatpak-build')"
+    echo "    - SSH to a Steam Deck and run 'just flatpak-build' there"
+    exit 1
+fi
+
 # === Platform check (Docker availability) ===
 
 if ! command -v docker &>/dev/null; then

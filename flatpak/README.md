@@ -63,6 +63,34 @@ convert apps/frontend/src-tauri/icons/icon.png -resize 512x512 flatpak/icons/256
 Icons are pre-generated and committed to the repository. Regeneration is only
 needed when the source icon changes.
 
+## Host Requirements for Local Builds
+
+The Flatpak bundle **must be produced on a native x86_64 host** (Steam Deck = x86_64).
+The local Docker build path (`just docker-build-all`) refuses to run on Apple Silicon
+because `flatpak-builder` invokes `bubblewrap`, which calls `prctl(PR_SET_SECCOMP)`.
+That syscall is not translated by Rosetta, so the bwrap sandbox fails to initialize:
+
+```
+bwrap: Unable to set up system call filtering as requested: prctl(PR_SET_SECCOMP) reported EINVAL.
+```
+
+This is a fundamental limitation of amd64 emulation on aarch64 hosts, not a Docker
+configuration issue (`--privileged`, `--security-opt seccomp=unconfined`, and
+`--security-opt apparmor=unconfined` all fail to recover).
+
+### Supported build paths
+
+| Host                          | Path                                            | Status     |
+| ----------------------------- | ----------------------------------------------- | ---------- |
+| Linux x86_64 (or CI)          | `just docker-build-all` or `just flatpak-build` | Works      |
+| GitHub Actions (ubuntu-24.04) | `.github/workflows/build.yml` (push a tag / PR) | Works (CI) |
+| Steam Deck (SteamOS, x86_64)  | SSH in, run `just flatpak-build` from the repo  | Works      |
+| Apple Silicon Mac (arm64)     | Any local Docker path                           | Refused    |
+
+If you only need to iterate on the manifest YAML, metainfo XML, or icons, run
+`./flatpak/build.sh <deb>` on macOS — it performs structural validation only
+(YAML/XML parse + icon presence) without invoking flatpak-builder.
+
 ## Architecture
 
 The Flatpak build uses a **deb-extract** pattern:

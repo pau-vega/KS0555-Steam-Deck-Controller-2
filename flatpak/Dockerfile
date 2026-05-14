@@ -1,7 +1,9 @@
 # Dockerfile — build .deb + .flatpak from source
 # Usage: just docker-build-all
-# Target: Steam Deck (x86_64). Force linux/amd64 so Apple Silicon hosts don't produce aarch64 artifacts.
-FROM --platform=linux/amd64 ubuntu:24.04
+# Target: Steam Deck (x86_64). The host MUST pass `--platform linux/amd64` on `docker build`
+# (the wrapping `justfile` recipe does this). Avoid hardcoding --platform on FROM to silence
+# BuildKit warning FromPlatformFlagConstDisallowed and keep the image multi-platform-buildable.
+FROM ubuntu:24.04
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
