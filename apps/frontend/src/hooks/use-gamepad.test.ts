@@ -109,6 +109,43 @@ describe("useGamepad", () => {
     expect(result.current.direction).toBe("S")
   })
 
+  it("exposes gamepadName from connected event", async () => {
+    const { result } = renderHook(() => useGamepad())
+    await act(async () => {})
+
+    act(() => {
+      listenerCallbacks["gamepad-connected"]!({ name: "8BitDo Ultimate 2" })
+    })
+    expect(result.current.gamepadName).toBe("8BitDo Ultimate 2")
+    expect(result.current.gamepadConnected).toBe(true)
+  })
+
+  it("clears gamepadName on disconnect", async () => {
+    const { result } = renderHook(() => useGamepad())
+    await act(async () => {})
+
+    act(() => {
+      listenerCallbacks["gamepad-connected"]!({ name: "Xbox Controller" })
+    })
+    expect(result.current.gamepadName).toBe("Xbox Controller")
+
+    act(() => {
+      listenerCallbacks["gamepad-disconnected"]!({ name: "Xbox Controller" })
+    })
+    expect(result.current.gamepadName).toBe(null)
+    expect(result.current.gamepadConnected).toBe(false)
+  })
+
+  it("gamepadName starts null", () => {
+    const { result } = renderHook(() => useGamepad())
+    expect(result.current.gamepadName).toBe(null)
+  })
+
+  it("isDeck remains in return for backward compat", () => {
+    const { result } = renderHook(() => useGamepad())
+    expect(result.current.isDeck).toBe(false)
+  })
+
   afterEach(() => {
     vi.clearAllMocks()
   })
