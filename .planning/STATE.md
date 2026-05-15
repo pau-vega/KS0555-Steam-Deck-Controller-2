@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: Analog Speed Control
 status: executing
-last_updated: "2026-05-15T15:59:44.924Z"
-last_activity: 2026-05-15 -- Phase 20 planning complete
+last_updated: "2026-05-15T16:06:37.383Z"
+last_activity: 2026-05-15 -- Phase 20 execution started
 progress:
   total_phases: 4
   completed_phases: 0
@@ -20,13 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-15)
 
 **Core value:** Control a real robot from Steam Deck gamepad input with low latency — commands must reach the robot reliably and quickly.
-**Current focus:** v2.2 Analog Speed Control — R2/L2 triggers and left-stick magnitude drive variable PWM (80–255) over the existing BT24 serial protocol.
+**Current focus:** Phase 20 — protocol-domain
 
 ## Current Position
 
-Phase: 20 (not yet planned)
-Status: Ready to execute
-Last activity: 2026-05-15 -- Phase 20 planning complete
+Phase: 20 (protocol-domain) — EXECUTING
+Plan: 1 of 3
+Status: Executing Phase 20
+Last activity: 2026-05-15 -- Phase 20 execution started
 
 ## Progress
 
