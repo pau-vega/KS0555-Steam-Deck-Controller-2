@@ -125,6 +125,45 @@ pub fn compute_stick_direction(x: f32, y: f32, deadzone: f32) -> Direction {
     }
 }
 
+/// Analog-aware stick computation that returns a `Command` instead of a bare `Direction`.
+///
+/// Uses the module-level `DEADZONE` (0.15) directly — no parameter — per REQ-SPD-05.
+/// Picks the dominant axis using the same tiebreak as `compute_stick_direction`. The
+/// magnitude `sqrt(x*x + y*y)` is clamped to `1.0` and then passed to
+/// `quantize_pressure`. If either axis is non-finite (NaN, ±INF), returns
+/// `Command::Stop` (T-20-04 mitigation). If the per-axis deadzone gate passes but the
+/// magnitude still quantizes to `None` (very small vector), returns `Command::Stop`.
+pub fn compute_stick_command(x: f32, y: f32) -> Command {
+    if !x.is_finite() || !y.is_finite() {
+        return Command::Stop;
+    }
+
+    let abs_x = x.abs();
+    let abs_y = y.abs();
+
+    if abs_x < DEADZONE && abs_y < DEADZONE {
+        return Command::Stop;
+    }
+
+    let dir = if abs_y > abs_x {
+        if y < 0.0 {
+            Direction::F
+        } else {
+            Direction::B
+        }
+    } else if x < 0.0 {
+        Direction::L
+    } else {
+        Direction::R
+    };
+
+    let m = (x * x + y * y).sqrt().min(1.0);
+    match quantize_pressure(m) {
+        Some(pwm) => Command::Drive { dir, pwm },
+        None => Command::Stop,
+    }
+}
+
 pub fn lateral_only(d: Direction) -> Direction {
     match d {
         Direction::L | Direction::R => d,
@@ -217,6 +256,59 @@ pub fn compute_trigger(inputs: &GamepadInputs, threshold: f32) -> (Direction, f3
     };
 
     (direction, r2_eff, l2_eff)
+}
+
+/// Analog-aware trigger computation that returns a `Command` instead of a bare `Direction`.
+///
+/// Mirrors `compute_trigger` for pressure derivation, digital fallback, and R2-wins-tie
+/// semantics (REQ-SPD-04). Differences:
+/// - Uses the module-level `TRIGGER_THRESHOLD` directly (no `threshold` parameter).
+/// - Returns `Command::Drive { dir, pwm }` when a direction is active and
+///   `quantize_pressure(max(r2_eff, l2_eff))` resolves to `Some(pwm)`; otherwise
+///   `Command::Stop`.
+/// - The second and third tuple elements are the same effective pressures the legacy
+///   function returns, so the adapter heartbeat cadence stays unchanged when callers
+///   migrate to this function in Phase 21.
+pub fn compute_trigger_command(inputs: &GamepadInputs) -> (Command, f32, f32) {
+    let r2_pressure = if inputs.r2 > TRIGGER_THRESHOLD {
+        inputs.r2 - TRIGGER_THRESHOLD
+    } else {
+        0.0
+    };
+    let l2_pressure = if inputs.l2 > TRIGGER_THRESHOLD {
+        inputs.l2 - TRIGGER_THRESHOLD
+    } else {
+        0.0
+    };
+
+    let (r2_eff, l2_eff) = if r2_pressure == 0.0 && l2_pressure == 0.0 {
+        let r2_btn = inputs.trigger_buttons.r2 || inputs.trigger_buttons.r1;
+        let l2_btn = inputs.trigger_buttons.l2 || inputs.trigger_buttons.l1;
+        if r2_btn || l2_btn {
+            (
+                if r2_btn { 1.0 } else { 0.0 },
+                if l2_btn { 1.0 } else { 0.0 },
+            )
+        } else {
+            (0.0, 0.0)
+        }
+    } else {
+        (r2_pressure, l2_pressure)
+    };
+
+    let dir = if r2_eff > 0.0 && r2_eff >= l2_eff {
+        Direction::F
+    } else if l2_eff > 0.0 {
+        Direction::B
+    } else {
+        return (Command::Stop, r2_eff, l2_eff);
+    };
+
+    let strongest = r2_eff.max(l2_eff);
+    match quantize_pressure(strongest) {
+        Some(pwm) => (Command::Drive { dir, pwm }, r2_eff, l2_eff),
+        None => (Command::Stop, r2_eff, l2_eff),
+    }
 }
 
 pub fn compute_combined(inputs: &GamepadInputs, deadzone: f32) -> Direction {
@@ -473,5 +565,240 @@ mod tests {
         assert_eq!(quantize_pressure(-0.5), None);
         assert_eq!(quantize_pressure(f32::NEG_INFINITY), None);
         assert_eq!(quantize_pressure(f32::NAN), None);
+    }
+
+    // ---- compute_trigger_command tests (REQ-SPD-04) ----
+
+    #[test]
+    fn trigger_command_stop_when_below_deadzone() {
+        let inputs = GamepadInputs {
+            r2: 0.05,
+            l2: 0.05,
+            ..GamepadInputs::default()
+        };
+        let (cmd, _r2_eff, _l2_eff) = compute_trigger_command(&inputs);
+        assert_eq!(cmd, Command::Stop);
+    }
+
+    #[test]
+    fn trigger_command_r2_only_forward() {
+        // r2_eff = 0.9 - 0.1 = 0.8 → quantize_pressure(0.8) = Some(216) (bucket idx 7)
+        let inputs = GamepadInputs {
+            r2: 0.9,
+            l2: 0.0,
+            ..GamepadInputs::default()
+        };
+        let (cmd, _r2_eff, _l2_eff) = compute_trigger_command(&inputs);
+        if let Command::Drive { dir, pwm } = cmd {
+            assert_eq!(dir, Direction::F);
+            assert_eq!(pwm, 216);
+        } else {
+            panic!("expected Command::Drive {{ F, 216 }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn trigger_command_l2_only_backward() {
+        let inputs = GamepadInputs {
+            r2: 0.0,
+            l2: 0.9,
+            ..GamepadInputs::default()
+        };
+        let (cmd, _r2_eff, _l2_eff) = compute_trigger_command(&inputs);
+        if let Command::Drive { dir, pwm } = cmd {
+            assert_eq!(dir, Direction::B);
+            assert_eq!(pwm, 216);
+        } else {
+            panic!("expected Command::Drive {{ B, 216 }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn trigger_command_r2_wins_tie() {
+        // R2 exact-tie wins per REQ-SPD-04 ("stronger wins, R2 wins exact tie").
+        let inputs = GamepadInputs {
+            r2: 0.5,
+            l2: 0.5,
+            ..GamepadInputs::default()
+        };
+        let (cmd, _r2_eff, _l2_eff) = compute_trigger_command(&inputs);
+        if let Command::Drive { dir, .. } = cmd {
+            assert_eq!(dir, Direction::F, "R2 must win exact tie");
+        } else {
+            panic!("expected Command::Drive, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn trigger_command_stronger_wins() {
+        let inputs = GamepadInputs {
+            r2: 0.3,
+            l2: 0.8,
+            ..GamepadInputs::default()
+        };
+        let (cmd, _r2_eff, _l2_eff) = compute_trigger_command(&inputs);
+        if let Command::Drive { dir, .. } = cmd {
+            assert_eq!(dir, Direction::B);
+        } else {
+            panic!("expected Command::Drive {{ B, .. }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn trigger_command_digital_fallback() {
+        // r2/l2 analog both zero, digital R2 button pressed → pressure = 1.0 → bucket 9 = 255.
+        let inputs = GamepadInputs {
+            r2: 0.0,
+            l2: 0.0,
+            trigger_buttons: TriggerButtons {
+                r2: true,
+                ..TriggerButtons::default()
+            },
+            ..GamepadInputs::default()
+        };
+        let (cmd, _r2_eff, _l2_eff) = compute_trigger_command(&inputs);
+        if let Command::Drive { dir, pwm } = cmd {
+            assert_eq!(dir, Direction::F);
+            assert_eq!(pwm, 255);
+        } else {
+            panic!("expected Command::Drive {{ F, 255 }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn trigger_command_nan_is_stop() {
+        // NaN > TRIGGER_THRESHOLD is `false` per IEEE-754, so analog pressures both
+        // collapse to 0.0; no digital buttons set → `Command::Stop` (T-20-05).
+        let inputs = GamepadInputs {
+            r2: f32::NAN,
+            l2: f32::NAN,
+            ..GamepadInputs::default()
+        };
+        let (cmd, _r2_eff, _l2_eff) = compute_trigger_command(&inputs);
+        assert_eq!(cmd, Command::Stop);
+    }
+
+    #[test]
+    fn trigger_command_returns_pressures() {
+        // r2 = 0.5, l2 = 0.0 → r2_eff = 0.5 - 0.1 = 0.4; l2_eff = 0.0.
+        let inputs = GamepadInputs {
+            r2: 0.5,
+            l2: 0.0,
+            ..GamepadInputs::default()
+        };
+        let (_cmd, r2_eff, l2_eff) = compute_trigger_command(&inputs);
+        assert!(
+            (r2_eff - 0.4).abs() < 1e-6,
+            "r2_eff = {r2_eff}, expected ~0.4"
+        );
+        assert_eq!(l2_eff, 0.0);
+    }
+
+    // ---- compute_stick_command tests (REQ-SPD-05) ----
+
+    #[test]
+    fn stick_command_deadzone_returns_stop() {
+        assert_eq!(compute_stick_command(0.0, 0.0), Command::Stop);
+        assert_eq!(compute_stick_command(0.1, 0.1), Command::Stop);
+        assert_eq!(compute_stick_command(-0.14, 0.14), Command::Stop);
+    }
+
+    #[test]
+    fn stick_command_full_press_forward() {
+        let cmd = compute_stick_command(0.0, -1.0);
+        if let Command::Drive { dir, pwm } = cmd {
+            assert_eq!(dir, Direction::F);
+            assert_eq!(pwm, 255);
+        } else {
+            panic!("expected Command::Drive {{ F, 255 }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn stick_command_full_press_backward() {
+        let cmd = compute_stick_command(0.0, 1.0);
+        if let Command::Drive { dir, pwm } = cmd {
+            assert_eq!(dir, Direction::B);
+            assert_eq!(pwm, 255);
+        } else {
+            panic!("expected Command::Drive {{ B, 255 }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn stick_command_full_press_left() {
+        let cmd = compute_stick_command(-1.0, 0.0);
+        if let Command::Drive { dir, pwm } = cmd {
+            assert_eq!(dir, Direction::L);
+            assert_eq!(pwm, 255);
+        } else {
+            panic!("expected Command::Drive {{ L, 255 }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn stick_command_full_press_right() {
+        let cmd = compute_stick_command(1.0, 0.0);
+        if let Command::Drive { dir, pwm } = cmd {
+            assert_eq!(dir, Direction::R);
+            assert_eq!(pwm, 255);
+        } else {
+            panic!("expected Command::Drive {{ R, 255 }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn stick_command_axis_tiebreak_y_wins_when_dominant() {
+        let cmd = compute_stick_command(0.1, -0.8);
+        if let Command::Drive { dir, .. } = cmd {
+            assert_eq!(dir, Direction::F);
+        } else {
+            panic!("expected Command::Drive {{ F, .. }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn stick_command_axis_tiebreak_x_wins_when_dominant() {
+        let cmd = compute_stick_command(0.8, 0.1);
+        if let Command::Drive { dir, .. } = cmd {
+            assert_eq!(dir, Direction::R);
+        } else {
+            panic!("expected Command::Drive {{ R, .. }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn stick_command_magnitude_clamps_to_one() {
+        // sqrt(0.9^2 + 0.9^2) = sqrt(1.62) ≈ 1.273; clamped to 1.0 → quantize_pressure(1.0) = 255.
+        let cmd = compute_stick_command(0.9, 0.9);
+        if let Command::Drive { pwm, .. } = cmd {
+            assert_eq!(pwm, 255, "clamp(magnitude, 1.0) must yield bucket 9 = 255");
+        } else {
+            panic!("expected Command::Drive, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn stick_command_magnitude_quantization_partial() {
+        // (0.5, 0.0): magnitude = 0.5; quantize_pressure(0.5) is in bucket 4 → Some(158).
+        let cmd = compute_stick_command(0.5, 0.0);
+        if let Command::Drive { dir, pwm } = cmd {
+            assert_eq!(dir, Direction::R);
+            assert_eq!(pwm, 158);
+        } else {
+            panic!("expected Command::Drive {{ R, 158 }}, got {:?}", cmd);
+        }
+    }
+
+    #[test]
+    fn stick_command_nan_is_stop() {
+        assert_eq!(compute_stick_command(f32::NAN, 0.5), Command::Stop);
+        assert_eq!(compute_stick_command(0.5, f32::NAN), Command::Stop);
+        assert_eq!(compute_stick_command(f32::NAN, f32::NAN), Command::Stop);
+    }
+
+    #[test]
+    fn stick_command_infinity_is_stop() {
+        assert_eq!(compute_stick_command(f32::INFINITY, 0.0), Command::Stop);
     }
 }
