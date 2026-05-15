@@ -47,23 +47,27 @@ fn lateral_only_drops_forward_and_back() {
 
 #[test]
 fn combined_dpad_wins_over_trigger() {
-    let mut inputs = GamepadInputs::default();
-    inputs.dpad_buttons = DpadButtons {
-        left: true,
-        ..DpadButtons::default()
+    let inputs = GamepadInputs {
+        dpad_buttons: DpadButtons {
+            left: true,
+            ..DpadButtons::default()
+        },
+        r2: 0.9,
+        ..GamepadInputs::default()
     };
-    inputs.r2 = 0.9;
     assert_eq!(compute_combined(&inputs, DEADZONE), Direction::L);
 }
 
 #[test]
 fn combined_trigger_fires_when_dpad_and_stick_idle() {
-    let mut inputs = GamepadInputs::default();
-    inputs.trigger_buttons = TriggerButtons {
-        r2: true,
-        ..TriggerButtons::default()
+    let inputs = GamepadInputs {
+        trigger_buttons: TriggerButtons {
+            r2: true,
+            ..TriggerButtons::default()
+        },
+        r2: 0.9,
+        ..GamepadInputs::default()
     };
-    inputs.r2 = 0.9;
     assert_eq!(compute_combined(&inputs, DEADZONE), Direction::F);
 }
 
@@ -72,9 +76,8 @@ fn trigger_interval_min_at_full_pressure() {
     let fast =
         compute_trigger_interval(1.0, TRIGGER_HEARTBEAT_MIN_MS, TRIGGER_HEARTBEAT_MAX_MS);
     assert!(
-        fast >= TRIGGER_HEARTBEAT_MIN_MS && fast <= TRIGGER_HEARTBEAT_MIN_MS * 2,
-        "fast={}",
-        fast
+        (TRIGGER_HEARTBEAT_MIN_MS..=TRIGGER_HEARTBEAT_MIN_MS * 2).contains(&fast),
+        "fast={fast}"
     );
 }
 

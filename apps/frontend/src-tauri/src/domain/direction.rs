@@ -272,34 +272,49 @@ mod tests {
         assert_eq!(compute_trigger_interval(0.0, 30, 400), 400);
         assert_eq!(compute_trigger_interval(-0.5, 30, 400), 400);
         let fast = compute_trigger_interval(1.0, 30, 400);
-        assert!(fast >= 30 && fast <= 60, "fast={}", fast);
+        assert!((30..=60).contains(&fast), "fast={fast}");
     }
 
     #[test]
     fn combined_prefers_dpad_buttons_over_triggers() {
-        let mut inputs = GamepadInputs::default();
-        inputs.dpad_buttons.left = true;
-        inputs.r2 = 0.9;
+        let inputs = GamepadInputs {
+            dpad_buttons: DpadButtons {
+                left: true,
+                ..DpadButtons::default()
+            },
+            r2: 0.9,
+            ..GamepadInputs::default()
+        };
         assert_eq!(compute_combined(&inputs, DEADZONE), Direction::L);
     }
 
     #[test]
     fn combined_falls_back_to_trigger_when_no_dpad_or_stick() {
-        let mut inputs = GamepadInputs::default();
-        inputs.r2 = 0.9;
-        assert_eq!(compute_combined(&inputs, DEADZONE), Direction::F);
-        inputs.r2 = 0.0;
-        inputs.l2 = 0.9;
-        assert_eq!(compute_combined(&inputs, DEADZONE), Direction::B);
+        let r2_only = GamepadInputs {
+            r2: 0.9,
+            ..GamepadInputs::default()
+        };
+        assert_eq!(compute_combined(&r2_only, DEADZONE), Direction::F);
+
+        let l2_only = GamepadInputs {
+            l2: 0.9,
+            ..GamepadInputs::default()
+        };
+        assert_eq!(compute_combined(&l2_only, DEADZONE), Direction::B);
     }
 
     #[test]
     fn combined_lateral_only_filters_forward_back() {
-        let mut inputs = GamepadInputs::default();
-        inputs.stick_y = -1.0;
-        assert_eq!(compute_combined(&inputs, DEADZONE), Direction::S);
-        inputs.stick_x = 1.0;
-        inputs.stick_y = 0.0;
-        assert_eq!(compute_combined(&inputs, DEADZONE), Direction::R);
+        let stick_forward = GamepadInputs {
+            stick_y: -1.0,
+            ..GamepadInputs::default()
+        };
+        assert_eq!(compute_combined(&stick_forward, DEADZONE), Direction::S);
+
+        let stick_right = GamepadInputs {
+            stick_x: 1.0,
+            ..GamepadInputs::default()
+        };
+        assert_eq!(compute_combined(&stick_right, DEADZONE), Direction::R);
     }
 }
