@@ -2,9 +2,10 @@ import { invoke } from "@tauri-apps/api/core"
 import { listen } from "@tauri-apps/api/event"
 import { useCallback, useEffect, useState } from "react"
 
+import type { Direction } from "../types"
+
 import { encodeCommand } from "../lib/encode-command"
 import { isTauri } from "../lib/is-tauri"
-import type { Direction } from "../types"
 
 type BluetoothState = "disconnected" | "connecting" | "connected"
 
