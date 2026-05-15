@@ -52,6 +52,13 @@ fn get_direction_from_axes(x: f32, y: f32) -> Direction {
     }
 }
 
+fn lateral_only(d: Direction) -> Direction {
+    match d {
+        Direction::L | Direction::R => d,
+        _ => Direction::S,
+    }
+}
+
 fn compute_direction(gamepad: &gilrs::Gamepad) -> Direction {
     let dpad_x = gamepad
         .axis_data(Axis::DPadX)
@@ -101,7 +108,7 @@ fn compute_direction(gamepad: &gilrs::Gamepad) -> Direction {
         || dpad_right;
 
     if dpad_active {
-        get_direction_from_axes(eff_x, eff_y)
+        lateral_only(get_direction_from_axes(eff_x, eff_y))
     } else {
         let stick_x = gamepad
             .axis_data(Axis::LeftStickX)
@@ -111,7 +118,7 @@ fn compute_direction(gamepad: &gilrs::Gamepad) -> Direction {
             .axis_data(Axis::LeftStickY)
             .map(|d| d.value())
             .unwrap_or(0.0);
-        get_direction_from_axes(stick_x, stick_y)
+        lateral_only(get_direction_from_axes(stick_x, stick_y))
     }
 }
 
@@ -185,10 +192,11 @@ fn compute_trigger_interval(pressure: f32) -> u64 {
 }
 
 fn is_dpad_active(gamepad: &gilrs::Gamepad) -> bool {
-    gamepad.is_pressed(Button::DPadUp)
-        || gamepad.is_pressed(Button::DPadDown)
-        || gamepad.is_pressed(Button::DPadLeft)
-        || gamepad.is_pressed(Button::DPadRight)
+    let dpad_x = gamepad
+        .axis_data(Axis::DPadX)
+        .map(|d| d.value())
+        .unwrap_or(0.0);
+    gamepad.is_pressed(Button::DPadLeft) || gamepad.is_pressed(Button::DPadRight) || dpad_x.abs() > DEADZONE
 }
 
 fn is_stick_active(gamepad: &gilrs::Gamepad) -> bool {
@@ -196,11 +204,7 @@ fn is_stick_active(gamepad: &gilrs::Gamepad) -> bool {
         .axis_data(Axis::LeftStickX)
         .map(|d| d.value())
         .unwrap_or(0.0);
-    let y = gamepad
-        .axis_data(Axis::LeftStickY)
-        .map(|d| d.value())
-        .unwrap_or(0.0);
-    x.abs() > DEADZONE || y.abs() > DEADZONE
+    x.abs() > DEADZONE
 }
 
 fn poll_triggers(

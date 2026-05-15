@@ -13,11 +13,9 @@ interface ButtonDef {
 }
 
 const BUTTONS: ButtonDef[] = [
-  { label: "▲", command: "F", gridArea: "1 / 2", ariaLabel: "Forward" },
   { label: "◀", command: "L", gridArea: "2 / 1", ariaLabel: "Left" },
   { label: "■", command: "S", gridArea: "2 / 2", ariaLabel: "Stop" },
   { label: "▶", command: "R", gridArea: "2 / 3", ariaLabel: "Right" },
-  { label: "▼", command: "B", gridArea: "3 / 2", ariaLabel: "Backward" },
 ]
 
 interface DirectionButtonProps {
