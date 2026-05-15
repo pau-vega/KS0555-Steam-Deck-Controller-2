@@ -2,14 +2,13 @@
 gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: Analog Speed Control
-status: active
-stopped_at: Milestone bootstrapped — Phase 20 not yet planned.
-last_updated: "2026-05-15"
-last_activity: 2026-05-15 -- /gsd-new-milestone bootstrap for v2.2 Analog Speed Control
+status: executing
+last_updated: "2026-05-15T15:59:44.924Z"
+last_activity: 2026-05-15 -- Phase 20 planning complete
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
+  total_plans: 3
   completed_plans: 0
   percent: 0
 ---
@@ -26,8 +25,8 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 20 (not yet planned)
-Status: Milestone bootstrapped, awaiting `/gsd-plan-phase 20`
-Last activity: 2026-05-15 -- /gsd-new-milestone bootstrap for v2.2 Analog Speed Control
+Status: Ready to execute
+Last activity: 2026-05-15 -- Phase 20 planning complete
 
 ## Progress
 
@@ -43,6 +42,7 @@ Last activity: 2026-05-15 -- /gsd-new-milestone bootstrap for v2.2 Analog Speed 
 ## Decisions Made
 
 **Key v2.2 decisions (planning phase):**
+
 - Adopt PWM serial protocol `<dir><pwm>\n` — robot firmware already supports it (range 80–255, default 150). No firmware flashing.
 - Quantize trigger/stick pressure to 10 buckets to cap BLE write rate (~10 Hz/axis) while keeping perceived smoothness.
 - Stronger trigger wins on R2 vs L2 conflict (mirrors existing stick-axis tiebreak).
@@ -68,18 +68,22 @@ Carried from prior milestones (still deferred):
 ## Accumulated Context
 
 ### v2.0 Delivered
+
 Tauri v2 desktop shell, BLE via btleplug, gamepad via gilrs, hook rewrites, SteamOS build/test. Replaced broken Web APIs with native Rust.
 
 ### v2.1 Delivered
+
 Flatpak packaging pipeline, sandbox permissions, CI migration (AppImage → Flatpak), documentation rewrite, validated end-to-end CI run. All 9 phases complete.
 
 ### v2.2 Planning (this session)
+
 - Discovered Arduino firmware in sibling repo `~/Documents/arduino-tank-controller/firmware/` already speaks `<dir><pwm>\n` PWM protocol. "Firmware immutable / 5-char only" assertions in AGENTS.md, PROJECT.md, docs/ARCHITECTURE.md are stale.
 - Drafted REQ-SPD-01..15 across protocol/domain, gamepad layer, IPC, frontend, docs.
 - Updated PROJECT.md (Active requirements, constraint reword, key decisions).
 - Created REQUIREMENTS.md, extended ROADMAP.md.
 
 ### Quick Tasks (v2.1)
+
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260512-002 | Setup release-please and reset to 0.0.1 | 2026-05-12 |
