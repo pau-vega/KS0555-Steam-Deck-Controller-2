@@ -1,9 +1,10 @@
 ---
-status: diagnosed
+status: complete
 phase: 20-protocol-domain
-source: [20-01-SUMMARY.md, 20-02-SUMMARY.md, 20-03-SUMMARY.md]
+source: [20-01-SUMMARY.md, 20-02-SUMMARY.md, 20-03-SUMMARY.md, 20-04-SUMMARY.md]
 started: 2026-05-15T16:56:57Z
-updated: 2026-05-15T17:10:00Z
+updated: 2026-05-16T00:00:00Z
+regression_complete: 2026-05-16
 ---
 
 ## Current Test
@@ -25,17 +26,21 @@ result: pass
 expected: With BT24 module powered nearby, click "Connect Bluetooth". StatusBar transitions disconnected → connecting → connected. No error string under the button. The button disappears once connected.
 result: pass
 
-### 4. On-screen ControlPad drives robot
-expected: With BLE connected, click "F" on ControlPad. Robot drives forward. Click "S" to stop. Repeat for B/L/R. Each click drives the corresponding direction. "Last command: X" updates on screen.
-result: issue
-reported: "the robot do not respond to any of the inputs"
-severity: blocker
+### 4. On-screen ControlPad drives robot (regression after 20-04)
+expected: With BLE connected, click each ControlPad button. Robot drives in the corresponding direction. Click "S" → robot stops. "Last command: X" updates on screen. Previously failed (bare-char payload swallowed by validator); plan 20-04 wired encodeCommand into useBluetooth.send and surfaces invoke rejections via bleError.
+result: pass
+regression_verified: 2026-05-16
+prior_result: issue
+prior_reported: "the robot do not respond to any of the inputs"
+prior_severity: blocker
 
-### 5. Gamepad drives robot via triggers/stick
-expected: With BLE + gamepad connected, press R2 (or push left stick forward). Robot drives forward. Release/center → robot stops. Press L2 (or stick back) → robot drives backward. Stick left/right → robot turns. "Current direction" indicator on screen reflects the gamepad input.
-result: issue
-reported: "The indicator on the screen is showing the correct inputs, but the robot does not move"
-severity: blocker
+### 5. Gamepad drives robot via triggers/stick (regression after 20-04)
+expected: With BLE + gamepad connected, push stick forward / back / left / right and press R2/L2. Robot drives in each direction. Release/center → robot stops. "Current direction" still updates. Previously failed because gilrs_adapter still emits bare Direction char (Phase 21 owns full adapter rewrite); 20-04's FE encoder normalises the bare char into a valid wire payload as a stopgap.
+result: pass
+regression_verified: 2026-05-16
+prior_result: issue
+prior_reported: "The indicator on the screen is showing the correct inputs, but the robot does not move"
+prior_severity: blocker
 
 ### 6. Invalid payload error stays scrubbed
 expected: From the Tauri WebView devtools console, run `await window.__TAURI__.core.invoke("ble_send", { command: "X" })`. Promise rejects with an error string that ONLY mentions the rejected payload (quoted) and the expected format ('<dir><pwm>\\n' or 'S\\n'). No MAC, UUID, file path, or BleState internals appear in the message.
@@ -45,11 +50,12 @@ reason: "`window.__TAURI__.core` undefined in dev (global Tauri not exposed by d
 ## Summary
 
 total: 6
-passed: 3
-issues: 2
+passed: 5
+issues: 0
 pending: 0
 skipped: 1
 blocked: 0
+regression: 2  # Tests 4 + 5 verified on hardware 2026-05-16 after plan 20-04 closure
 
 ## Gaps
 
